@@ -1,42 +1,84 @@
-"""
-Pipeline de Extração em Cascata.
-
-Estratégia local-first para economia de tokens:
-1. Tenta extração com modelo local (Ollama)
-2. Valida resultado
-3. Se falhar ou baixa confiança, escala para API
-
-Economia estimada: 60-80% em tokens de API.
-"""
+"""Pipeline de extração em cascata com estratégia cloud/local + fallback de API."""
 
 from __future__ import annotations
 
-import json
 import logging
 import time
-from dataclasses import dataclass, field
+import importlib
+from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
-from typing import Literal
+from typing import TYPE_CHECKING, Literal, cast
 
-try:
-    from .config import paths, llm_config, extraction_config, local_config
-    from .exceptions import ExtractError, LLMError
-    from .validators import ValidationResult, validate_yaml
-except ImportError:  # pragma: no cover - standalone usage
-    from config import paths, llm_config, extraction_config, local_config
-    from exceptions import ExtractError, LLMError
-    from validators import ValidationResult, validate_yaml
+if __package__:
+    from . import config as _config
+    from . import exceptions as _exceptions
+    from . import validators as _validators
+else:  # pragma: no cover - standalone usage
+    _config = importlib.import_module("config")
+    _exceptions = importlib.import_module("exceptions")
+    _validators = importlib.import_module("validators")
+
+if TYPE_CHECKING:
+    if __package__:
+        from .validators import ValidationResult
+    else:  # pragma: no cover - standalone usage
+        from validators import ValidationResult
+
+llm_config = _config.llm_config
+local_config = _config.local_config
+ExtractError = _exceptions.ExtractError
+validate_yaml = _validators.validate_yaml
 
 logger = logging.getLogger(__name__)
+
+
+def _is_placeholder_api_key(value: str) -> bool:
+    normalized = (value or "").strip().lower()
+    if not normalized:
+        return True
+    placeholder_markers = (
+        "your-",
+        "-here",
+        "placeholder",
+        "sua",
+        "sk-ant-sua",
+        "sk-sua",
+    )
+    return any(marker in normalized for marker in placeholder_markers)
+
+
+def _resolve_api_provider(preferred_provider: str) -> str:
+    if preferred_provider == "anthropic":
+        return "anthropic"
+    if preferred_provider == "openai":
+        return "openai"
+
+    has_openai = not _is_placeholder_api_key(getattr(llm_config, "OPENAI_API_KEY", ""))
+    has_anthropic = not _is_placeholder_api_key(
+        getattr(llm_config, "ANTHROPIC_API_KEY", "")
+    )
+    if has_openai:
+        return "openai"
+    if has_anthropic:
+        return "anthropic"
+    return "anthropic"
+
+
+def _source_for_api_provider(provider: str) -> ExtractionSource:
+    if provider == "openai":
+        return ExtractionSource.API_OPENAI
+    return ExtractionSource.API_ANTHROPIC
 
 
 # ============================================================
 # Enums e Data Classes
 # ============================================================
 
+
 class ExtractionSource(Enum):
     """Fonte da extração."""
+
     LOCAL_OLLAMA = "local_ollama"
     LOCAL_OLLAMA_VISION = "local_ollama_vision"
     API_ANTHROPIC = "api_anthropic"
@@ -47,6 +89,7 @@ class ExtractionSource(Enum):
 @dataclass
 class CascadeMetrics:
     """Métricas de uma extração em cascata."""
+
     total_time_ms: float = 0.0
     local_time_ms: float = 0.0
     api_time_ms: float = 0.0
@@ -61,6 +104,7 @@ class CascadeMetrics:
 @dataclass
 class CascadeResult:
     """Resultado de uma extração em cascata."""
+
     yaml_content: str
     source: ExtractionSource
     confidence: float
@@ -72,7 +116,10 @@ class CascadeResult:
     @property
     def tokens_saved(self) -> int:
         """Tokens de API economizados por usar local."""
-        if self.source in [ExtractionSource.LOCAL_OLLAMA, ExtractionSource.LOCAL_OLLAMA_VISION]:
+        if self.source in [
+            ExtractionSource.LOCAL_OLLAMA,
+            ExtractionSource.LOCAL_OLLAMA_VISION,
+        ]:
             # Estimativa: extração típica usa ~10K tokens de API
             return 10000
         return 0
@@ -81,6 +128,7 @@ class CascadeResult:
 # ============================================================
 # Funções de Extração Local
 # ============================================================
+
 
 def extract_with_ollama(
     text: str,
@@ -111,13 +159,9 @@ def extract_with_ollama(
     metrics = CascadeMetrics()
     start_time = time.time()
 
-    # Escolher modelo
-    if images:
-        model = model or local_config.OLLAMA_EXTRACTION_MODEL
-        logger.info(f"[{artigo_id}] Extração vision com {model}")
-    else:
-        model = model or local_config.OLLAMA_REPAIR_MODEL
-        logger.info(f"[{artigo_id}] Extração texto com {model}")
+    model = model or local_config.OLLAMA_EXTRACTION_MODEL
+    mode = "vision" if images else "texto"
+    logger.info(f"[{artigo_id}] Extração {mode} com {model}")
 
     try:
         # Montar prompt
@@ -189,7 +233,7 @@ def repair_with_ollama(
         prompt = f"""Corrija o seguinte YAML baseado nos erros de validação.
 
 ERROS:
-{chr(10).join(f'- {e}' for e in validation_errors)}
+{chr(10).join(f"- {e}" for e in validation_errors)}
 
 YAML ORIGINAL:
 ```yaml
@@ -223,6 +267,7 @@ Retorne APENAS o YAML corrigido, sem explicações.
 # ============================================================
 # Funções de Extração API
 # ============================================================
+
 
 def extract_with_api(
     text: str,
@@ -283,20 +328,24 @@ def extract_with_api(
             )
 
         metrics.api_time_ms = (time.time() - start_time) * 1000
-        metrics.api_tokens = getattr(response, 'total_tokens', 0) if hasattr(response, 'total_tokens') else 0
+        metrics.api_tokens = (
+            getattr(response, "total_tokens", 0)
+            if hasattr(response, "total_tokens")
+            else 0
+        )
         metrics.total_time_ms = metrics.api_time_ms
         metrics.attempts = 1
 
         # Estimar custo
         if provider == "anthropic":
-            metrics.api_cost_estimate = (metrics.api_tokens * 0.000009)
+            metrics.api_cost_estimate = metrics.api_tokens * 0.000009
         else:
-            metrics.api_cost_estimate = (metrics.api_tokens * 0.00001)
+            metrics.api_cost_estimate = metrics.api_tokens * 0.00001
 
         # Extrair YAML do resultado
         if isinstance(response, str):
             yaml_content = _extract_yaml_block(response)
-        elif hasattr(response, 'content'):
+        elif hasattr(response, "content"):
             yaml_content = _extract_yaml_block(response.content)
         else:
             yaml_content = _extract_yaml_block(str(response))
@@ -313,12 +362,14 @@ def extract_with_api(
 # Pipeline de Cascata
 # ============================================================
 
+
 def extract_cascade(
     artigo_id: str,
     text: str,
     prompt_template: str,
     *,
-    strategy: Literal["local_first", "api_first", "local_only", "api_only"] | None = None,
+    strategy: Literal["local_first", "api_first", "local_only", "api_only"]
+    | None = None,
     images: list[Path] | None = None,
     confidence_threshold: float | None = None,
     max_local_retries: int = 2,
@@ -344,8 +395,13 @@ def extract_cascade(
     Returns:
         CascadeResult com extração e métricas
     """
-    strategy = strategy or local_config.EXTRACTION_STRATEGY
-    confidence_threshold = confidence_threshold or local_config.LOCAL_CONFIDENCE_THRESHOLD
+    strategy = cast(
+        Literal["local_first", "api_first", "local_only", "api_only"],
+        strategy or local_config.EXTRACTION_STRATEGY,
+    )
+    confidence_threshold = (
+        confidence_threshold or local_config.LOCAL_CONFIDENCE_THRESHOLD
+    )
 
     total_metrics = CascadeMetrics()
     start_time = time.time()
@@ -356,10 +412,13 @@ def extract_cascade(
     # Estratégia: API Only
     # ========================================
     if strategy == "api_only":
+        api_provider = _resolve_api_provider(llm_config.PRIMARY_PROVIDER)
+        api_source = _source_for_api_provider(api_provider)
         try:
             yaml_content, metrics = extract_with_api(
-                text, prompt_template,
-                provider=llm_config.PRIMARY_PROVIDER,
+                text,
+                prompt_template,
+                provider=cast(Literal["anthropic", "openai"], api_provider),
                 images=images,
                 artigo_id=artigo_id,
             )
@@ -369,7 +428,7 @@ def extract_cascade(
 
             return CascadeResult(
                 yaml_content=yaml_content,
-                source=ExtractionSource.API_ANTHROPIC,
+                source=api_source,
                 confidence=confidence,
                 validation=validation,
                 metrics=metrics,
@@ -378,7 +437,7 @@ def extract_cascade(
         except Exception as e:
             return CascadeResult(
                 yaml_content="",
-                source=ExtractionSource.API_ANTHROPIC,
+                source=api_source,
                 confidence=0.0,
                 validation=None,
                 metrics=total_metrics,
@@ -401,7 +460,8 @@ def extract_cascade(
                 source = ExtractionSource.LOCAL_OLLAMA_VISION
 
             yaml_content, metrics = extract_with_ollama(
-                text, prompt_template,
+                text,
+                prompt_template,
                 images=images,
                 artigo_id=artigo_id,
             )
@@ -414,10 +474,16 @@ def extract_cascade(
             validation = _validate_yaml(yaml_content, artigo_id)
             confidence = _estimate_confidence(yaml_content, validation)
 
-            logger.info(f"[{artigo_id}] Local attempt {attempt+1}: confidence={confidence:.2f}")
+            logger.info(
+                f"[{artigo_id}] Local attempt {attempt + 1}: confidence={confidence:.2f}"
+            )
 
             # Aceitar se passar no threshold
-            if confidence >= confidence_threshold and validation and validation.is_valid:
+            if (
+                confidence >= confidence_threshold
+                and validation
+                and validation.is_valid
+            ):
                 total_metrics.total_time_ms = (time.time() - start_time) * 1000
 
                 return CascadeResult(
@@ -429,18 +495,23 @@ def extract_cascade(
                 )
 
             # Tentar repair se tiver erros
-            if validation and not validation.is_valid and attempt < max_local_retries - 1:
+            if (
+                validation
+                and not validation.is_valid
+                and attempt < max_local_retries - 1
+            ):
                 logger.info(f"[{artigo_id}] Tentando repair local...")
                 errors = validation.errors[:5]  # errors já é list[str]
                 yaml_content, repair_metrics = repair_with_ollama(
-                    yaml_content, errors,
+                    yaml_content,
+                    errors,
                     artigo_id=artigo_id,
                 )
                 total_metrics.local_time_ms += repair_metrics.local_time_ms
                 total_metrics.local_tokens += repair_metrics.local_tokens
 
         except Exception as e:
-            logger.warning(f"[{artigo_id}] Local attempt {attempt+1} failed: {e}")
+            logger.warning(f"[{artigo_id}] Local attempt {attempt + 1} failed: {e}")
 
     # ========================================
     # Escalar para API (se local_first)
@@ -460,12 +531,17 @@ def extract_cascade(
     # Escalar para API
     logger.info(f"[{artigo_id}] Escalando para API (confidence={confidence:.2f})")
     total_metrics.escalated = True
-    total_metrics.escalation_reason = f"Low confidence ({confidence:.2f}) or validation failed"
+    total_metrics.escalation_reason = (
+        f"Low confidence ({confidence:.2f}) or validation failed"
+    )
 
     try:
+        api_provider = _resolve_api_provider(llm_config.PRIMARY_PROVIDER)
+        api_source = _source_for_api_provider(api_provider)
         yaml_content, api_metrics = extract_with_api(
-            text, prompt_template,
-            provider=llm_config.PRIMARY_PROVIDER,
+            text,
+            prompt_template,
+            provider=cast(Literal["anthropic", "openai"], api_provider),
             images=images,
             artigo_id=artigo_id,
         )
@@ -481,7 +557,9 @@ def extract_cascade(
 
         return CascadeResult(
             yaml_content=yaml_content,
-            source=ExtractionSource.HYBRID if total_metrics.local_tokens > 0 else ExtractionSource.API_ANTHROPIC,
+            source=ExtractionSource.HYBRID
+            if total_metrics.local_tokens > 0
+            else api_source,
             confidence=confidence,
             validation=validation,
             metrics=total_metrics,
@@ -504,6 +582,7 @@ def extract_cascade(
 # ============================================================
 # Funções Auxiliares
 # ============================================================
+
 
 def _extract_yaml_block(content: str) -> str:
     """Extrai bloco YAML de uma resposta."""
@@ -532,7 +611,9 @@ def _validate_yaml(yaml_content: str, artigo_id: str) -> ValidationResult | None
         return None
 
 
-def _estimate_confidence(yaml_content: str, validation: ValidationResult | None) -> float:
+def _estimate_confidence(
+    yaml_content: str, validation: ValidationResult | None
+) -> float:
     """
     Estima confiança da extração.
 

@@ -2,8 +2,8 @@
 Adapter unificado para modelos Ollama.
 
 Fornece interface consistente para:
-- Geração de texto (qwen3-coder)
-- Geração com visão (qwen3-vl)
+- Geração de texto (modelos cloud/local)
+- Geração com visão (modelos multimodais)
 - OCR especializado (glm-ocr)
 - Embeddings (nomic-embed-text-v2-moe)
 - Reranking (bge-reranker-v2-m3)
@@ -33,9 +33,11 @@ logger = logging.getLogger(__name__)
 # Data Classes
 # ============================================================
 
+
 @dataclass
 class OllamaResponse:
     """Resposta de um modelo Ollama."""
+
     content: str
     model: str
     prompt_tokens: int = 0
@@ -49,6 +51,7 @@ class OllamaResponse:
 @dataclass
 class OllamaModel:
     """Metadados de um modelo Ollama."""
+
     name: str
     size_gb: float
     family: str
@@ -60,6 +63,7 @@ class OllamaModel:
 @dataclass
 class EmbeddingResult:
     """Resultado de embedding."""
+
     embedding: list[float]
     model: str
     dimensions: int
@@ -69,6 +73,7 @@ class EmbeddingResult:
 @dataclass
 class RerankResult:
     """Resultado de reranking."""
+
     rankings: list[tuple[int, float]]  # (index, score)
     model: str
     processing_time_ms: float
@@ -79,11 +84,13 @@ class RerankResult:
 # ============================================================
 
 DEFAULT_MODELS = {
-    "text": "qwen3-coder:latest",          # 17.3 GB - coding/repair tasks
-    "vision": "qwen3-vl:30b",               # 18.2 GB - high quality vision
-    "vision_fast": "qwen3-vl:8b",           # 5.7 GB - fast vision
-    "ocr": "glm-ocr:latest",                # 2.1 GB - specialized OCR
-    "embedding": "nomic-embed-text-v2-moe", # 0.9 GB - embeddings (note: sem :latest)
+    "cloud": "glm-4.7:cloud",  # Cloud proxy - extração/repair (sem VRAM)
+    "cloud_fallback": "kimi-k2.5:cloud",  # Cloud fallback (sem VRAM)
+    "text": "qwen3-vl:8b",  # 6.1 GB - cabe em GPU 10GB
+    "vision": "qwen3-vl:8b",  # 6.1 GB - visão local (cabe em GPU 10GB)
+    "vision_fast": "qwen3-vl:8b",  # 6.1 GB - mesmo modelo (GPU limitada)
+    "ocr": "glm-ocr:latest",  # 2.2 GB - OCR especializado
+    "embedding": "nomic-embed-text-v2-moe",  # 0.9 GB - embeddings (note: sem :latest)
     "reranker": "qllama/bge-reranker-v2-m3:q4_k_m",  # 0.4 GB - reranking
 }
 
@@ -91,6 +98,7 @@ DEFAULT_MODELS = {
 # ============================================================
 # Funções de Verificação
 # ============================================================
+
 
 def is_ollama_available() -> bool:
     """Verifica se Ollama está rodando."""
@@ -108,7 +116,7 @@ def list_models() -> list[OllamaModel]:
         models = []
 
         # Nova API retorna objeto com atributo .models
-        if hasattr(response, 'models'):
+        if hasattr(response, "models"):
             model_list = response.models or []
         elif isinstance(response, dict):
             model_list = response.get("models", [])
@@ -117,13 +125,21 @@ def list_models() -> list[OllamaModel]:
 
         for model in model_list:
             # Suportar tanto objeto quanto dict
-            if hasattr(model, 'model'):
+            if hasattr(model, "model"):
                 name = model.model
-                size_bytes = getattr(model, 'size', 0)
-                details = getattr(model, 'details', None)
-                family = getattr(details, 'family', 'unknown') if details else 'unknown'
-                param_size = getattr(details, 'parameter_size', 'unknown') if details else 'unknown'
-                quant = getattr(details, 'quantization_level', 'unknown') if details else 'unknown'
+                size_bytes = getattr(model, "size", 0)
+                details = getattr(model, "details", None)
+                family = getattr(details, "family", "unknown") if details else "unknown"
+                param_size = (
+                    getattr(details, "parameter_size", "unknown")
+                    if details
+                    else "unknown"
+                )
+                quant = (
+                    getattr(details, "quantization_level", "unknown")
+                    if details
+                    else "unknown"
+                )
             else:
                 name = model.get("name", "")
                 size_bytes = model.get("size", 0)
@@ -144,14 +160,16 @@ def list_models() -> list[OllamaModel]:
             if "ocr" in name_lower:
                 capabilities.append("ocr")
 
-            models.append(OllamaModel(
-                name=name,
-                size_gb=size_bytes / (1024**3),
-                family=family,
-                parameter_size=param_size,
-                quantization=quant,
-                capabilities=capabilities,
-            ))
+            models.append(
+                OllamaModel(
+                    name=name,
+                    size_gb=size_bytes / (1024**3),
+                    family=family,
+                    parameter_size=param_size,
+                    quantization=quant,
+                    capabilities=capabilities,
+                )
+            )
 
         return models
     except Exception as e:
@@ -177,7 +195,18 @@ def check_model_available(model_name: str) -> bool:
     return False
 
 
-def get_model_for_task(task: Literal["text", "vision", "vision_fast", "ocr", "embedding", "reranker"]) -> str:
+def get_model_for_task(
+    task: Literal[
+        "cloud",
+        "cloud_fallback",
+        "text",
+        "vision",
+        "vision_fast",
+        "ocr",
+        "embedding",
+        "reranker",
+    ],
+) -> str:
     """Retorna o modelo padrão para uma tarefa."""
     return DEFAULT_MODELS.get(task, DEFAULT_MODELS["text"])
 
@@ -185,6 +214,7 @@ def get_model_for_task(task: Literal["text", "vision", "vision_fast", "ocr", "em
 # ============================================================
 # Funções de Geração
 # ============================================================
+
 
 def generate_text(
     prompt: str,
@@ -200,7 +230,7 @@ def generate_text(
 
     Args:
         prompt: Prompt do usuário
-        model: Nome do modelo (padrão: qwen3-coder)
+        model: Nome do modelo (padrão: DEFAULT_MODELS["text"])
         system: Prompt de sistema opcional
         temperature: Temperatura de sampling
         max_tokens: Máximo de tokens na resposta
@@ -238,7 +268,8 @@ def generate_text(
             model=model,
             prompt_tokens=response.get("prompt_eval_count", 0),
             completion_tokens=response.get("eval_count", 0),
-            total_tokens=response.get("prompt_eval_count", 0) + response.get("eval_count", 0),
+            total_tokens=response.get("prompt_eval_count", 0)
+            + response.get("eval_count", 0),
             total_duration_ms=response.get("total_duration", 0) / 1_000_000,
             load_duration_ms=response.get("load_duration", 0) / 1_000_000,
             eval_duration_ms=elapsed_ms,
@@ -246,7 +277,9 @@ def generate_text(
 
     except Exception as e:
         logger.error(f"Erro na geração Ollama ({model}): {e}")
-        raise LLMError(f"Ollama generation failed: {e}", provider="ollama", retriable=True)
+        raise LLMError(
+            f"Ollama generation failed: {e}", provider="ollama", retriable=True
+        )
 
 
 def generate_vision(
@@ -264,7 +297,7 @@ def generate_vision(
     Args:
         prompt: Prompt do usuário
         images: Lista de imagens (paths, base64, bytes ou PIL Image)
-        model: Nome do modelo (padrão: qwen3-vl:30b)
+        model: Nome do modelo (padrão: DEFAULT_MODELS["vision"])
         temperature: Temperatura de sampling
         max_tokens: Máximo de tokens na resposta
         timeout: Timeout em segundos
@@ -290,6 +323,7 @@ def generate_vision(
                 image_data.append(base64.b64encode(img).decode("utf-8"))
             elif isinstance(img, Image.Image):
                 import io
+
                 buffer = io.BytesIO()
                 img.save(buffer, format="PNG")
                 image_data.append(base64.b64encode(buffer.getvalue()).decode("utf-8"))
@@ -299,11 +333,13 @@ def generate_vision(
 
         response = ollama.chat(
             model=model,
-            messages=[{
-                "role": "user",
-                "content": prompt,
-                "images": image_data,
-            }],
+            messages=[
+                {
+                    "role": "user",
+                    "content": prompt,
+                    "images": image_data,
+                }
+            ],
             options={
                 "temperature": temperature,
                 "num_predict": max_tokens,
@@ -317,7 +353,8 @@ def generate_vision(
             model=model,
             prompt_tokens=response.get("prompt_eval_count", 0),
             completion_tokens=response.get("eval_count", 0),
-            total_tokens=response.get("prompt_eval_count", 0) + response.get("eval_count", 0),
+            total_tokens=response.get("prompt_eval_count", 0)
+            + response.get("eval_count", 0),
             total_duration_ms=response.get("total_duration", 0) / 1_000_000,
             load_duration_ms=response.get("load_duration", 0) / 1_000_000,
             eval_duration_ms=elapsed_ms,
@@ -325,7 +362,9 @@ def generate_vision(
 
     except Exception as e:
         logger.error(f"Erro na geração vision Ollama ({model}): {e}")
-        raise LLMError(f"Ollama vision generation failed: {e}", provider="ollama", retriable=True)
+        raise LLMError(
+            f"Ollama vision generation failed: {e}", provider="ollama", retriable=True
+        )
 
 
 def generate_ocr(
@@ -346,12 +385,15 @@ def generate_ocr(
         OllamaResponse com texto extraído
     """
     model = model or DEFAULT_MODELS["ocr"]
-    return generate_vision(prompt, [image], model=model, temperature=0.1, max_tokens=4096)
+    return generate_vision(
+        prompt, [image], model=model, temperature=0.1, max_tokens=4096
+    )
 
 
 # ============================================================
 # Funções de Embedding e Reranking
 # ============================================================
+
 
 def generate_embedding(
     text: str,
@@ -390,7 +432,9 @@ def generate_embedding(
 
     except Exception as e:
         logger.error(f"Erro ao gerar embedding ({model}): {e}")
-        raise LLMError(f"Ollama embedding failed: {e}", provider="ollama", retriable=True)
+        raise LLMError(
+            f"Ollama embedding failed: {e}", provider="ollama", retriable=True
+        )
 
 
 def generate_embeddings_batch(
@@ -423,18 +467,22 @@ def generate_embeddings_batch(
 
         results = []
         for emb in response["embeddings"]:
-            results.append(EmbeddingResult(
-                embedding=emb,
-                model=model,
-                dimensions=len(emb),
-                processing_time_ms=elapsed_per_text,
-            ))
+            results.append(
+                EmbeddingResult(
+                    embedding=emb,
+                    model=model,
+                    dimensions=len(emb),
+                    processing_time_ms=elapsed_per_text,
+                )
+            )
 
         return results
 
     except Exception as e:
         logger.error(f"Erro ao gerar embeddings batch ({model}): {e}")
-        raise LLMError(f"Ollama batch embedding failed: {e}", provider="ollama", retriable=True)
+        raise LLMError(
+            f"Ollama batch embedding failed: {e}", provider="ollama", retriable=True
+        )
 
 
 def rerank_passages(
@@ -502,6 +550,7 @@ def rerank_passages(
 # ============================================================
 # Funções de Conveniência
 # ============================================================
+
 
 def extract_yaml(
     prompt: str,

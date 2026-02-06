@@ -62,6 +62,22 @@ def _env_float(key: str, default: str) -> float:
     return float(os.getenv(key, default))
 
 
+def _is_placeholder_api_key(value: str) -> bool:
+    normalized = (value or "").strip().lower()
+    if not normalized:
+        return True
+
+    placeholder_markers = (
+        "your-",
+        "-here",
+        "placeholder",
+        "sua",
+        "sk-ant-sua",
+        "sk-sua",
+    )
+    return any(marker in normalized for marker in placeholder_markers)
+
+
 @dataclass
 class Paths:
     """Caminhos do projeto."""
@@ -142,20 +158,33 @@ class LLMConfig:
         default_factory=lambda: _env_str("OPENAI_MODEL", "gpt-4o")
     )
 
-    # Modelos (Ollama/local)
+    # Modelos (Ollama)
     # Separar modelos por função para manter qualidade/custo:
-    # - *_CODER: tarefas mecânicas (format/repair)
-    # - *_VISION: extração com imagens (multimodal)
+    # - *_CLOUD: tarefas complexas via Ollama cloud proxy (sem usar VRAM)
+    # - *_CODER: tarefas mecânicas locais (format/repair fallback)
+    # - *_VISION: extração com imagens (multimodal local)
+    OLLAMA_MODEL_CLOUD: str = field(
+        default_factory=lambda: _env_str(
+            "OLLAMA_MODEL_CLOUD",
+            "glm-4.7:cloud",
+        )
+    )
+    OLLAMA_MODEL_CLOUD_FALLBACK: str = field(
+        default_factory=lambda: _env_str(
+            "OLLAMA_MODEL_CLOUD_FALLBACK",
+            "kimi-k2.5:cloud",
+        )
+    )
     OLLAMA_MODEL_CODER: str = field(
         default_factory=lambda: _env_str(
             "OLLAMA_MODEL_CODER",
-            "qwen3-coder:latest",
+            "qwen3-vl:8b",
         )
     )
     OLLAMA_MODEL_VISION: str = field(
         default_factory=lambda: _env_str(
             "OLLAMA_MODEL_VISION",
-            "qwen3-vl:30b",
+            "qwen3-vl:8b",
         )
     )
 
@@ -164,7 +193,7 @@ class LLMConfig:
         default_factory=lambda: _env_bool("USE_TWO_PASS", "true")
     )
     PRIMARY_PROVIDER: str = field(
-        default_factory=lambda: _env_str("PRIMARY_PROVIDER", "anthropic")
+        default_factory=lambda: _env_str("PRIMARY_PROVIDER", "ollama")
     )
 
     # Limites
@@ -174,13 +203,13 @@ class LLMConfig:
 
     # Timeouts (segundos)
     TIMEOUT_TOTAL: float = field(
-        default_factory=lambda: _env_float("LLM_TIMEOUT_TOTAL", "120")
+        default_factory=lambda: _env_float("LLM_TIMEOUT_TOTAL", "180")
     )
     TIMEOUT_CONNECT: float = field(
-        default_factory=lambda: _env_float("LLM_TIMEOUT_CONNECT", "10")
+        default_factory=lambda: _env_float("LLM_TIMEOUT_CONNECT", "15")
     )
     TIMEOUT_READ: float = field(
-        default_factory=lambda: _env_float("LLM_TIMEOUT_READ", "110")
+        default_factory=lambda: _env_float("LLM_TIMEOUT_READ", "165")
     )
 
     # Retry
@@ -234,41 +263,55 @@ class LLMConfig:
         """Valida configuração. Retorna lista de erros."""
         errors = []
 
-        # Pelo menos um provider "cloud" deve existir para EXTRAÇÃO, a menos que você esteja rodando só tarefas locais.
-        if not self.ANTHROPIC_API_KEY or self.ANTHROPIC_API_KEY.startswith(
-            "sk-ant-sua"
-        ):
-            errors.append("ANTHROPIC_API_KEY não configurada (edite o arquivo .env)")
+        has_anthropic = not _is_placeholder_api_key(self.ANTHROPIC_API_KEY)
+        has_openai = not _is_placeholder_api_key(self.OPENAI_API_KEY)
+        has_ollama = bool(self.OLLAMA_ENABLED)
 
-        # OpenAI só é obrigatória se USE_TWO_PASS=true (repair/formatting).
-        # Nota: se você usar Ollama para repair, dá pra manter USE_TWO_PASS=true sem OpenAI,
-        # mas o notebook/pipeline precisa apontar PROVIDER_REPAIR='ollama'.
-        if self.USE_TWO_PASS:
-            if (
-                not self.OPENAI_API_KEY or self.OPENAI_API_KEY.startswith("sk-sua")
-            ) and not self.OLLAMA_ENABLED:
-                errors.append(
-                    "OPENAI_API_KEY não configurada (necessária para USE_TWO_PASS=true quando OLLAMA_ENABLED=false)"
-                )
+        # Pelo menos um provider de extração precisa estar disponível.
+        if not (has_ollama or has_openai or has_anthropic):
+            errors.append(
+                "Nenhum provider disponível: configure OLLAMA_ENABLED=true ou uma API key válida (OPENAI/ANTHROPIC)."
+            )
+
+        # Com two-pass ativo, é necessário ao menos um provider para repair.
+        if self.USE_TWO_PASS and not (has_ollama or has_openai or has_anthropic):
+            errors.append(
+                "USE_TWO_PASS=true exige ao menos um provider configurado para repair (Ollama/OpenAI/Anthropic)."
+            )
+
+        available = {
+            "anthropic": has_anthropic,
+            "openai": has_openai,
+            "ollama": has_ollama,
+        }
+        if self.PRIMARY_PROVIDER not in available:
+            errors.append(
+                f"PRIMARY_PROVIDER inválido: {self.PRIMARY_PROVIDER}. Use anthropic, openai ou ollama."
+            )
+        elif not available[self.PRIMARY_PROVIDER]:
+            errors.append(
+                f"PRIMARY_PROVIDER={self.PRIMARY_PROVIDER} não está disponível com a configuração atual."
+            )
 
         return errors
 
     def get_masked_keys(self) -> dict:
         """Retorna status das chaves para exibição (sem expor fragmentos)."""
 
-        def status(key: str, placeholder_prefix: str = "") -> str:
-            if not key or len(key) < 10:
+        def status(key: str) -> str:
+            if not key or len(key.strip()) < 10:
                 return "NÃO CONFIGURADA"
-            if placeholder_prefix and key.startswith(placeholder_prefix):
+            if _is_placeholder_api_key(key):
                 return "NÃO CONFIGURADA (placeholder)"
             return "CONFIGURADA [OK]"
 
         return {
-            "anthropic": status(self.ANTHROPIC_API_KEY, "sk-ant-sua"),
-            "openai": status(self.OPENAI_API_KEY, "sk-sua"),
+            "anthropic": status(self.ANTHROPIC_API_KEY),
+            "openai": status(self.OPENAI_API_KEY),
             "ollama": (
                 f"{'ON' if self.OLLAMA_ENABLED else 'OFF'} "
-                f"(coder={self.OLLAMA_MODEL_CODER}, "
+                f"(cloud={self.OLLAMA_MODEL_CLOUD}, "
+                f"coder={self.OLLAMA_MODEL_CODER}, "
                 f"vision={self.OLLAMA_MODEL_VISION} @ {self.OLLAMA_BASE_URL})"
             ),
         }
@@ -329,12 +372,12 @@ class LocalProcessingConfig:
     )
     USE_CASCADE: bool = field(default_factory=lambda: _env_bool("USE_CASCADE", "false"))
 
-    # Modelos Ollama por tarefa
+    # Modelos Ollama por tarefa (cloud-first para economia)
     OLLAMA_EXTRACTION_MODEL: str = field(
-        default_factory=lambda: _env_str("OLLAMA_EXTRACTION_MODEL", "qwen3-vl:30b")
+        default_factory=lambda: _env_str("OLLAMA_EXTRACTION_MODEL", "glm-4.7:cloud")
     )
     OLLAMA_REPAIR_MODEL: str = field(
-        default_factory=lambda: _env_str("OLLAMA_REPAIR_MODEL", "qwen3-coder:latest")
+        default_factory=lambda: _env_str("OLLAMA_REPAIR_MODEL", "glm-4.7:cloud")
     )
     OLLAMA_OCR_MODEL: str = field(
         default_factory=lambda: _env_str("OLLAMA_OCR_MODEL", "glm-ocr:latest")

@@ -3,8 +3,6 @@
 from __future__ import annotations
 
 import logging
-import re
-import time
 
 # APIs
 from anthropic import Anthropic
@@ -36,10 +34,9 @@ class LLMClient(LLMClientPostprocessMixin, LLMClientQuotesMixin):
     Nota: também suporta um provider local via Ollama (OpenAI-compatible API).
 
     Estratégia recomendada (custo/qualidade):
-    - Extração primária via Ollama (modelo multimodal, ex: qwen3-vl:30b)
-    - Validar com regras do Guia (schema + regras)
-    - Repair (preferencialmente via Ollama, depois fallback)
-    - Se ainda falhar, fallback para Anthropic (Claude) apenas quando necessário
+    - Extração textual via Ollama cloud proxy
+    - Extração com imagens via modelo vision local
+    - Repair com cadeia cloud -> cloud_fallback -> OpenAI -> Anthropic
     """
 
     def __init__(self, context: AppContext | None = None) -> None:
@@ -61,19 +58,33 @@ class LLMClient(LLMClientPostprocessMixin, LLMClientQuotesMixin):
 
         timeout = self.llm_config.get_httpx_timeout()
 
-        if self.llm_config.ANTHROPIC_API_KEY and not self.llm_config.ANTHROPIC_API_KEY.startswith("sk-ant-sua"):
-            self.anthropic = Anthropic(api_key=self.llm_config.ANTHROPIC_API_KEY, timeout=timeout)
+        if (
+            self.llm_config.ANTHROPIC_API_KEY
+            and not self.llm_config.ANTHROPIC_API_KEY.startswith("sk-ant-sua")
+        ):
+            self.anthropic = Anthropic(
+                api_key=self.llm_config.ANTHROPIC_API_KEY, timeout=timeout
+            )
 
-        if self.llm_config.OPENAI_API_KEY and not self.llm_config.OPENAI_API_KEY.startswith("sk-sua"):
-            self.openai = OpenAI(api_key=self.llm_config.OPENAI_API_KEY, timeout=timeout)
+        if (
+            self.llm_config.OPENAI_API_KEY
+            and not self.llm_config.OPENAI_API_KEY.startswith("sk-sua")
+        ):
+            self.openai = OpenAI(
+                api_key=self.llm_config.OPENAI_API_KEY, timeout=timeout
+            )
 
         # Ollama (local) via OpenAI-compatible API
         if getattr(self.llm_config, "OLLAMA_ENABLED", False):
-            base_url = getattr(self.llm_config, "OLLAMA_BASE_URL", "http://localhost:11434/v1")
+            base_url = getattr(
+                self.llm_config, "OLLAMA_BASE_URL", "http://localhost:11434/v1"
+            )
             # Ollama ignora api_key, mas o cliente OpenAI exige um valor
             self.ollama = OpenAI(base_url=base_url, api_key="ollama", timeout=timeout)
 
-    def _call_with_retry(self, fn, provider: str, action: str, artigo_id: str | None = None) -> str:
+    def _call_with_retry(
+        self, fn, provider: str, action: str, artigo_id: str | None = None
+    ) -> str:
         wrapped = retry_with_backoff(
             max_retries=self.llm_config.RETRY_MAX_RETRIES,
             base_delay=self.llm_config.RETRY_BASE_DELAY,
@@ -124,8 +135,12 @@ class LLMClient(LLMClientPostprocessMixin, LLMClientQuotesMixin):
         self._usage_totals["tokens_in"] += int(tokens_in or 0)
         self._usage_totals["tokens_out"] += int(tokens_out or 0)
         self._usage_totals["cached_tokens"] += int(cached_tokens or 0)
-        self._usage_totals["cache_read_input_tokens"] += int(cache_read_input_tokens or 0)
-        self._usage_totals["cache_creation_input_tokens"] += int(cache_creation_input_tokens or 0)
+        self._usage_totals["cache_read_input_tokens"] += int(
+            cache_read_input_tokens or 0
+        )
+        self._usage_totals["cache_creation_input_tokens"] += int(
+            cache_creation_input_tokens or 0
+        )
 
     def _build_system_prompt(self, prompt: str, provider: str):
         if provider == "anthropic":
@@ -147,13 +162,42 @@ class LLMClient(LLMClientPostprocessMixin, LLMClientQuotesMixin):
     def _check_provider(self, provider: Provider) -> None:
         """Verifica se o provider está disponível."""
         if provider == "anthropic" and not self.anthropic:
-            raise ValueError("Anthropic API não configurada. Verifique ANTHROPIC_API_KEY no .env")
+            raise ValueError(
+                "Anthropic API não configurada. Verifique ANTHROPIC_API_KEY no .env"
+            )
         if provider == "openai" and not self.openai:
-            raise ValueError("OpenAI API não configurada. Verifique OPENAI_API_KEY no .env")
+            raise ValueError(
+                "OpenAI API não configurada. Verifique OPENAI_API_KEY no .env"
+            )
         if provider == "ollama" and not self.ollama:
             raise ValueError(
                 "Ollama não configurado/indisponível. Verifique se o serviço está rodando e OLLAMA_ENABLED/OLLAMA_BASE_URL no .env"
             )
+
+    @staticmethod
+    def _has_image_blocks(content: list[dict]) -> bool:
+        return any(
+            isinstance(block, dict) and block.get("type") == "image_url"
+            for block in content
+        )
+
+    def _get_ollama_hybrid_model(self, content: list[dict]) -> str:
+        return (
+            self.llm_config.OLLAMA_MODEL_VISION
+            if self._has_image_blocks(content)
+            else self.llm_config.OLLAMA_MODEL_CLOUD
+        )
+
+    def _iter_ollama_repair_models(self) -> list[str]:
+        candidates = [
+            getattr(self.llm_config, "OLLAMA_MODEL_CLOUD", ""),
+            getattr(self.llm_config, "OLLAMA_MODEL_CLOUD_FALLBACK", ""),
+        ]
+        ordered_unique: list[str] = []
+        for model in candidates:
+            if model and model not in ordered_unique:
+                ordered_unique.append(model)
+        return ordered_unique
 
     def extract_with_vision(
         self,
@@ -161,7 +205,7 @@ class LLMClient(LLMClientPostprocessMixin, LLMClientQuotesMixin):
         prompt: str,
         artigo_id: str,
         provider: Provider = "anthropic",
-        max_tokens: int = 8000
+        max_tokens: int = 8000,
     ) -> str:
         """
         Extrai dados do artigo usando LLM com visão.
@@ -170,7 +214,7 @@ class LLMClient(LLMClientPostprocessMixin, LLMClientQuotesMixin):
             images: Lista de imagens no formato do provider
             prompt: Prompt do Guia v3.3
             artigo_id: ID do artigo (ART_001, etc.)
-            provider: "anthropic" ou "openai"
+            provider: "anthropic", "openai" ou "ollama"
             max_tokens: Limite de tokens na resposta
 
         Returns:
@@ -196,11 +240,29 @@ Comece o YAML com --- e termine com ---"""
         # Ollama (OpenAI-compatible) pode suportar visão quando usado com um modelo multimodal
         # (ex: qwen3-vl:*). Mantemos o provider explícito para controle e fallback.
         if provider == "anthropic":
-            return self._call_anthropic_vision(images, user_message, max_tokens, artigo_id=artigo_id, system_prompt=system_prompt)
+            return self._call_anthropic_vision(
+                images,
+                user_message,
+                max_tokens,
+                artigo_id=artigo_id,
+                system_prompt=system_prompt,
+            )
         if provider == "openai":
-            return self._call_openai_vision(images, user_message, max_tokens, artigo_id=artigo_id, system_prompt=system_prompt)
+            return self._call_openai_vision(
+                images,
+                user_message,
+                max_tokens,
+                artigo_id=artigo_id,
+                system_prompt=system_prompt,
+            )
         # provider == "ollama"
-        return self._call_ollama_vision(images, user_message, max_tokens, artigo_id=artigo_id, system_prompt=system_prompt)
+        return self._call_ollama_vision(
+            images,
+            user_message,
+            max_tokens,
+            artigo_id=artigo_id,
+            system_prompt=system_prompt,
+        )
 
     def extract_with_hybrid(
         self,
@@ -208,7 +270,7 @@ Comece o YAML com --- e termine com ---"""
         prompt: str,
         artigo_id: str,
         provider: Provider = "anthropic",
-        max_tokens: int = 8000
+        max_tokens: int = 8000,
     ) -> str:
         """
         Extrai dados do artigo usando conteúdo híbrido (texto + imagens).
@@ -217,7 +279,7 @@ Comece o YAML com --- e termine com ---"""
             content: Lista de content blocks (texto e imagens misturados)
             prompt: Prompt do Guia v3.3
             artigo_id: ID do artigo (ART_001, etc.)
-            provider: "anthropic" ou "openai"
+            provider: "anthropic", "openai" ou "ollama"
             max_tokens: Limite de tokens na resposta
 
         Returns:
@@ -248,11 +310,25 @@ Comece o YAML com --- e termine com ---
 """
 
         if provider == "anthropic":
-            return self._call_anthropic_hybrid(content, intro, max_tokens, artigo_id=artigo_id, system_prompt=system_prompt)
+            return self._call_anthropic_hybrid(
+                content,
+                intro,
+                max_tokens,
+                artigo_id=artigo_id,
+                system_prompt=system_prompt,
+            )
         if provider == "openai":
-            return self._call_openai_hybrid(content, intro, max_tokens, artigo_id=artigo_id, system_prompt=system_prompt)
+            return self._call_openai_hybrid(
+                content,
+                intro,
+                max_tokens,
+                artigo_id=artigo_id,
+                system_prompt=system_prompt,
+            )
         # provider == "ollama" (OpenAI-compatible)
-        return self._call_ollama_hybrid(content, intro, max_tokens, artigo_id=artigo_id, system_prompt=system_prompt)
+        return self._call_ollama_hybrid(
+            content, intro, max_tokens, artigo_id=artigo_id, system_prompt=system_prompt
+        )
 
     def _call_anthropic_hybrid(
         self,
@@ -263,6 +339,7 @@ Comece o YAML com --- e termine com ---
         system_prompt: object | None = None,
     ) -> str:
         """Chamada para Claude com conteúdo híbrido."""
+
         def _do_call() -> str:
             message_content = [{"type": "text", "text": intro}]
             message_content.extend(content)
@@ -280,19 +357,32 @@ Comece o YAML com --- e termine com ---
                     "extract_hybrid",
                     tokens_in=getattr(usage, "input_tokens", 0),
                     tokens_out=getattr(usage, "output_tokens", 0),
-                    cache_read_input_tokens=getattr(usage, "cache_read_input_tokens", 0),
-                    cache_creation_input_tokens=getattr(usage, "cache_creation_input_tokens", 0),
+                    cache_read_input_tokens=getattr(
+                        usage, "cache_read_input_tokens", 0
+                    ),
+                    cache_creation_input_tokens=getattr(
+                        usage, "cache_creation_input_tokens", 0
+                    ),
                 )
                 self._accumulate_usage(
                     tokens_in=getattr(usage, "input_tokens", 0),
                     tokens_out=getattr(usage, "output_tokens", 0),
-                    cache_read_input_tokens=getattr(usage, "cache_read_input_tokens", 0),
-                    cache_creation_input_tokens=getattr(usage, "cache_creation_input_tokens", 0),
+                    cache_read_input_tokens=getattr(
+                        usage, "cache_read_input_tokens", 0
+                    ),
+                    cache_creation_input_tokens=getattr(
+                        usage, "cache_creation_input_tokens", 0
+                    ),
                 )
             return response.content[0].text
 
         try:
-            return self._call_with_retry(_do_call, provider="anthropic", action="extract_hybrid", artigo_id=artigo_id)
+            return self._call_with_retry(
+                _do_call,
+                provider="anthropic",
+                action="extract_hybrid",
+                artigo_id=artigo_id,
+            )
         except Exception as e:
             logger.error(f"Anthropic API error: {e}")
             raise LLMError(str(e), provider="anthropic", retriable=True)
@@ -306,6 +396,7 @@ Comece o YAML com --- e termine com ---
         system_prompt: object | None = None,
     ) -> str:
         """Chamada para OpenAI com conteúdo híbrido."""
+
         def _do_call() -> str:
             message_content = [{"type": "text", "text": intro}]
             message_content.extend(content)
@@ -317,8 +408,12 @@ Comece o YAML com --- e termine com ---
                 model=self.llm_config.OPENAI_MODEL,
                 max_completion_tokens=max_tokens,
                 messages=messages,
-                prompt_cache_key=self.llm_config.PROMPT_CACHE_KEY if self.llm_config.PROMPT_CACHE_ENABLED else None,
-                prompt_cache_retention=self.llm_config.PROMPT_CACHE_RETENTION if self.llm_config.PROMPT_CACHE_ENABLED else None,
+                prompt_cache_key=self.llm_config.PROMPT_CACHE_KEY
+                if self.llm_config.PROMPT_CACHE_ENABLED
+                else None,
+                prompt_cache_retention=self.llm_config.PROMPT_CACHE_RETENTION
+                if self.llm_config.PROMPT_CACHE_ENABLED
+                else None,
             )
             usage = getattr(response, "usage", None)
             if usage:
@@ -337,10 +432,15 @@ Comece o YAML com --- e termine com ---
                     tokens_out=getattr(usage, "completion_tokens", 0),
                     cached_tokens=cached,
                 )
-            return response.choices[0].message.content
+            return response.choices[0].message.content or ""
 
         try:
-            return self._call_with_retry(_do_call, provider="openai", action="extract_hybrid", artigo_id=artigo_id)
+            return self._call_with_retry(
+                _do_call,
+                provider="openai",
+                action="extract_hybrid",
+                artigo_id=artigo_id,
+            )
         except Exception as e:
             logger.error(f"OpenAI API error: {e}")
             raise LLMError(str(e), provider="openai", retriable=True)
@@ -353,7 +453,12 @@ Comece o YAML com --- e termine com ---
         artigo_id: str | None = None,
         system_prompt: object | None = None,
     ) -> str:
-        """Chamada para Ollama (OpenAI-compatible) com conteúdo híbrido."""
+        """Chamada para Ollama (OpenAI-compatible) com conteúdo híbrido.
+
+        Usa modelo cloud (glm-4.7:cloud) para extração por padrão.
+        Conteúdo com imagens usa modelo vision local (qwen3-vl:8b).
+        """
+
         def _do_call() -> str:
             message_content = [{"type": "text", "text": intro}]
             message_content.extend(content)
@@ -361,16 +466,21 @@ Comece o YAML com --- e termine com ---
             if system_prompt:
                 messages.append({"role": "system", "content": system_prompt})
             messages.append({"role": "user", "content": message_content})
-            model = self.llm_config.OLLAMA_MODEL_VISION
+            model = self._get_ollama_hybrid_model(content)
             response = self.ollama.chat.completions.create(
                 model=model,
                 max_completion_tokens=max_tokens,
                 messages=messages,
             )
-            return response.choices[0].message.content
+            return response.choices[0].message.content or ""
 
         try:
-            return self._call_with_retry(_do_call, provider="ollama", action="extract_hybrid", artigo_id=artigo_id)
+            return self._call_with_retry(
+                _do_call,
+                provider="ollama",
+                action="extract_hybrid",
+                artigo_id=artigo_id,
+            )
         except Exception as e:
             logger.error(f"Ollama API error: {e}")
             raise LLMError(str(e), provider="ollama", retriable=True)
@@ -384,6 +494,7 @@ Comece o YAML com --- e termine com ---
         system_prompt: object | None = None,
     ) -> str:
         """Chamada para Claude com visão."""
+
         def _do_call() -> str:
             content = []
             for img in images:
@@ -403,19 +514,32 @@ Comece o YAML com --- e termine com ---
                     "extract_vision",
                     tokens_in=getattr(usage, "input_tokens", 0),
                     tokens_out=getattr(usage, "output_tokens", 0),
-                    cache_read_input_tokens=getattr(usage, "cache_read_input_tokens", 0),
-                    cache_creation_input_tokens=getattr(usage, "cache_creation_input_tokens", 0),
+                    cache_read_input_tokens=getattr(
+                        usage, "cache_read_input_tokens", 0
+                    ),
+                    cache_creation_input_tokens=getattr(
+                        usage, "cache_creation_input_tokens", 0
+                    ),
                 )
                 self._accumulate_usage(
                     tokens_in=getattr(usage, "input_tokens", 0),
                     tokens_out=getattr(usage, "output_tokens", 0),
-                    cache_read_input_tokens=getattr(usage, "cache_read_input_tokens", 0),
-                    cache_creation_input_tokens=getattr(usage, "cache_creation_input_tokens", 0),
+                    cache_read_input_tokens=getattr(
+                        usage, "cache_read_input_tokens", 0
+                    ),
+                    cache_creation_input_tokens=getattr(
+                        usage, "cache_creation_input_tokens", 0
+                    ),
                 )
             return response.content[0].text
 
         try:
-            return self._call_with_retry(_do_call, provider="anthropic", action="extract_vision", artigo_id=artigo_id)
+            return self._call_with_retry(
+                _do_call,
+                provider="anthropic",
+                action="extract_vision",
+                artigo_id=artigo_id,
+            )
         except Exception as e:
             logger.error(f"Anthropic Vision API error: {e}")
             raise LLMError(str(e), provider="anthropic", retriable=True)
@@ -429,6 +553,7 @@ Comece o YAML com --- e termine com ---
         system_prompt: object | None = None,
     ) -> str:
         """Chamada para OpenAI com visão."""
+
         def _do_call() -> str:
             content = list(images)
             content.append({"type": "text", "text": user_message})
@@ -440,8 +565,12 @@ Comece o YAML com --- e termine com ---
                 model=self.llm_config.OPENAI_MODEL,
                 max_completion_tokens=max_tokens,
                 messages=messages,
-                prompt_cache_key=self.llm_config.PROMPT_CACHE_KEY if self.llm_config.PROMPT_CACHE_ENABLED else None,
-                prompt_cache_retention=self.llm_config.PROMPT_CACHE_RETENTION if self.llm_config.PROMPT_CACHE_ENABLED else None,
+                prompt_cache_key=self.llm_config.PROMPT_CACHE_KEY
+                if self.llm_config.PROMPT_CACHE_ENABLED
+                else None,
+                prompt_cache_retention=self.llm_config.PROMPT_CACHE_RETENTION
+                if self.llm_config.PROMPT_CACHE_ENABLED
+                else None,
             )
             usage = getattr(response, "usage", None)
             if usage:
@@ -460,10 +589,15 @@ Comece o YAML com --- e termine com ---
                     tokens_out=getattr(usage, "completion_tokens", 0),
                     cached_tokens=cached,
                 )
-            return response.choices[0].message.content
+            return response.choices[0].message.content or ""
 
         try:
-            return self._call_with_retry(_do_call, provider="openai", action="extract_vision", artigo_id=artigo_id)
+            return self._call_with_retry(
+                _do_call,
+                provider="openai",
+                action="extract_vision",
+                artigo_id=artigo_id,
+            )
         except Exception as e:
             logger.error(f"OpenAI Vision API error: {e}")
             raise LLMError(str(e), provider="openai", retriable=True)
@@ -477,6 +611,7 @@ Comece o YAML com --- e termine com ---
         system_prompt: object | None = None,
     ) -> str:
         """Chamada para Ollama (OpenAI-compatible) com visão."""
+
         def _do_call() -> str:
             content = list(images)
             content.append({"type": "text", "text": user_message})
@@ -490,10 +625,15 @@ Comece o YAML com --- e termine com ---
                 max_completion_tokens=max_tokens,
                 messages=messages,
             )
-            return response.choices[0].message.content
+            return response.choices[0].message.content or ""
 
         try:
-            return self._call_with_retry(_do_call, provider="ollama", action="extract_vision", artigo_id=artigo_id)
+            return self._call_with_retry(
+                _do_call,
+                provider="ollama",
+                action="extract_vision",
+                artigo_id=artigo_id,
+            )
         except Exception as e:
             logger.error(f"Ollama Vision API error: {e}")
             raise LLMError(str(e), provider="ollama", retriable=True)
@@ -502,8 +642,8 @@ Comece o YAML com --- e termine com ---
         self,
         yaml_content: str,
         errors: list[str],
-        provider: Provider = "ollama",  # Prioriza modelo local para economia
-        max_tokens: int = 8000
+        provider: Provider = "ollama",  # Prioriza cadeia cloud/local para economia
+        max_tokens: int = 8000,
     ) -> str:
         """
         Repara YAML com erros de validação.
@@ -511,14 +651,13 @@ Comece o YAML com --- e termine com ---
         Args:
             yaml_content: YAML com erros
             errors: Lista de erros encontrados
-            provider: LLM para usar (default: openai para repairs)
+            provider: LLM para usar (default: ollama, com fallback em cadeia)
             max_tokens: Limite de tokens
 
         Returns:
             YAML corrigido
         """
-        # Roteamento automático: preferir Ollama (local) para repairs.
-        # Se Ollama indisponível, fallback para OpenAI/Anthropic.
+        # Roteamento automático para provider solicitado com fallback seguro.
         if provider == "ollama" and not self.ollama:
             if self.openai:
                 provider = "openai"
@@ -575,30 +714,48 @@ YAML corrigido:"""
                     {"role": "user", "content": repair_prompt},
                 ],
             )
-            return response.choices[0].message.content
+            return response.choices[0].message.content or ""
 
-        # Estratégia: preferir Ollama (Qwen) para tarefas mecânicas (repair).
-        # Se falhar, cair para OpenAI; por fim, Anthropic.
+        # Estratégia: preferir Ollama cloud para repairs.
+        # Se falhar, tentar cloud fallback; depois OpenAI; por fim Anthropic.
         if provider == "ollama":
-            try:
-                # Para repairs (mecânico), usar modelo coder dedicado
-                model = self.llm_config.OLLAMA_MODEL_CODER
-                return _call_openai_client(self.ollama, model)
-            except Exception as e:
-                # Fallback automático
-                if self.openai:
+            last_error: Exception | None = None
+            if self.ollama:
+                for model in self._iter_ollama_repair_models():
                     try:
-                        return _call_openai_client(self.openai, self.llm_config.OPENAI_MODEL)
-                    except Exception:
-                        pass
-                if self.anthropic:
+                        return _call_openai_client(self.ollama, model)
+                    except Exception as e:
+                        last_error = e
+
+            # Fallback 2: OpenAI
+            if self.openai:
+                try:
+                    return _call_openai_client(
+                        self.openai, self.llm_config.OPENAI_MODEL
+                    )
+                except Exception as e:
+                    last_error = e
+
+            # Fallback 3: Anthropic
+            if self.anthropic:
+                try:
                     response = self.anthropic.messages.create(
                         model=self.llm_config.ANTHROPIC_MODEL,
                         max_tokens=max_tokens,
-                        messages=[{"role": "user", "content": repair_prompt}]
+                        messages=[{"role": "user", "content": repair_prompt}],
                     )
-                    return response.content[0].text
-                raise e
+                    return response.content[0].text or ""
+                except Exception as e:
+                    last_error = e
+
+            if last_error is not None:
+                raise last_error
+
+            raise LLMError(
+                "Nenhum provider disponível para repair_yaml",
+                provider="ollama",
+                retriable=False,
+            )
 
         if provider == "openai":
             return _call_openai_client(self.openai, self.llm_config.OPENAI_MODEL)
@@ -607,11 +764,10 @@ YAML corrigido:"""
         response = self.anthropic.messages.create(
             model=self.llm_config.ANTHROPIC_MODEL,
             max_tokens=max_tokens,
-            messages=[
-                {"role": "user", "content": repair_prompt}
-            ]
+            messages=[{"role": "user", "content": repair_prompt}],
         )
-        return response.content[0].text
+        return response.content[0].text or ""
+
 
 if __name__ == "__main__":
     print("=== LLM Client Test ===")
@@ -626,7 +782,9 @@ if __name__ == "__main__":
     print("\nModelos configurados:")
     print(f"  Anthropic: {llm_config.ANTHROPIC_MODEL}")
     print(f"  OpenAI: {llm_config.OPENAI_MODEL}")
-    if getattr(llm_config, 'OLLAMA_ENABLED', False):
+    if getattr(llm_config, "OLLAMA_ENABLED", False):
+        print(f"  Ollama cloud: {llm_config.OLLAMA_MODEL_CLOUD}")
+        print(f"  Ollama cloud fallback: {llm_config.OLLAMA_MODEL_CLOUD_FALLBACK}")
         print(f"  Ollama coder: {llm_config.OLLAMA_MODEL_CODER}")
         print(f"  Ollama vision: {llm_config.OLLAMA_MODEL_VISION}")
 
