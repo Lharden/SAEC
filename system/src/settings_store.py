@@ -12,6 +12,8 @@ DEFAULT_SETTINGS: dict[str, Any] = {
     "last_workspace": "",
     "last_project_by_workspace": {},
     "selected_preset": "pilot",
+    "window_geometry": "",  # "WIDTHxHEIGHT+X+Y" format
+    "active_tab": 0,        # Index of the active right-panel tab
 }
 
 
@@ -40,6 +42,10 @@ class SettingsStore:
             data["last_workspace"] = ""
         if not isinstance(data["selected_preset"], str) or not data["selected_preset"]:
             data["selected_preset"] = "pilot"
+        if not isinstance(data.get("window_geometry"), str):
+            data["window_geometry"] = ""
+        if not isinstance(data.get("active_tab"), int):
+            data["active_tab"] = 0
         return data
 
     def load(self) -> dict[str, Any]:
@@ -71,6 +77,21 @@ class SettingsStore:
         data["last_workspace"] = normalized
         self.save(data)
         return data
+
+    def save_window_state(
+        self, *, geometry: str, active_tab: int
+    ) -> None:
+        data = self.load()
+        data["window_geometry"] = geometry
+        data["active_tab"] = active_tab
+        self.save(data)
+
+    def get_window_state(self) -> dict[str, Any]:
+        data = self.load()
+        return {
+            "geometry": data.get("window_geometry", ""),
+            "active_tab": data.get("active_tab", 0),
+        }
 
     def set_last_project(self, workspace_root: Path, project_id: str) -> dict[str, Any]:
         data = self.load()

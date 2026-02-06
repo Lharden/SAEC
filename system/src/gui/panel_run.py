@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import re
 from pathlib import Path
 import tkinter as tk
 from tkinter import ttk
@@ -27,6 +28,7 @@ class RunPanel(ttk.LabelFrame):
 
         self._run_button: ttk.Button | None = None
         self._cancel_button: ttk.Button | None = None
+        self._validation_label: tk.Label | None = None
         self._build()
 
     def _build(self) -> None:
@@ -98,6 +100,13 @@ class RunPanel(ttk.LabelFrame):
         )
         self._cancel_button.pack(side="left", padx=(6, 0))
 
+        self._validation_label = tk.Label(
+            self, text="", fg="#CC0000", bg="#C0C0C0", anchor="w", justify="left"
+        )
+        self._validation_label.grid(
+            row=5, column=0, columnspan=4, sticky="w", padx=6, pady=(0, 4)
+        )
+
         self._on_preset_changed()
 
     def _on_preset_changed(self, _event=None) -> None:
@@ -119,6 +128,7 @@ class RunPanel(ttk.LabelFrame):
     ) -> RunRequest:
         mode = self.mode_var.get().strip() or "step"
         step = int(self.step_var.get()) if mode == "step" else None
+        preset = get_preset(self.preset_var.get())
         return RunRequest(
             mode="all" if mode == "all" else "step",
             step=step,
@@ -126,6 +136,44 @@ class RunPanel(ttk.LabelFrame):
             dry_run=bool(self.dry_run_var.get()),
             force=bool(self.force_var.get()),
             log_level=self.log_level_var.get().strip() or "INFO",
+            timeout_minutes=preset.timeout_minutes,
             workspace_root=workspace_root,
             project_root=project_root,
         )
+
+    def validate(self) -> list[str]:
+        """Return list of validation error messages. Empty list means valid."""
+        errors: list[str] = []
+
+        mode = self.mode_var.get()
+
+        # Validate step selection when in step mode
+        if mode == "step":
+            step = self.step_var.get()
+            try:
+                step_num = int(step)
+                if step_num not in (1, 2, 3, 5):
+                    errors.append(
+                        f"Invalid step: {step_num}. Must be 1, 2, 3, or 5."
+                    )
+            except (ValueError, TypeError):
+                errors.append("Step must be a number (1, 2, 3, or 5).")
+
+        # Validate article ID format (if provided)
+        article = self.article_var.get().strip()
+        if article:
+            if not re.match(r"^ART_\d{3}$", article) and not re.match(
+                r"^[A-Za-z0-9_-]+$", article
+            ):
+                errors.append(f"Invalid article ID format: '{article}'")
+
+        return errors
+
+    def show_validation_errors(self, errors: list[str]) -> None:
+        """Display validation errors in the panel, or clear them."""
+        if self._validation_label is None:
+            return
+        if errors:
+            self._validation_label.configure(text="\n".join(errors))
+        else:
+            self._validation_label.configure(text="")

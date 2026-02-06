@@ -5,6 +5,7 @@ from __future__ import annotations
 import os
 import subprocess
 import threading
+import time
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Callable, Literal
@@ -20,6 +21,7 @@ class RunRequest:
     dry_run: bool
     force: bool
     log_level: str
+    timeout_minutes: float = 30.0
     workspace_root: Path | None = None
     project_root: Path | None = None
 
@@ -143,9 +145,30 @@ class PipelineJobRunner:
                 with self._lock:
                     self._active_process = proc
 
+                start_time = time.monotonic()
+                timeout_seconds = request.timeout_minutes * 60
+
                 if proc.stdout is not None:
                     for line in proc.stdout:
                         on_output(line.rstrip("\n"))
+                        if time.monotonic() - start_time > timeout_seconds:
+                            on_output(
+                                f"[TIMEOUT] Job exceeded {request.timeout_minutes:.0f}"
+                                " minute limit. Terminating..."
+                            )
+                            proc.terminate()
+                            try:
+                                proc.wait(timeout=10)
+                            except subprocess.TimeoutExpired:
+                                proc.kill()
+                            on_complete(
+                                RunResult(
+                                    success=False,
+                                    return_code=-2,
+                                    command=command,
+                                )
+                            )
+                            return
 
                 return_code = proc.wait()
                 on_complete(
@@ -153,6 +176,13 @@ class PipelineJobRunner:
                         success=return_code == 0,
                         return_code=return_code,
                         command=command,
+                    )
+                )
+            except Exception as e:
+                on_output(f"[RUNNER ERROR] {e}")
+                on_complete(
+                    RunResult(
+                        success=False, return_code=-99, command=command
                     )
                 )
             finally:

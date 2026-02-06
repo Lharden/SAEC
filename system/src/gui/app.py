@@ -4,9 +4,12 @@ from __future__ import annotations
 
 from pathlib import Path
 import sys
+import time
+import traceback
 import tkinter as tk
 from tkinter import messagebox
 
+from gui.dialog_error import show_error_dialog
 from gui.dialog_project import prompt_new_project
 from gui.dialog_workspace import choose_workspace
 from gui.layout_main import MainLayout, build_main_layout
@@ -26,6 +29,8 @@ class SAECWin98App(tk.Tk):
         self.minsize(1000, 640)
 
         apply_win98_theme(self)
+
+        self.report_callback_exception = self._on_tk_exception
 
         self.workspace_root: Path | None = None
         self.project_root: Path | None = None
@@ -58,6 +63,15 @@ class SAECWin98App(tk.Tk):
         self._build_menu()
         self._restore_session()
         self._refresh_queue_ui()
+        self.protocol("WM_DELETE_WINDOW", self._on_close)
+
+    def _on_tk_exception(self, exc_type, exc_value, exc_tb) -> None:
+        tb_text = "".join(traceback.format_exception(exc_type, exc_value, exc_tb))
+        show_error_dialog(
+            self,
+            message=f"An unexpected error occurred: {exc_value}",
+            details=tb_text,
+        )
 
     def _detect_main_script(self) -> Path:
         candidate = Path(__file__).resolve().parents[2] / "main.py"
@@ -84,7 +98,7 @@ class SAECWin98App(tk.Tk):
         menu = tk.Menu(self)
 
         file_menu = tk.Menu(menu, tearoff=False)
-        file_menu.add_command(label="Exit", command=self.destroy)
+        file_menu.add_command(label="Exit", command=self._on_close)
         menu.add_cascade(label="File", menu=file_menu)
 
         workspace_menu = tk.Menu(menu, tearoff=False)
@@ -108,6 +122,46 @@ class SAECWin98App(tk.Tk):
 
         self.configure(menu=menu)
 
+    def _on_close(self) -> None:
+        """Handle window close with confirmation if jobs are active."""
+        if self._runner.is_running:
+            confirm = messagebox.askyesno(
+                "Pipeline Running",
+                "A pipeline job is still running.\n"
+                "Cancel the job and quit?",
+                parent=self,
+            )
+            if not confirm:
+                return
+            self._runner.cancel()
+            # Wait briefly for process to terminate
+            deadline = time.monotonic() + 5.0
+            while self._runner.is_running and time.monotonic() < deadline:
+                self.update()
+                time.sleep(0.1)
+
+        pending = self._queue.pending_count
+        if pending > 0:
+            confirm = messagebox.askyesno(
+                "Pending Jobs",
+                f"{pending} job(s) still pending in the queue.\n"
+                "Quit anyway?",
+                parent=self,
+            )
+            if not confirm:
+                return
+
+        # Save window state before closing
+        try:
+            self._settings_store.save_window_state(
+                geometry=self.geometry(),
+                active_tab=self.layout.right_notebook.index("current"),
+            )
+        except Exception:
+            pass  # Don't prevent closing on save error
+
+        self.destroy()
+
     def _show_about(self) -> None:
         messagebox.showinfo(
             "About",
@@ -129,6 +183,22 @@ class SAECWin98App(tk.Tk):
         if workspace_path.exists():
             self._set_workspace(workspace_path)
         self._refresh_queue_ui()
+
+        # Restore window geometry
+        window_state = self._settings_store.get_window_state()
+        saved_geometry = window_state.get("geometry", "")
+        if saved_geometry:
+            try:
+                self.geometry(saved_geometry)
+            except tk.TclError:
+                pass  # Invalid geometry, use default
+
+        # Restore active tab
+        active_tab = window_state.get("active_tab", 0)
+        try:
+            self.layout.right_notebook.select(active_tab)
+        except (tk.TclError, IndexError):
+            pass
 
     def _on_browse_workspace(self) -> None:
         initial = self.workspace_root or Path.home()
@@ -258,6 +328,12 @@ class SAECWin98App(tk.Tk):
             workspace_root=self.workspace_root,
             project_root=self.project_root,
         )
+
+        errors = self.layout.run_panel.validate()
+        if errors:
+            self.layout.run_panel.show_validation_errors(errors)
+            return
+        self.layout.run_panel.show_validation_errors([])  # Clear any previous errors
 
         item = self._queue.enqueue(request)
         self.layout.logs_panel.append_line(

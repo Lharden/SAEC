@@ -12,6 +12,7 @@ class Preset:
     step: int | None
     dry_run: bool
     force: bool
+    timeout_minutes: float
     description: str
 
 
@@ -22,6 +23,7 @@ PRESETS: dict[str, Preset] = {
         step=2,
         dry_run=False,
         force=False,
+        timeout_minutes=10.0,
         description="Ingest one article and validate setup.",
     ),
     "batch": Preset(
@@ -30,6 +32,7 @@ PRESETS: dict[str, Preset] = {
         step=None,
         dry_run=False,
         force=False,
+        timeout_minutes=60.0,
         description="Run full pipeline with standard safety flags.",
     ),
     "local_only": Preset(
@@ -38,6 +41,7 @@ PRESETS: dict[str, Preset] = {
         step=None,
         dry_run=False,
         force=False,
+        timeout_minutes=60.0,
         description="Run full flow preferring local models and local resources.",
     ),
     "api_only": Preset(
@@ -46,6 +50,7 @@ PRESETS: dict[str, Preset] = {
         step=None,
         dry_run=False,
         force=False,
+        timeout_minutes=60.0,
         description="Run full flow using API providers only.",
     ),
 }

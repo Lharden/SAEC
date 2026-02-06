@@ -25,6 +25,7 @@ class MainLayout:
     logs_panel: LogsPanel
     status_panel: StatusPanel
     status_var: tk.StringVar
+    right_notebook: ttk.Notebook
 
 
 def build_main_layout(root: tk.Tk, *, on_run, on_cancel) -> MainLayout:
@@ -93,4 +94,5 @@ def build_main_layout(root: tk.Tk, *, on_run, on_cancel) -> MainLayout:
         logs_panel=logs_panel,
         status_panel=status_panel,
         status_var=status_var,
+        right_notebook=notebook,
     )

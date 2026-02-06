@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import threading
+
 from job_runner import RunRequest, RunResult
 from run_queue import RunQueue
 
@@ -66,3 +68,42 @@ def test_queue_cancel_running_marks_cancelled() -> None:
     assert cancelled is not None
     assert cancelled.status == "cancelled"
     assert queue.running_item is None
+
+
+def test_concurrent_enqueue_from_multiple_threads() -> None:
+    queue = RunQueue()
+    num_threads = 10
+    items_per_thread = 10
+    barrier = threading.Barrier(num_threads)
+
+    def _enqueue_batch(thread_idx: int) -> None:
+        barrier.wait()
+        for i in range(items_per_thread):
+            queue.enqueue(_request(f"T{thread_idx}_ART_{i:03d}"))
+
+    threads = [
+        threading.Thread(target=_enqueue_batch, args=(t,))
+        for t in range(num_threads)
+    ]
+    for t in threads:
+        t.start()
+    for t in threads:
+        t.join()
+
+    assert len(queue.snapshot()) == num_threads * items_per_thread
+    assert queue.pending_count == num_threads * items_per_thread
+
+
+def test_snapshot_returns_consistent_copy() -> None:
+    queue = RunQueue()
+    queue.enqueue(_request("ART_SNAP_1"))
+    queue.enqueue(_request("ART_SNAP_2"))
+
+    snap = queue.snapshot()
+
+    # Mutating the snapshot list must not affect the queue
+    snap.pop()
+    snap.clear()
+
+    assert len(queue.snapshot()) == 2
+    assert queue.pending_count == 2
