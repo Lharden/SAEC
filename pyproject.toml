@@ -1,0 +1,63 @@
+[tool.mypy]
+python_version = "3.11"
+files = ["system"]
+ignore_missing_imports = true
+warn_unused_ignores = true
+warn_redundant_casts = true
+no_implicit_optional = true
+strict_equality = true
+exclude = ["system/test_api.py", "system/src/llm_client.py"]
+
+[tool.pyright]
+include = ["system"]
+typeCheckingMode = "basic"
+reportMissingImports = false
+reportMissingTypeStubs = false
+exclude = ["system/test_api.py", "system/src/llm_client.py"]
+
+[tool.pylint.main]
+ignore = ["Extraction/outputs"]
+jobs = 0
+py-version = "3.11"
+
+[tool.pylint.format]
+max-line-length = 100
+
+[tool.pylint."MESSAGES CONTROL"]
+disable = [
+  "missing-module-docstring",
+  "missing-function-docstring",
+  "missing-class-docstring",
+  "too-few-public-methods",
+  "line-too-long",
+  "invalid-name",
+  "too-many-arguments",
+  "too-many-positional-arguments",
+  "too-many-locals",
+  "too-many-statements",
+  "too-many-branches",
+  "too-many-return-statements",
+  "too-many-instance-attributes",
+  "too-many-lines",
+  "wrong-import-position",
+  "wrong-import-order",
+  "import-error",
+  "broad-exception-caught",
+  "duplicate-code",
+  "mixed-line-endings",
+  "trailing-whitespace",
+  "f-string-without-interpolation",
+  "non-ascii-name",
+  "unused-variable",
+  "unused-argument",
+  "unused-import",
+  "redefined-outer-name",
+  "reimported",
+  "import-outside-toplevel",
+  "no-else-return",
+  "consider-using-enumerate",
+  "no-member",
+  "not-callable",
+  "raise-missing-from",
+  "logging-fstring-interpolation",
+]

@@ -1,0 +1,106 @@
+---
+ArtigoID: ART_016
+Ano: 2023
+TipoPublicação: Conference
+Referência_Curta: Samad et al., 2023
+DOI: https://doi.org/10.2118/216770-MS
+SegmentoO&G: Cross-segment
+SegmentoO&G_Confiança: Média
+Ambiente: NR
+Complexidade: Média
+Complexidade_Justificativa: F1=0 (ambiente não especificado), F2=1 (múltiplos departamentos e fornecedores de software envolvidos
+  em projetos EPC), F3=1 (projetos de engenharia críticos com ciclo de vida de 30-50 anos)
+ProcessoSCM_Alvo: Planejamento de produção
+TipoRisco_SCRM: Risco operacional
+ObjetoCrítico: Documentação de engenharia (P&IDs) e modelos digitais de plantas de processamento
+ProblemaNegócio_Contexto: 'Projetos EPC (Engineering, Procurement, Construction) em plantas de processamento de óleo e gás
+  dependem criticamente de documentação de engenharia, especialmente P&IDs (Piping and Instrumentation Diagrams).
+
+  A criação de digital twins requer integração de dados de múltiplas disciplinas e aplicações, mas os softwares atuais de
+  P&ID inteligente apresentam limitações significativas para brownfield projects, extração de listas de materiais, e clouds
+  de revisão/escopo.
+
+  Há também risco de inacessibilidade de dados digitais ao longo da vida útil da planta (30-50 anos), comprometendo a utilização
+  futura por modelos de IA.'
+ClasseIA: Híbrido
+ClasseIA_Confiança: Baixa
+TarefaAnalítica: Previsão
+FamíliaModelo: NR;NLP;Processamento de imagens
+TipoDado: Multimodal
+Maturidade: Conceito
+Maturidade_Confiança: Alta
+Intervenção_Descrição: 'O artigo propõe a aplicação futura de modelos de IA (regressão, classificação e clustering) sobre
+  digital twins de plantas de processamento. As aplicações sugeridas incluem: previsão de datas de conclusão de projeto, identificação
+  de problemas de oferta-demanda de materiais, cálculos de vida útil da planta, análise de composição de produtos, previsões
+  de substituição de componentes, e estudos de segurança. O artigo também menciona NLP e processamento de imagens como técnicas
+  de IA relevantes para treinamento de modelos com dados de digital twin.
+
+  '
+Dados_Descrição: 'Os dados provêm de documentos de engenharia EPC, incluindo P&IDs inteligentes, modelos 3D, e dados tabulares
+  extraídos via XML. Fontes incluem linhas de tubulação, instrumentação, equipamentos, e listas de materiais (MTO). O artigo
+  menciona formatos ASCII, CSV, TXT e XML para neutralização de dados. Não há especificação de volume ou período de dados
+  reais utilizados.
+
+  '
+CategoriaMecanismo: Integração de dados dispersos
+Mecanismo_Fonte: Inferido
+Mecanismo_Declarado: NR
+Mecanismo_Inferido: 'INFERIDO: A centralização de dados de múltiplas disciplinas (processo, instrumentação, mecânica) em uma
+  plataforma digital twin permite visibilidade unificada e reduz silos de informação. INFERIDO: A padronização de formatos
+  de dados (ASCII, XML) facilita o acesso por modelos de IA, permitindo treinamento com dados limpos e consistentes. INFERIDO:
+  A integração de P&IDs inteligentes com modelos 3D e sistemas de diferentes vendors via data lake possibilita análises preditivas
+  para supply-demand de materiais e cronogramas.'
+Mecanismo_Estruturado: Documentos EPC + P&IDs inteligentes → Integração via XML/data lake → Centralização em digital twin
+  → Habilitação de modelos de IA para previsão e análise
+ResultadoTipo: Qualitativo
+Resultados_Quant: NR
+Resultados_Qual: O artigo relata sucesso na automação de relatórios MTO a partir de P&IDs, extração inteligente de listas
+  de materiais, e clouds de revisão/escopo. Há também risco de inacessibilidade de dados digitais ao longo da vida útil da
+  planta (30-50 anos), comprometendo a utilização futura por modelos de IA.
+NívelEvidência: NR
+Limitações_Artigo: Sem limitações reportadas.
+Quotes:
+- QuoteID: Q001
+  TipoQuote: Intervenção
+  Trecho: Data utilization from EPC documents is relatively easy because we can channelize or neutralize documents data with
+    TXT, CSV or XML file formats, but neutralizing data from 2D and 3D models is very cumbersome and all available CAD software
+    has not any common file formatting system to address this issue.
+  Página: p.8
+- QuoteID: Q002
+  TipoQuote: Método
+  Trecho: Digital twin life span should not be haunted by the ghost of mortality e.g., inaccessibility after 10 or more years
+    or unavailable data links to get required data easily from related applications for any kind of AI models training.
+  Página: p.9
+- QuoteID: Q003
+  TipoQuote: Outcome
+  Trecho: Smart P&ID Role in Digital Twin During the pre-digital twin era, smart drawings and 3D models have produced remarkable
+    results.
+  Página: p.3
+- QuoteID: Q004
+  TipoQuote: Limitação
+  Trecho: Permission to reproduce in print is restricted to an abstract of not more than 300 words; illustrations may not
+    be copied.
+  Página: p.1
+- QuoteID: Q005
+  TipoQuote: Outcome
+  Trecho: Proposed Solutions CFIHOS (Capital Facilities Information Handover Specifications), ISO 8601 and ASCII-based format
+    (American Standard Code for Information) ISO 10303 standards may be strengthened, involved and implemented more forcefully
+    to make 2D and 3D data exchange more neutral and accessible via simple text editors even.
+  Página: p.8
+- QuoteID: Q006
+  TipoQuote: Intervenção
+  Trecho: In the later stages of any running processing plant when revamping is required, then revision and scope clouds intelligent
+    entry in the smart P&IDs system and tailor-made solutions for reporting system carry more benefits for digital twin goals
+    as well as for any AI model training.
+  Página: p.9
+- QuoteID: Q007
+  TipoQuote: Outcome
+  Trecho: During drafting if main / primary lines are mixed up with branches, vent Downloaded from http://onepetro.org/SPEADIP/proceedings-pdf/23ADIP/23ADIP/D031S099R005/3279819/spe-216770-ms.pdf/1
+    by Schlumberger Oilfield UK Plc user on 28 September 2025
+  Página: p.6
+- QuoteID: Q008
+  TipoQuote: Outcome
+  Trecho: The Instrumentation department is bound to get Downloaded from http://onepetro.org/SPEADIP/proceedings-pdf/23ADIP/23ADIP/D031S099R005/3279819/spe-216770-ms.pdf/1
+    by Schlumberger Oilfield UK Plc user on 28 September 2025
+  Página: p.2
+---

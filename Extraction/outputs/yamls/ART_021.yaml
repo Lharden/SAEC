@@ -1,0 +1,121 @@
+---
+ArtigoID: ART_021
+Ano: 2023
+TipoPublicação: Conference
+Referência_Curta: Cardona et al., 2023
+DOI: https://doi.org/10.2118/213140-MS
+SegmentoO&G: Upstream (E&P)
+SegmentoO&G_Confiança: Alta
+Ambiente: Onshore
+Complexidade: Baixa
+Complexidade_Justificativa: F1=0 (campo onshore na Colômbia - Upper Magdalena Valley basin), F2=0 (não menciona cadeia de
+  fornecedores complexa), F3=1 (risco operacional crítico com falhas de ESP causando produção diferida significativa)
+ProcessoSCM_Alvo: Manutenção/MRO
+TipoRisco_SCRM: Risco de ativos
+ObjetoCrítico: Bombas submersíveis elétricas (ESP) em poços críticos
+ProblemaNegócio_Contexto: 'Falhas em bombas ESP representam um dos maiores desafios no ciclo de produção, afetando múltiplas
+  áreas operacionais como manutenção, suprimentos, produção e planejamento.
+
+  ESPs são equipamentos caros e suas falhas resultam em grande produção diferida e investimentos significativos para restaurar
+  a produção.
+
+  O projeto visa melhorar a tomada de decisão operacional para logística de planejamento de manutenção em poços críticos com
+  sistemas ESP em um campo de petróleo na bacia do Alto Vale do Magdalena, Colômbia, onde 56% dos 876 poços utilizam ESP.'
+ClasseIA: Híbrido
+ClasseIA_Confiança: Alta
+TarefaAnalítica: Classificação
+FamíliaModelo: 'Outro: PCA (redução de dimensionalidade); Outro: Análise de componentes principais'
+TipoDado: Séries temporais
+Maturidade: Protótipo
+Maturidade_Confiança: Média
+Intervenção_Descrição: 'O projeto utiliza Principal Component Analysis (PCA) como técnica de redução de dimensionalidade não
+  supervisionada para identificar variáveis com maior potencial preditivo de falhas em bombas ESP. O PCA transforma 22 variáveis
+  monitoradas em 2-3 componentes principais que explicam ~82% da variância. Os dados são padronizados e balanceados antes
+  da análise. O modelo permite identificar zonas distintas nos componentes principais que correspondem a diferentes momentos
+  operacionais: tempo de falha, antes da falha, após a falha, e operação normal (mais de duas horas antes da falha).
+
+  '
+Dados_Descrição: 'Dados coletados de sistema SCADA transmitidos para datalake na nuvem. Universo de ~850 poços monitorados
+  com média de 30 variáveis por poço. Para o poço XX-003, foram utilizados 32.454 registros com 22 variáveis de sensores downhole
+  (temperatura, pressão, voltagem, amperagem, vibração, frequência do motor, etc.). Fontes incluem relatórios de produção
+  e diferimento, relatórios de falhas e análises post-mortem. Dados transformados de JSON para dataframe estruturado.
+
+  '
+CategoriaMecanismo: Detecção precoce/anomalias
+Mecanismo_Fonte: Misto
+Mecanismo_Declarado: '"PCA has potential to be used as a tool to identify dynamic changes in the ESP system and therefore
+  to detect developing ESP problems." O modelo "allows to create zones where pump failures can be assumed to exist" e "predict
+  pump failures with high accuracy in enough time to perform preventive maintenance, reducing production deferrals."
+
+  '
+Mecanismo_Inferido: 'INFERIDO: A redução dimensional via PCA permite condensar informação de mais de 50 variáveis monitoradas
+  em poucos componentes interpretáveis, facilitando vigilância humana. INFERIDO: A separação espacial das observações nos
+  componentes principais revela padrões distintos para diferentes estados operacionais da bomba, permitindo antecipação de
+  falhas horas antes do evento. INFERIDO: A identificação de zonas de falha provável nos gráficos de componentes principais
+  fornece alertas antecipados para planejadores de manutenção.
+
+  '
+Mecanismo_Estruturado: Dados de sensores ESP (séries temporais) → PCA (redução dimensional) + labeling temporal → Zonas de
+  classificação de estado operacional → Predição de falha com antecedência para manutenção preventiva
+ResultadoTipo: Misto
+Resultados_Quant: 'Variância explicada PC1: 70%; Variância explicada PC2: 12%; Variância total com 3 componentes: ~87% (baseline:
+  NR); Performance de predição: >60% mencionado no abstract (baseline: NR)'
+Resultados_Qual: Identificação de três componentes principais que permitem predizer falhas de bomba com horas de antecedência.
+  Criação de zonas visuais distintas para diferentes momentos operacionais (falha, antes da falha, após falha, operação normal).
+  Insights para tomada de decisão de campo auxiliando monitoramento de mais de 50 variáveis. Modelo configurado para implementação
+  em produção para identificação em tempo real.
+NívelEvidência: Experimento com dados reais
+Limitações_Artigo: 'Os autores recomendam que a empresa operadora revise o processo de geração e armazenamento de informações,
+  pois erros nos arquivos JSON podem estar aumentando, tornando a informação no datalake inutilizável. Também recomendam validar
+  processos de armazenamento da fonte ao datalake para garantir integridade dos dados.
+
+  '
+Observação: 'O artigo foca primariamente em PCA como técnica de pré-processamento e visualização para identificar padrões
+  de falha. Embora mencione "classification algorithm" no abstract, o corpo do artigo detalha principalmente a análise PCA.
+  A maturidade é classificada como Protótipo pois o modelo está "configured so that it can be implemented in production" mas
+  não há evidência de implementação real.
+
+  '
+Quotes:
+- QuoteID: Q001
+  TipoQuote: Intervenção
+  Trecho: 'The failures in the ESP system are classified based on the following parameters: – Mechanical type failures – Electrical
+    type failures – Well failures Machine Learning Approach ESP''s are one of the most expensive equipment in artificial lift
+    systems.'
+  Página: p.2
+- QuoteID: Q002
+  TipoQuote: Método
+  Trecho: Data exploration through the visualization of parameters in time series and the association matrix allows to understand
+    the relationships of the parameters in an analytical way.
+  Página: p.12
+- QuoteID: Q003
+  TipoQuote: Outcome
+  Trecho: This paper discusses the advantages of predicting failures in ESP pumps with performance greater than 60%.
+  Página: p.1
+- QuoteID: Q004
+  TipoQuote: Limitação
+  Trecho: Permission to reproduce in print is restricted to an abstract of not more than 300 words; illustrations may not
+    be copied.
+  Página: p.1
+- QuoteID: Q005
+  TipoQuote: Outcome
+  Trecho: This is the result of a low resistance of the motors to temperatures higher than 400°F generating overheating, high
+    tendency to Downthrust and Upthrust due to inefficient designs, abrasive environments with solids and sands content higher
+    than 6%, as well as high well deviations, designs with more rotors for higher power and high thrust and loads on the pump
+    shaft that require more robust protecto...
+  Página: p.2
+- QuoteID: Q006
+  TipoQuote: Outcome
+  Trecho: This is also the ALS with the widest production range, with availability to work different casing diameters and
+    a financial benefit up to 90% based on volumetric efficiency.
+  Página: p.2
+- QuoteID: Q007
+  TipoQuote: Outcome
+  Trecho: According to (Long Peng et al., 2021), electrical submersible pumps (ESP) are one of the most widely employed ALS,
+    accounting for over 60% of the global oil production.
+  Página: p.2
+- QuoteID: Q008
+  TipoQuote: Outcome
+  Trecho: 2 SPE-213140-MS Introduction Over 90% of producer wells in the world require an artificial lift system (ALS).
+  Página: p.2
+---

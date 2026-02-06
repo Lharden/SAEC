@@ -1,0 +1,111 @@
+---
+ArtigoID: ART_022
+Ano: 2023
+TipoPublicação: Conference
+Referência_Curta: Vedat, 2023
+DOI: https://doi.org/10.2118/217024-MS
+SegmentoO&G: Upstream (E&P)
+SegmentoO&G_Confiança: Alta
+Ambiente: Offshore
+Complexidade: Alta
+Complexidade_Justificativa: F1=1 (offshore explícito), F2=1 (múltiplos clientes e locações offshore, shared vessels entre
+  empresas), F3=1 (risco operacional e de transporte em ambiente remoto e hostil)
+ProcessoSCM_Alvo: Logística/transporte
+TipoRisco_SCRM: Risco de transporte/logística
+ObjetoCrítico: Embarcações de suprimento offshore (supply vessels) e carga para instalações offshore
+ProblemaNegócio_Contexto: 'O setor offshore de O&G enfrenta desafios logísticos significativos devido à operação em ambientes
+  remotos e hostis, exigindo gestão complexa de supply chains com múltiplos modos de transporte.
+
+  Modelos operacionais tradicionais são arcaicos, com duplicação de recursos (embarcações, mão de obra, equipamentos), processos
+  baseados em papel, e falta de visibilidade em tempo real.
+
+  Isso resulta em ineficiências, altos custos operacionais, consumo excessivo de combustível e elevadas emissões de CO2, além
+  de dificuldades de coordenação entre stakeholders.'
+ClasseIA: Híbrido
+ClasseIA_Confiança: Média
+TarefaAnalítica: Otimização
+FamíliaModelo: Outro;ML
+TipoDado: Multimodal
+Maturidade: Produção
+Maturidade_Confiança: Alta
+NívelEvidência: Estudo de caso real
+Limitações_Artigo: Sem limitações reportadas.
+Intervenção_Descrição: 'Plataforma integrada de logística (FlexDelivery) baseada em IA e machine learning que automatiza o
+  planejamento e agendamento de carga offshore. O sistema utiliza dados de booking de carga e dados telemétricos para gerar
+  schedules de curto e longo prazo, otimizando rotas, modos de transporte e estratégias de gestão de inventário. Inclui rastreamento
+  em tempo real, monitoramento contínuo e capacidade de aprendizado contínuo para melhoria iterativa dos processos logísticos.
+
+  '
+Dados_Descrição: 'Dados de booking de carga (peso, tamanho, quantidade, requisitos de manuseio), dados telemétricos de embarcações,
+  cronogramas de rigs (mensais, 2 anos), solicitações de carga (7-10 dias), telemetria de embarcações em tempo real, e previsões
+  meteorológicas. Case study inclui dados de 2 clientes com 5 locações offshore, 200 sqm por viagem cada, comparando abordagem
+  tradicional vs. otimizada.
+
+  '
+CategoriaMecanismo: Otimização de trade-offs
+Mecanismo_Fonte: Misto
+Mecanismo_Declarado: 'O sistema utiliza IA para criar schedules eficientes e ML para aprender com dados históricos e melhorar
+  continuamente os processos. A plataforma considera múltiplas variáveis simultaneamente para otimizar seleção de rotas, modos
+  de transporte e consolidação de carga. O rastreamento em tempo real permite transparência e ajustes rápidos a disrupções.
+  A consolidação de carga maximiza utilização de embarcações e reduz entradas na zona de 500M.
+
+  '
+Mecanismo_Inferido: 'INFERIDO: A otimização multi-variável simultânea reduz espaço de decisão complexo a soluções viáveis.
+  INFERIDO: O aprendizado contínuo com ML permite adaptação a padrões operacionais e melhoria progressiva de eficiência. INFERIDO:
+  A integração de dados dispersos (cargo, telemetria, weather) em plataforma única elimina silos informacionais e habilita
+  decisões coordenadas. INFERIDO: A consolidação de carga baseada em algoritmos maximiza utilização de deck space, diluindo
+  custos fixos entre múltiplos clientes.
+
+  '
+Mecanismo_Estruturado: Dados de carga + telemetria + weather → Otimização AI multi-variável + ML contínuo → Schedules otimizados
+  + consolidação de carga → Redução de custo, tempo e emissões
+ResultadoTipo: Quantitativo
+Resultados_Quant: 'Redução de delivery time: 23% (vs. baseline: abordagem tradicional); Redução de custo: 23% de $650/sqm
+  para $500/sqm; Redução de CO2: 32-36% de 250MT para 159MT; Redução de distância: 51% de 1070nm para 527nm; Redução de fuel:
+  77MT para 49MT; Economia por case study: $150,000'
+Resultados_Qual: Melhoria na colaboração e comunicação entre stakeholders; Maior transparência na supply chain; Padronização
+  de procedimentos operacionais; Redução de erros; Melhoria na segurança com menos entradas na zona de 500M; Mudança comportamental
+  em procurement para uso de tecnologia
+Quotes:
+- QuoteID: Q001
+  TipoQuote: Contexto
+  Trecho: 10 SPE-217024-MS AI and digital solutions serve as the backbone of the platform, effectively addressing the industry's
+    perennial challenges, such as operational inefficiencies, safety risks, and high costs.
+  Página: p.10
+- QuoteID: Q002
+  TipoQuote: Intervenção
+  Trecho: Discussion on the Systems Approach to Cargo Planning Cargo planning is a critical aspect of supply chain management,
+    particularly in the offshore sector, where the movement of goods and equipment often involves multiple modes of transportation
+    and complex schedules.
+  Página: p.9
+- QuoteID: Q003
+  TipoQuote: Método
+  Trecho: The system aims to streamline the supply chain process, provide a more flexible logistics method to the oil and
+    gas industry, reduce costs, and improve efficiency through a strategic and data-driven approach.
+  Página: p.2
+- QuoteID: Q004
+  TipoQuote: Outcome
+  Trecho: This efficiency has led to a significant reduction in distance travelled, from 1,070 nautical miles to 527 nautical
+    miles, a reduction of 51%, saving 68 hours of sailing time.
+  Página: p.8
+- QuoteID: Q005
+  TipoQuote: Limitação
+  Trecho: Permission to reproduce in print is restricted to an abstract of not more than 300 words; illustrations may not
+    be copied.
+  Página: p.1
+- QuoteID: Q006
+  TipoQuote: Outcome
+  Trecho: 2 SPE-217024-MS The use of integrated logistics in the offshore sector has resulted in an overall cost reduction
+    of 23% on the shipment of goods and a reduction of CO2 emissions by 32%, enabling effective management of the movement
+    of goods and equipment while promoting sustainability.
+  Página: p.2
+- QuoteID: Q007
+  TipoQuote: Outcome
+  Trecho: The case study also reports a reduction of CO2 emissions from 250 MT to 159 MT, amounting to a total reduction of
+    91 MT or 36%.
+  Página: p.8
+- QuoteID: Q008
+  TipoQuote: Contexto
+  Trecho: The offshore sector within the oil and gas industry presents unique challenges.
+  Página: p.2
+---

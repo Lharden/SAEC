@@ -1,0 +1,120 @@
+---
+ArtigoID: ART_003
+Ano: 2025
+TipoPublicação: Conference
+Referência_Curta: Chirici et al., 2025
+DOI: https://doi.org/10.1007/978-981-96-2625-0_41
+SegmentoO&G: Midstream
+SegmentoO&G_Confiança: Média
+Ambiente: NR
+Complexidade: Média
+Complexidade_Justificativa: F1=0 (ambiente NR), F2=1 (15,000 empresas no dataset representando cadeia complexa), F3=1 (risco
+  ambiental/regulatório crítico com foco em emissões CO2)
+ProcessoSCM_Alvo: Planejamento de produção
+TipoRisco_SCRM: Risco ambiental/regulatório
+ObjetoCrítico: Work Breakdown Structure (WBS) na produção de navios petroleiros
+ProblemaNegócio_Contexto: 'A indústria de petróleo bruto, particularmente na produção de navios, enfrenta pressões significativas
+  para equilibrar sustentabilidade ambiental com eficiência operacional.
+
+  Atividades marítimas contribuem aproximadamente 2.5% das emissões globais de CO2, com navios de petróleo bruto representando
+  porção substancial.
+
+  Regulamentações ambientais mais rigorosas como IMO 2020 e EU ETS exigem que a indústria adote estratégias inovadoras para
+  minimizar a pegada de carbono mantendo vantagem competitiva.
+
+  O desafio é otimizar estruturas de trabalho (WBS) para reduzir emissões, lead times e custos na cadeia de suprimentos de
+  produção de navios.'
+ClasseIA: Híbrido
+ClasseIA_Confiança: Alta
+TarefaAnalítica: Otimização
+FamíliaModelo: Redes neurais feedforward; Redes Bayesianas
+TipoDado: Tabular/ERP
+Maturidade: Conceito
+Maturidade_Confiança: Alta
+Intervenção_Descrição: 'Algoritmo híbrido que integra Graph Attention Networks (GAT) com técnicas Monte Carlo Markov Chain
+  (MCMC) para otimizar configurações de Work Breakdown Structure (WBS). O GAT atribui pesos de atenção dinâmicos aos nós do
+  grafo (componentes/processos), priorizando aqueles com maior impacto na cadeia. O MCMC simula cenários considerando incertezas
+  como disponibilidade de materiais e atrasos, gerando distribuição de resultados possíveis para identificar configurações
+  ótimas.
+
+  '
+Dados_Descrição: 'Dataset sintético representando 15,000 empresas do setor de óleo e gás na Europa envolvidas na produção
+  de navios petroleiros. Cada empresa é representada por identificador único, conjunto de atividades e métricas associadas
+  incluindo emissões de CO2, lead time, economia de custos e saúde financeira. A taxonomia do navio é representada como Directed
+  Acyclic Graph (DAG) onde nós denotam componentes de manufatura e arestas representam dependências.
+
+  '
+CategoriaMecanismo: Otimização de trade-offs
+Mecanismo_Fonte: Misto
+Mecanismo_Declarado: 'O GAT atribui pesos de atenção dinâmicos aos nós, priorizando aqueles com maior impacto na cadeia de
+  suprimentos. O MCMC simula cenários contabilizando incertezas como flutuação de disponibilidade de materiais ou atrasos
+  inesperados. O algoritmo combinado refina iterativamente as configurações WBS ajustando pesos de atenção em resposta aos
+  outputs do MCMC, garantindo adaptação contínua a novas informações.
+
+  '
+Mecanismo_Inferido: 'INFERIDO: A representação em grafo (DAG) permite capturar interdependências complexas entre componentes,
+  facilitando identificação de caminhos críticos. INFERIDO: O mecanismo de atenção do GAT permite foco diferenciado em componentes
+  com maior impacto em emissões e custos. INFERIDO: A integração com MCMC permite quantificar incertezas e avaliar robustez
+  das soluções sob diferentes cenários probabilísticos. INFERIDO: O processo iterativo de refinamento garante otimização multi-objetivo
+  simultânea de CO2, lead time e custos.
+
+  '
+Mecanismo_Estruturado: WBS como DAG + métricas de empresas → GAT (pesos de atenção dinâmicos) + MCMC (simulação probabilística)
+  → Priorização de componentes críticos + avaliação de cenários → Configuração WBS otimizada para CO2, lead time e custos
+ResultadoTipo: Quantitativo
+Resultados_Quant: 'Redução CO2: 22% (de 500 para 390 toneladas métricas por navio, baseline: 500); Redução lead time: 16%
+  (de 24 para 20.2 meses, baseline: 24 meses); Economia de custos: 15% (~$5 milhões por navio, baseline: NR); Melhoria saúde
+  financeira: 9% (de 7.2 para 7.85, baseline: 7.2)'
+Resultados_Qual: Modelo demonstra capacidade robusta em otimização multidimensional dentro da gestão de cadeia de suprimentos,
+  combinando objetivos ambientais e financeiros
+NívelEvidência: Simulação com dados sintéticos
+Limitações_Artigo: 'NR
+
+  '
+Observação: 'Estudo utiliza exclusivamente dados sintéticos, sem validação com dados reais. Os autores indicam que a combinação
+  GAT-MCMC requer testes rigorosos para confirmar efetividade em aplicações do mundo real. Classificado como Midstream pois
+  foca na produção de navios para transporte de petróleo bruto.
+
+  '
+Quotes:
+- QuoteID: Q001
+  TipoQuote: Contexto
+  Trecho: The crude oil industry, particularly in the production of vessels, faces significant pressures to balance environmental
+    sustainability with operational efficiency.
+  Página: p.2
+- QuoteID: Q002
+  TipoQuote: Intervenção
+  Trecho: This paper introduces a novel approach to optimizing Work Breakdown Structure (WBS) configurations in crude oil
+    vessel production by integrating Graph Attention Networks (GAT) and Monte Carlo Markov Chain (MCMC) techniques.
+  Página: p.3
+- QuoteID: Q003
+  TipoQuote: Mecanismo
+  Trecho: The GAT assigns dynamic attention weights to these nodes, prioritizing those with the most significant impact on
+    the overall supply chain.
+  Página: p.6
+- QuoteID: Q004
+  TipoQuote: Mecanismo
+  Trecho: The combined GAT-MCMC algorithm iteratively refines the WBS configurations by adjusting the attention weights in
+    response to the MCMC outputs. This dynamic process ensures that the model continually adapts to new information, optimizing
+    the supply chain in real-time.
+  Página: p.6
+- QuoteID: Q005
+  TipoQuote: Outcome
+  Trecho: The model achieved a 22% reduction in CO2 emissions, lowering emissions from 500 metric tons to 390 metric tons
+    per vessel
+  Página: p.7
+- QuoteID: Q006
+  TipoQuote: Outcome
+  Trecho: The model also decreased lead times by 16%, bringing average production times from 24 months down to 20.2 months
+  Página: p.7
+- QuoteID: Q007
+  TipoQuote: Método
+  Trecho: A synthetic dataset of 15,000 companies involved in crude oil vessel production in Europe was generated for this
+    study.
+  Página: p.5
+- QuoteID: Q008
+  TipoQuote: Mecanismo
+  Trecho: The MCMC method is used to simulate various scenarios within the supply chain, accounting for uncertainties such
+    as fluctuating material availability or unexpected delays.
+  Página: p.6
+---

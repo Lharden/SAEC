@@ -1,0 +1,119 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python -m mypy --config-file pyproject.toml \"$CLAUDE_FILE_PATH\" 2>nul || exit 0",
+            "timeout": 30000,
+            "pathGlobs": ["system/**/*.py"]
+          }
+        ]
+      },
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python -m pytest tests/ -x --tb=line -q --no-header 2>nul || echo '[TESTS] Some tests need attention'",
+            "timeout": 120000,
+            "pathGlobs": ["system/src/**/*.py", "tests/**/*.py"]
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo BLOCKED: Sensitive file protection",
+            "pathGlobs": ["**/.env*", "**/credentials*", "**/secrets*", "**/*_key*"],
+            "onSuccess": "block"
+          }
+        ]
+      },
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo BLOCKED: Lock files should only change via package manager",
+            "pathGlobs": ["**/requirements.lock", "**/poetry.lock", "**/Pipfile.lock"],
+            "onSuccess": "block"
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "matcher": "permission_prompt",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -Command \"[console]::beep(800,200); [console]::beep(1000,200)\""
+          }
+        ]
+      },
+      {
+        "matcher": "idle_prompt",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -Command \"[console]::beep(600,300)\""
+          }
+        ]
+      }
+    ]
+  },
+  "permissions": {
+    "allow": [
+      "Bash(python *)",
+      "Bash(python -m pytest*)",
+      "Bash(python -m mypy*)",
+      "Bash(python -m ruff*)",
+      "Bash(git *)",
+      "Bash(pip list*)",
+      "Bash(pip show*)",
+      "Bash(pip check*)",
+      "Bash(ollama *)",
+      "Bash(curl -s http://localhost*)",
+      "Bash(curl http://localhost*)",
+      "Bash(ls*)",
+      "Bash(dir*)",
+      "Bash(cd *)",
+      "Bash(echo *)",
+      "Bash(type *)",
+      "Bash(sleep *)",
+      "Bash(tail *)",
+      "Bash(head *)",
+      "Bash(wc *)",
+      "Read",
+      "Edit",
+      "Write",
+      "Glob",
+      "Grep"
+    ],
+    "deny": [
+      "Bash(rm -rf*)",
+      "Bash(del /s*)",
+      "Bash(del /q*)",
+      "Bash(*password*)",
+      "Bash(*token*)",
+      "Bash(*secret*)",
+      "Bash(*credential*)",
+      "Bash(pip install*)",
+      "Bash(pip uninstall*)",
+      "Bash(npm install*)",
+      "Bash(curl -O*)",
+      "Bash(curl --output*)",
+      "Bash(wget*)",
+      "Bash(Invoke-WebRequest*)",
+      "Bash(git push --force*)",
+      "Bash(git reset --hard*)"
+    ]
+  }
+}

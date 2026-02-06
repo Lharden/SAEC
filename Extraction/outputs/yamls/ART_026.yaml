@@ -1,0 +1,119 @@
+---
+ArtigoID: ART_026
+Ano: 2024
+TipoPublicação: Conference
+Referência_Curta: Shahini et al., 2024
+DOI: https://doi.org/10.2118/221022-MS
+SegmentoO&G: Upstream (E&P)
+SegmentoO&G_Confiança: Alta
+Ambiente: Onshore
+Complexidade: Média
+Complexidade_Justificativa: F1=0 (onshore - unconventional assets), F2=1 (hundreds of service providers mencionados), F3=1
+  (operações críticas de drilling, completion e manutenção com milhões de faturas)
+ProcessoSCM_Alvo: Procurement/compras
+TipoRisco_SCRM: Risco financeiro
+ObjetoCrítico: Faturas de fornecedores de serviços
+ProblemaNegócio_Contexto: 'O desenvolvimento de ativos não convencionais de óleo e gás envolve centenas de provedores de serviços
+  que geram milhões de faturas anualmente relacionadas a drilling, completion, produção e manutenção.
+
+  A categorização manual dessas faturas em mais de 1500 classes é demorada, propensa a erros e impede a identificação de oportunidades
+  de economia de custos.
+
+  Perdas financeiras significativas ocorrem devido à incapacidade de otimizar estratégias de contratação, gerenciar suprimentos
+  de materiais e identificar elementos de design com custos proibitivos através de categorização adequada de gastos.'
+ClasseIA: Deep Learning
+ClasseIA_Confiança: Alta
+TarefaAnalítica: Classificação
+FamíliaModelo: Transformers/Attention
+TipoDado: Texto
+Maturidade: Produção
+Maturidade_Confiança: Alta
+Intervenção_Descrição: 'Solução baseada em Large Language Model (LLM) usando modelo Llama fine-tuned para categorização automática
+  de faturas. O sistema emprega transformer para embedding de sentenças que converte descrições de faturas em vetores de alta
+  dimensão. Técnicas de transfer learning, fine-tuning e re-treinamento são utilizadas para melhorar performance. Interface
+  Streamlit permite validação em tempo real e correção de previsões pelos usuários.
+
+  '
+Dados_Descrição: 'Dezenas de milhões de registros de faturas de operações de desenvolvimento de ativos não convencionais.
+  Dados de múltiplos provedores de serviços envolvidos em drilling, completion, produção e manutenção. Cada fatura contém
+  descrições de serviços, descrições de materiais, valores, quantidades e preços unitários. Particionamento temporal com 3
+  anos de dados históricos para treinamento e 6 meses de dados recentes para validação e teste.
+
+  '
+CategoriaMecanismo: Automação informacional (NLP)
+Mecanismo_Fonte: Misto
+Mecanismo_Declarado: 'By encoding texts into a high-dimensional vectors, embedding model ensures that each invoice is represented
+  by a dense feature set, enhancing the subsequent classification accuracy. This automation not only enhances efficiency but
+  also provides a foundation for deeper analytical insights into spending patterns, enabling more strategic decision making.
+
+  '
+Mecanismo_Inferido: 'INFERIDO: O LLM transforma descrições textuais heterogêneas em representações vetoriais semânticas padronizadas,
+  permitindo classificação consistente em mais de 1500 categorias. INFERIDO: A automação elimina o gargalo manual, reduzindo
+  tempo de processamento de dias para horas e permitindo análises de gastos em tempo real. INFERIDO: A categorização precisa
+  habilita visibilidade granular de gastos por fornecedor, categoria e região, revelando discrepâncias de preços e oportunidades
+  de economia.
+
+  '
+Mecanismo_Estruturado: Descrições textuais de faturas → Embedding (Transformer) + Classificação (Llama LLM) → Categorização
+  automática padronizada → Visibilidade de gastos e identificação de oportunidades de economia
+ResultadoTipo: Misto
+Resultados_Quant: 'Acurácia geral: >90% (baseline: NR); Acurácia macro: >85% (baseline: NR); Acurácia por business unit: >90%
+  mantida em todas as unidades'
+Resultados_Qual: Redução significativa do tempo de processamento de categorização; capacidade de monitorar tendências de inflação/deflação
+  em commodities críticas; identificação de discrepâncias de preços unitários entre fornecedores para mesmos ativos e atividades;
+  habilitação de oportunidades de economia como redução de despesas com combustível
+NívelEvidência: Estudo de caso real
+Limitações_Artigo: 'Algumas classes apresentam acurácias mais baixas devido a amostras de treinamento insuficientes. Novas
+  classes que aparecem em dados recentes terão acurácias menores até serem incluídas no processo de re-treinamento. Desbalanceamento
+  de dados entre categorias frequentes e raras pode enviesar o modelo para categorias mais comuns.
+
+  '
+Observação: 'O artigo descreve implementação em produção na ConocoPhillips com deployment operacional incluindo dashboard
+  Streamlit para QC e re-treinamento periódico do modelo.
+
+  '
+Quotes:
+- QuoteID: Q001
+  TipoQuote: Contexto
+  Trecho: Abstract In this paper, we introduce a cutting-edge solution to the complex challenge of managing operational costs
+    in unconventional asset development, particularly concerning continuous well drilling, completion, and field maintenance
+    operations within the oil and gas sector.
+  Página: p.1
+- QuoteID: Q002
+  TipoQuote: Intervenção
+  Trecho: As we move forward, continuous improvement through model retraining, and updates based on user feedback and new
+    data, will remain central to our approach, ensuring that our solutions remain at the cutting edge of technology and industry
+    needs.
+  Página: p.7
+- QuoteID: Q003
+  TipoQuote: Método
+  Trecho: Our methodology of temporal data partitioning reflects a nuanced understanding of operational dynamics, ensuring
+    that the model is trained on historical data while validated and tested against the most current data available.
+  Página: p.7
+- QuoteID: Q004
+  TipoQuote: Mecanismo
+  Trecho: Each invoice is converted into a high-dimensional vector that effectively captures its semantic essence, therefore
+    facilitating more accurate and efficient categorization.
+  Página: p.4
+- QuoteID: Q005
+  TipoQuote: Outcome
+  Trecho: Model Results The fine-tuned and selected model demonstrated a significant capability in achieving an overall accuracy
+    of above 90% and macro accuracy of above 85% across more than 1500 classes, showing its effectiveness in handling a complex
+    and large-scale categorization task.
+  Página: p.4
+- QuoteID: Q006
+  TipoQuote: Limitação
+  Trecho: Permission to reproduce in print is restricted to an abstract of not more than 300 words; illustrations may not
+    be copied.
+  Página: p.1
+- QuoteID: Q007
+  TipoQuote: Outcome
+  Trecho: SPE-221022-MS 7 Dynamic Updates A custom dashboard using Streamlit is created to track the model's performance metrics
+    in real-time, providing clear visibility into accuracy rates, processing times, and error rates.
+  Página: p.7
+- QuoteID: Q008
+  TipoQuote: Outcome
+  Trecho: Through rigorous model training and iterative refinement facilitated by the user interface, our approach attains
+    an impressive accuracy exceeding 90% across all regions.
+  Página: p.1
+---

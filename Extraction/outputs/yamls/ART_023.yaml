@@ -1,0 +1,112 @@
+---
+ArtigoID: ART_023
+Ano: 2021
+TipoPublicação: Conference
+Referência_Curta: Kannankutty & Menon, 2021
+DOI: https://doi.org/10.2118/207211-MS
+SegmentoO&G: Cross-segment
+SegmentoO&G_Confiança: Alta
+Ambiente: NR
+Complexidade: Média
+Complexidade_Justificativa: 'F1=0 (ambiente não especificado), F2=1 (múltiplos fornecedores implícitos em supply chain), F3=1
+  (riscos de fornecimento mencionados, ex: COVID-19)'
+ProcessoSCM_Alvo: Procurement/compras
+TipoRisco_SCRM: Risco de fornecimento
+ObjetoCrítico: Processos de procurement e supply chain em empresas de O&G
+ProblemaNegócio_Contexto: 'A indústria de óleo e gás enfrenta período de incerteza e volatilidade de demanda devido a fatores
+  como COVID-19,
+
+  opções de energia alternativa e implicações geopolíticas. As empresas dependem de expertise de especialistas para
+
+  identificar fornecedores, usando principalmente dados internos de ERP, sem políticas para coletar Market Intelligence
+
+  e Big Data de fontes externas. Isso resulta em decisões de procurement menos informadas e vulnerabilidade a disrupções
+
+  na cadeia de suprimentos, como atrasos em componentes críticos durante a pandemia.'
+ClasseIA: Híbrido
+ClasseIA_Confiança: Média
+TarefaAnalítica: Recomendação
+FamíliaModelo: IA/ML+NLP+Big Data
+TipoDado: Multimodal
+Maturidade: Conceito
+Maturidade_Confiança: Alta
+Intervenção_Descrição: "Cognitive procurement (Procurement 4.0) utilizando AI, ML, NLP, Big Data e Market Intelligence para\
+  \ criar \nsistemas de auto-aprendizagem para procurement. Propõe três modelos de governança: Human-on-the-loop (sem IA),\
+  \ \nHuman-in-the-loop (IA sugere, humano decide), e Human-out-of-loop (IA decide autonomamente). Inclui aplicações \ncomo\
+  \ NLP para revisão de contratos, ML para classificação de gastos e aprovação de pagamentos, e Big Data para \nidentificação\
+  \ de novos fornecedores.\n"
+Dados_Descrição: "Dados primários coletados via questionário online com escala Likert de 5 pontos, enviado a profissionais\
+  \ de \nprocurement em diversas organizações de O&G. O questionário cobriu: impacto da transformação digital, desafios \n\
+  potenciais na transformação digital de procurement e supply chain, e tecnologias habilitadoras. Não foram \nespecificados\
+  \ volume de respondentes ou período de coleta no texto disponível.\n"
+CategoriaMecanismo: Integração de dados dispersos
+Mecanismo_Fonte: Misto
+Mecanismo_Declarado: "O artigo declara que a integração de Market Intelligence de fontes externas com dados internos de ERP\
+  \ permite \ndecisões de procurement mais informadas. Big Data com conectores para dados externos estruturados e não-estruturados,\
+  \ \ncombinados com predictive analytics, simplificará o processo de tomada de decisão em procurement.\n"
+Mecanismo_Inferido: 'INFERIDO: A IA analisa dados de forma imparcial, reduzindo erros humanos e vieses nas decisões de sourcing.
+  INFERIDO: A automação de tarefas rotineiras libera especialistas para atividades estratégicas. INFERIDO: A antecipação de
+  riscos de fornecimento via Big Data permite planos de mitigação antes de perdas de produção.
+
+  '
+Mecanismo_Estruturado: Dados internos (ERP) + externos (MI, Big Data) → AI/ML/NLP → Análise imparcial e insights → Decisões
+  de procurement otimizadas
+ResultadoTipo: Qualitativo
+Resultados_Quant: NR
+Resultados_Qual: 92.6% dos participantes concordam que integrar MI de fontes externas melhora decisões de procurement; 88.9%
+  concordam que procurement se tornará função estratégica e inovadora; 70.9% acreditam que AI pode assumir processos de procurement
+  no longo prazo; maioria concorda que AI/ML/blockchain aumentarão transparência e simplificarão processos
+NívelEvidência: Survey/entrevistas
+Limitações_Artigo: "O artigo menciona que mesmo com apoio da gestão e orçamento, organizações terão dificuldade em transformar\
+  \ \ne implementar procurement 4.0. Também identifica barreiras como gaps de habilidades, infraestrutura inadequada, \nmudança\
+  \ de papéis de trabalho e estrutura de comunicação organizacional.\n"
+Observação: "Artigo conceitual/exploratório baseado em survey de opinião de profissionais. Não apresenta implementação \n\
+  real de sistema cognitivo nem métricas quantitativas de performance. Foco em framework teórico e percepção \ndo mercado\
+  \ sobre adoção de tecnologias.\n"
+Quotes:
+- QuoteID: Q001
+  TipoQuote: Contexto
+  Trecho: SPE-207211-MS Implementing Cognitive Procurement and its Influence on Supply Chain During the Era of Digital Transformation
+    in Oil and Gas Industry 4.0 Manoj Kannankutty, ADNOC Distribution; Aditya Manoj Menon, Abu Dhabi International School
+    Copyright 2021, Society of Petroleum Engineers This paper was prepared for presentation at the Abu Dhabi International
+    Petroleum Exhibition & Conference to be...
+  Página: p.1
+- QuoteID: Q002
+  TipoQuote: Método
+  Trecho: SPE-207211-MS 13 Description of Methodology A questionnaire was sent out to collect primary data from employees
+    working in procurement or related business departments in various oil and gas companies.
+  Página: p.13
+- QuoteID: Q003
+  TipoQuote: Outcome
+  Trecho: 'The new transformed roles of procurement for industry 4.0 are also discussed in the conclusion, which includes:
+    – Daily activities – Procurement decision-making activities – Strategic Sourcing – Procurement to drive organizational
+    profitability, effectiveness and efficiency Survey Data and Results Data for this study were obtained by compiling a list
+    of relevant questions from multiple sources.'
+  Página: p.13
+- QuoteID: Q004
+  TipoQuote: Limitação
+  Trecho: Permission to reproduce in print is restricted to an abstract of not more than 300 words; illustrations may not
+    be copied.
+  Página: p.1
+- QuoteID: Q005
+  TipoQuote: Outcome
+  Trecho: Majority of the participants also agree or strongly agree that artificial intelligence will be able to reduce day-to-day
+    procurement activities and 70.9% of the participants believe that AI can take over the procurement process in the long
+    run.
+  Página: p.13
+- QuoteID: Q006
+  TipoQuote: Outcome
+  Trecho: 92.6% of participants either agreed or strongly agreed that Integrating Market Intelligence data from various external
+    sources for procurement will give the organization better insight for procurement decisions.
+  Página: p.13
+- QuoteID: Q007
+  TipoQuote: Outcome
+  Trecho: The results and the observations of the study are used to measure the benefits of implementing cognitive procurement
+    in the oil and gas industry 4.0.
+  Página: p.1
+- QuoteID: Q008
+  TipoQuote: Outcome
+  Trecho: This can be advantageous because the data collected can have some degree of uncertainty, that would make the predictions
+    not 100% accurate.
+  Página: p.9
+---

@@ -1,0 +1,116 @@
+---
+ArtigoID: ART_014
+Ano: 2021
+TipoPublicação: Conference
+Referência_Curta: Belov et al., 2021
+DOI: https://doi.org/10.2118/205219-MS
+SegmentoO&G: Upstream (E&P)
+SegmentoO&G_Confiança: Alta
+Ambiente: Onshore
+Complexidade: Média
+Complexidade_Justificativa: F1=0 (onshore - operações em Saudi Arabia, Argentina, Colombia), F2=1 (múltiplas locações e 74
+  stators monitorados em 6 países), F3=1 (risco de falha de equipamento crítico durante perfuração - mud motor failures são
+  muito custosas)
+ProcessoSCM_Alvo: Manutenção/MRO
+TipoRisco_SCRM: Risco de ativos
+ObjetoCrítico: Mud motor power sections (stator elastomer)
+ProblemaNegócio_Contexto: 'Mud motors são amplamente utilizados para perfuração direcional e de performance, mas estão sujeitos
+  a falhas devido às condições operacionais extremamente desafiadoras.
+
+  Até recentemente, a indústria de O&G carecia de procedimentos confiáveis para monitorar e manter a saúde das power sections
+  dos mud motors.
+
+  Falhas resultam em custos desnecessários de manutenção e reparo, além de falhas de perfuração imprevisíveis e muito custosas.
+
+  O problema principal é a degradação do elastômero (borracha) no stator devido à fadiga cíclica, aquecimento por histerese
+  e interação química com o fluido de perfuração.'
+ClasseIA: Híbrido
+ClasseIA_Confiança: Alta
+TarefaAnalítica: Previsão
+FamíliaModelo: Redes neurais feedforward; Regressão não-linear
+TipoDado: Séries temporais
+Maturidade: Produção
+Maturidade_Confiança: Alta
+Intervenção_Descrição: 'Solução híbrida de Prognostic Health Management (PHM) que combina modelo baseado em física de alta
+  fidelidade com abordagens data-driven usando machine learning. Um modelo de ordem reduzida (ROM) foi desenvolvido usando
+  regressão não-linear (ML supervisionado) treinado em dados simulados do modelo físico, permitindo cálculos em tempo real
+  (<1 segundo). O motor engine processa inputs (temperatura, fluxo de lama, pressão, status de perfuração, profundidade) e
+  produz outputs de RPM, torque e curvas de vida de fadiga em tempo real.
+
+  '
+Dados_Descrição: 'Dados de campo de múltiplas locações: Saudi Arabia, Argentina e Colombia. Validação com 202 runs coletados
+  em 6 meses, totalizando 8.941,2 horas de bombeamento sobre 74 stators em diferentes locações de campo. Inputs incluem: temperatura
+  downhole, taxa de fluxo de lama, pressão diferencial do motor, status on/off-bottom, profundidade do bit. Dados de validação
+  experimental com mais de 100 sinais diferentes incluindo pressão, temperatura, torque, RPM, vibrações e deslocamentos.
+
+  '
+CategoriaMecanismo: Antecipação de risco
+Mecanismo_Fonte: Declarado
+Mecanismo_Declarado: 'O artigo declara que o modelo reduzido treinado por ML permite previsões de RUL em tempo real, possibilitando
+  decisões informadas sobre manutenção e operação. A integração de modelo físico com ML preserva comportamento essencial e
+  efeitos dominantes enquanto reduz recursos computacionais. Isto permite rastrear o RUL continuamente e obter a saúde da
+  power section em tempo real durante e após a perfuração.
+
+  '
+Mecanismo_Inferido: 'INFERIDO: A combinação de física de fadiga de elastômeros com ML de regressão permite generalização para
+  condições não observadas. INFERIDO: O monitoramento contínuo de RUL transforma manutenção reativa em preditiva, antecipando
+  falhas antes que ocorram. INFERIDO: A velocidade computacional do ROM (<1s) viabiliza aplicação em tempo real que seria
+  impossível com simulação FEA completa.
+
+  '
+Mecanismo_Estruturado: Dados de sensores RT + especificações do motor → Modelo ROM (ML + física) → Estimativa de RUL e fadiga
+  → Decisão de manutenção/operação otimizada
+ResultadoTipo: Misto
+Resultados_Quant: 'Economia de manutenção projetada: 27% ao ano (vs. baseline: política local de reline); Redução de falhas
+  projetada: 10% ao ano (baseline: NR); Economia de manutenção na análise de 43 stators: 25% (vs. baseline: custo de reline
+  local)'
+Resultados_Qual: Validação demonstrou alta fidelidade entre previsões do modelo e condições pós-job observadas e falhas de
+  campo. O workflow PHM permite usar equipamentos em sua extensão máxima com performance de perfuração aumentada sem sacrificar
+  confiabilidade. Otimização da gestão de frota com redução de custos logísticos e de manutenção.
+NívelEvidência: Estudo de caso real
+Limitações_Artigo: 'NR
+
+  '
+Quotes:
+- QuoteID: Q001
+  TipoQuote: Contexto
+  Trecho: The findings of this paper demonstrate the value of the mud motor PHM solution for the oil and gas industry by providing
+    accurate prognosis of power section health, leading to reduced costs, minimized NPT, and increased operational reliability.
+  Página: p.1
+- QuoteID: Q002
+  TipoQuote: Intervenção
+  Trecho: It's based on a high-fidelity model and uses a hybrid approach by combining a high-fidelity physics-based model
+    of a power section and data-driven approaches with machine learning techniques for real-time applications.
+  Página: p.1
+- QuoteID: Q003
+  TipoQuote: Método
+  Trecho: The new methodology was tested in the field with great success.
+  Página: p.1
+- QuoteID: Q004
+  TipoQuote: Outcome
+  Trecho: The result was outstanding, with the initial deployment bringing about 27% of projected yearly maintenance savings
+    and 10% of projected yearly failure reduction.
+  Página: p.1
+- QuoteID: Q005
+  TipoQuote: Limitação
+  Trecho: Permission to reproduce in print is restricted to an abstract of not more than 300 words; illustrations may not
+    be copied.
+  Página: p.1
+- QuoteID: Q006
+  TipoQuote: Outcome
+  Trecho: The result was outstanding with the initial deployment bringing about 27% of projected yearly maintenance savings
+    and 10% of projected yearly failure reduction.
+  Página: p.12
+- QuoteID: Q007
+  TipoQuote: Outcome
+  Trecho: SPE-205219-MS Data-Driven PHM Solution for Health Monitoring of Mud Motor Power Sections While Drilling Dmitry Belov,
+    Samba BA, Ji Tang Liu, Anton Kolyshkin, and Sergio Daniel Rocchio, Schlumberger Copyright 2021, Society of Petroleum Engineers
+    This paper was prepared for presentation at the SPE Europec featured at 82nd EAGE Conference and Exhibition held in Amsterdam,
+    The Netherlands, 18 21 Octob...
+  Página: p.1
+- QuoteID: Q008
+  TipoQuote: Outcome
+  Trecho: Due to the extremely challenging operating conditions, they are prone to failures, resulting Downloaded from http://onepetro.org/SPEEURO/proceedings-pdf/21EURO/21EURO/D041S016R006/3650354/spe-205219-ms.pdf
+    by Schlumberger Oilfield UK Plc user on 19 January 2026
+  Página: p.1
+---

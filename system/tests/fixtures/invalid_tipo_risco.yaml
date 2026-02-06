@@ -1,0 +1,66 @@
+---
+ArtigoID: "ART_002"
+Ano: 2024
+TipoPublicação: "Journal"
+Referência_Curta: "Souza et al., 2024"
+DOI: "https://doi.org/10.1000/example2"
+
+SegmentoO&G: "Upstream (E&P)"
+SegmentoO&G_Confiança: "Alta"
+Ambiente: "Offshore"
+Complexidade: "Alta"
+Complexidade_Justificativa: "F1=1 (offshore), F2=1 (>5 fornecedores), F3=1 (risco crítico)"
+ProcessoSCM_Alvo: "Manutenção/MRO"
+TipoRisco_SCRM: "Risco de ativos"
+ObjetoCrítico: ""
+
+ProblemaNegócio_Contexto: |
+  Falhas em ESPs representam alto custo operacional em campos offshore.
+  A manutenção preventiva tradicional não consegue prever falhas com precisão.
+  O contexto de operação remota dificulta intervenções de emergência.
+
+ClasseIA: "ML supervisionado"
+ClasseIA_Confiança: "Alta"
+TarefaAnalítica: "Previsão"
+FamíliaModelo: "Ensemble tree-based"
+TipoDado: "Séries temporais"
+Maturidade: "Piloto"
+Maturidade_Confiança: "Média"
+
+Intervenção_Descrição: |
+  Sistema de ML que analisa dados de sensores de ESP para prever falhas.
+  Utiliza Random Forest treinado com histórico de 2 anos de operação.
+
+Dados_Descrição: |
+  Dados de sensores IoT de 50 ESPs em operação.
+  Período: 2022-2024. 1.2 milhões de registros.
+  Features: temperatura, vibração, corrente, pressão.
+
+CategoriaMecanismo: "Antecipação de risco"
+Mecanismo_Fonte: "Misto"
+Mecanismo_Declarado: "O modelo identifica padrões que precedem falhas."
+Mecanismo_Inferido: "INFERIDO: O algoritmo aprende correlações entre variáveis de sensor e eventos de falha."
+Mecanismo_Estruturado: "Dados de sensores → Random Forest → Score de risco → Alerta de manutenção"
+
+ResultadoTipo: "Quantitativo"
+Resultados_Quant: "Acurácia: 92% (vs. baseline: 78%); Recall: 89% (baseline: NR)"
+Resultados_Qual: "Redução significativa de paradas não programadas"
+NívelEvidência: "Experimento com dados reais"
+Limitações_Artigo: |
+  Estudo limitado a um único campo de produção.
+  Dados de apenas um fabricante de ESP.
+
+Quotes:
+  - QuoteID: Q001
+    TipoQuote: "Mecanismo"
+    Trecho: "The Random Forest model captures complex interactions between sensor variables that precede equipment failure"
+    Página: "p.7"
+  - QuoteID: Q002
+    TipoQuote: "Contexto"
+    Trecho: "ESP failures in offshore fields result in production losses exceeding $500k per event"
+    Página: "p.2"
+  - QuoteID: Q003
+    TipoQuote: "Outcome"
+    Trecho: "The proposed model achieved 92% accuracy in predicting failures within a 7-day window"
+    Página: "p.12"
+---
