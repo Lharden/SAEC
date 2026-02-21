@@ -16,10 +16,11 @@ import logging
 import time
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Literal, Union
+from typing import Any, Literal, Union, Sequence
 
 import ollama
 from PIL import Image
+from PIL.Image import Image as PILImage
 
 try:
     from ..exceptions import LLMError
@@ -27,6 +28,38 @@ except ImportError:  # pragma: no cover - standalone usage
     from exceptions import LLMError
 
 logger = logging.getLogger(__name__)
+
+
+def _int_or_zero(value: object) -> int:
+    if value is None:
+        return 0
+    if isinstance(value, bool):
+        return int(value)
+    if isinstance(value, (int, float, str)):
+        try:
+            return int(value)
+        except (TypeError, ValueError):
+            return 0
+    try:
+        return int(str(value))
+    except (TypeError, ValueError):
+        return 0
+
+
+def _duration_ms_from_ns(value: object) -> float:
+    if value is None:
+        return 0.0
+    if isinstance(value, bool):
+        return float(int(value)) / 1_000_000
+    if isinstance(value, (int, float, str)):
+        try:
+            return float(value) / 1_000_000
+        except (TypeError, ValueError):
+            return 0.0
+    try:
+        return float(str(value)) / 1_000_000
+    except (TypeError, ValueError):
+        return 0.0
 
 
 # ============================================================
@@ -126,27 +159,31 @@ def list_models() -> list[OllamaModel]:
         for model in model_list:
             # Suportar tanto objeto quanto dict
             if hasattr(model, "model"):
-                name = model.model
+                name = str(getattr(model, "model", "") or "")
                 size_bytes = getattr(model, "size", 0)
                 details = getattr(model, "details", None)
-                family = getattr(details, "family", "unknown") if details else "unknown"
+                family = str(getattr(details, "family", "unknown") or "unknown") if details else "unknown"
                 param_size = (
-                    getattr(details, "parameter_size", "unknown")
+                    str(getattr(details, "parameter_size", "unknown") or "unknown")
                     if details
                     else "unknown"
                 )
                 quant = (
-                    getattr(details, "quantization_level", "unknown")
+                    str(getattr(details, "quantization_level", "unknown") or "unknown")
                     if details
                     else "unknown"
                 )
             else:
-                name = model.get("name", "")
+                name = str(model.get("name", "") or "")
                 size_bytes = model.get("size", 0)
                 details = model.get("details", {})
-                family = details.get("family", "unknown")
-                param_size = details.get("parameter_size", "unknown")
-                quant = details.get("quantization_level", "unknown")
+                family = str(details.get("family", "unknown") or "unknown")
+                param_size = str(
+                    details.get("parameter_size", "unknown") or "unknown"
+                )
+                quant = str(
+                    details.get("quantization_level", "unknown") or "unknown"
+                )
 
             # Determinar capacidades baseado no nome
             capabilities = ["text"]
@@ -173,7 +210,10 @@ def list_models() -> list[OllamaModel]:
 
         return models
     except Exception as e:
-        logger.error(f"Erro ao listar modelos Ollama: {e}")
+        logger.error(
+            "Error listing Ollama models: %s", e,
+            extra={"action": "list"},
+        )
         return []
 
 
@@ -262,21 +302,25 @@ def generate_text(
         )
 
         elapsed_ms = (time.time() - start_time) * 1000
+        prompt_tokens = _int_or_zero(response.get("prompt_eval_count", 0))
+        completion_tokens = _int_or_zero(response.get("eval_count", 0))
 
         return OllamaResponse(
             content=response["message"]["content"],
             model=model,
-            prompt_tokens=response.get("prompt_eval_count", 0),
-            completion_tokens=response.get("eval_count", 0),
-            total_tokens=response.get("prompt_eval_count", 0)
-            + response.get("eval_count", 0),
-            total_duration_ms=response.get("total_duration", 0) / 1_000_000,
-            load_duration_ms=response.get("load_duration", 0) / 1_000_000,
+            prompt_tokens=prompt_tokens,
+            completion_tokens=completion_tokens,
+            total_tokens=prompt_tokens + completion_tokens,
+            total_duration_ms=_duration_ms_from_ns(response.get("total_duration", 0)),
+            load_duration_ms=_duration_ms_from_ns(response.get("load_duration", 0)),
             eval_duration_ms=elapsed_ms,
         )
 
     except Exception as e:
-        logger.error(f"Erro na geração Ollama ({model}): {e}")
+        logger.error(
+            "Ollama generation error: %s", e,
+            extra={"model": model, "action": "generate"},
+        )
         raise LLMError(
             f"Ollama generation failed: {e}", provider="ollama", retriable=True
         )
@@ -284,7 +328,7 @@ def generate_text(
 
 def generate_vision(
     prompt: str,
-    images: list[Union[Path, str, bytes, Image.Image]],
+    images: Sequence[Union[Path, str, bytes, PILImage]],
     *,
     model: str | None = None,
     temperature: float = 0.2,
@@ -321,11 +365,12 @@ def generate_vision(
                     image_data.append(base64.b64encode(f.read()).decode("utf-8"))
             elif isinstance(img, bytes):
                 image_data.append(base64.b64encode(img).decode("utf-8"))
-            elif isinstance(img, Image.Image):
+            elif isinstance(img, PILImage):
                 import io
 
                 buffer = io.BytesIO()
-                img.save(buffer, format="PNG")
+                pil_image: PILImage = img
+                pil_image.save(buffer, format="PNG")
                 image_data.append(base64.b64encode(buffer.getvalue()).decode("utf-8"))
             elif isinstance(img, str):
                 # Assume já é base64
@@ -347,21 +392,25 @@ def generate_vision(
         )
 
         elapsed_ms = (time.time() - start_time) * 1000
+        prompt_tokens = _int_or_zero(response.get("prompt_eval_count", 0))
+        completion_tokens = _int_or_zero(response.get("eval_count", 0))
 
         return OllamaResponse(
             content=response["message"]["content"],
             model=model,
-            prompt_tokens=response.get("prompt_eval_count", 0),
-            completion_tokens=response.get("eval_count", 0),
-            total_tokens=response.get("prompt_eval_count", 0)
-            + response.get("eval_count", 0),
-            total_duration_ms=response.get("total_duration", 0) / 1_000_000,
-            load_duration_ms=response.get("load_duration", 0) / 1_000_000,
+            prompt_tokens=prompt_tokens,
+            completion_tokens=completion_tokens,
+            total_tokens=prompt_tokens + completion_tokens,
+            total_duration_ms=_duration_ms_from_ns(response.get("total_duration", 0)),
+            load_duration_ms=_duration_ms_from_ns(response.get("load_duration", 0)),
             eval_duration_ms=elapsed_ms,
         )
 
     except Exception as e:
-        logger.error(f"Erro na geração vision Ollama ({model}): {e}")
+        logger.error(
+            "Ollama vision generation error: %s", e,
+            extra={"model": model, "action": "vision"},
+        )
         raise LLMError(
             f"Ollama vision generation failed: {e}", provider="ollama", retriable=True
         )
@@ -431,7 +480,10 @@ def generate_embedding(
         )
 
     except Exception as e:
-        logger.error(f"Erro ao gerar embedding ({model}): {e}")
+        logger.error(
+            "Ollama embedding error: %s", e,
+            extra={"model": model, "action": "embed"},
+        )
         raise LLMError(
             f"Ollama embedding failed: {e}", provider="ollama", retriable=True
         )
@@ -479,7 +531,10 @@ def generate_embeddings_batch(
         return results
 
     except Exception as e:
-        logger.error(f"Erro ao gerar embeddings batch ({model}): {e}")
+        logger.error(
+            "Ollama batch embedding error: %s", e,
+            extra={"model": model, "action": "embed"},
+        )
         raise LLMError(
             f"Ollama batch embedding failed: {e}", provider="ollama", retriable=True
         )
@@ -543,7 +598,10 @@ def rerank_passages(
         )
 
     except Exception as e:
-        logger.error(f"Erro no reranking ({model}): {e}")
+        logger.error(
+            "Reranking error: %s", e,
+            extra={"model": model, "action": "rerank"},
+        )
         raise LLMError(f"Reranking failed: {e}", provider="ollama", retriable=True)
 
 
@@ -556,7 +614,7 @@ def extract_yaml(
     prompt: str,
     *,
     model: str | None = None,
-    images: list[Union[Path, str, bytes]] | None = None,
+    images: Sequence[Union[Path, str, bytes, PILImage]] | None = None,
 ) -> str:
     """
     Extrai YAML estruturado de um prompt.
@@ -603,7 +661,7 @@ def test_connection() -> dict:
     Returns:
         Dict com status de conexão e modelos disponíveis
     """
-    result = {
+    result: dict[str, Any] = {
         "available": False,
         "models": [],
         "default_models": DEFAULT_MODELS,

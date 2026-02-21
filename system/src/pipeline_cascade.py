@@ -27,42 +27,51 @@ if TYPE_CHECKING:
 
 llm_config = _config.llm_config
 local_config = _config.local_config
+_is_placeholder_api_key = _config._is_placeholder_api_key
 ExtractError = _exceptions.ExtractError
 validate_yaml = _validators.validate_yaml
 
 logger = logging.getLogger(__name__)
 
 
-def _is_placeholder_api_key(value: str) -> bool:
-    normalized = (value or "").strip().lower()
-    if not normalized:
-        return True
-    placeholder_markers = (
-        "your-",
-        "-here",
-        "placeholder",
-        "sua",
-        "sk-ant-sua",
-        "sk-sua",
-    )
-    return any(marker in normalized for marker in placeholder_markers)
-
-
 def _resolve_api_provider(preferred_provider: str) -> str:
-    if preferred_provider == "anthropic":
-        return "anthropic"
-    if preferred_provider == "openai":
-        return "openai"
-
     has_openai = not _is_placeholder_api_key(getattr(llm_config, "OPENAI_API_KEY", ""))
     has_anthropic = not _is_placeholder_api_key(
         getattr(llm_config, "ANTHROPIC_API_KEY", "")
     )
+    preferred = (preferred_provider or "").strip().lower()
+    if preferred == "openai" and has_openai:
+        return "openai"
+    if preferred == "anthropic" and has_anthropic:
+        return "anthropic"
+    if preferred == "openai" and has_anthropic:
+        logger.warning(
+            "OpenAI indisponivel para cascade API; usando Anthropic",
+            extra={"action": "resolve_api_provider", "provider": "anthropic"},
+        )
+        return "anthropic"
+    if preferred == "anthropic" and has_openai:
+        logger.warning(
+            "Anthropic indisponivel para cascade API; usando OpenAI",
+            extra={"action": "resolve_api_provider", "provider": "openai"},
+        )
+        return "openai"
+
     if has_openai:
         return "openai"
     if has_anthropic:
         return "anthropic"
     return "anthropic"
+
+
+def _select_cascade_api_provider() -> str:
+    configured = (
+        str(getattr(llm_config, "PROVIDER_CASCADE_API", "auto")).strip().lower()
+    )
+    if configured in {"anthropic", "openai"}:
+        return configured
+    primary = str(getattr(llm_config, "PRIMARY_PROVIDER", "ollama")).strip().lower()
+    return primary
 
 
 def _source_for_api_provider(provider: str) -> ExtractionSource:
@@ -161,7 +170,10 @@ def extract_with_ollama(
 
     model = model or local_config.OLLAMA_EXTRACTION_MODEL
     mode = "vision" if images else "texto"
-    logger.info(f"[{artigo_id}] Extração {mode} com {model}")
+    logger.info(
+        "Extraction started",
+        extra={"artigo_id": artigo_id, "model": model, "action": "extract_local", "mode": mode},
+    )
 
     try:
         # Montar prompt
@@ -193,10 +205,16 @@ def extract_with_ollama(
 
         return yaml_content, metrics
 
-    except Exception as e:
-        logger.error(f"[{artigo_id}] Erro na extração Ollama: {e}")
+    except ExtractError:
         metrics.total_time_ms = (time.time() - start_time) * 1000
-        raise ExtractError(f"Ollama extraction failed: {e}")
+        raise
+    except Exception as e:
+        logger.error(
+            "Ollama extraction error: %s", e,
+            extra={"artigo_id": artigo_id, "model": model, "action": "extract_local"},
+        )
+        metrics.total_time_ms = (time.time() - start_time) * 1000
+        raise ExtractError(f"Ollama extraction failed: {e}") from e
 
 
 def repair_with_ollama(
@@ -227,7 +245,10 @@ def repair_with_ollama(
     start_time = time.time()
 
     model = model or local_config.OLLAMA_REPAIR_MODEL
-    logger.info(f"[{artigo_id}] Repair com {model}")
+    logger.info(
+        "Repair started",
+        extra={"artigo_id": artigo_id, "model": model, "action": "repair_local"},
+    )
 
     try:
         prompt = f"""Corrija o seguinte YAML baseado nos erros de validação.
@@ -258,10 +279,16 @@ Retorne APENAS o YAML corrigido, sem explicações.
         repaired = _extract_yaml_block(response.content)
         return repaired, metrics
 
-    except Exception as e:
-        logger.error(f"[{artigo_id}] Erro no repair Ollama: {e}")
+    except ExtractError:
         metrics.total_time_ms = (time.time() - start_time) * 1000
-        raise ExtractError(f"Ollama repair failed: {e}")
+        raise
+    except Exception as e:
+        logger.error(
+            "Ollama repair error: %s", e,
+            extra={"artigo_id": artigo_id, "model": model, "action": "repair_local"},
+        )
+        metrics.total_time_ms = (time.time() - start_time) * 1000
+        raise ExtractError(f"Ollama repair failed: {e}") from e
 
 
 # ============================================================
@@ -276,6 +303,7 @@ def extract_with_api(
     provider: Literal["anthropic", "openai"] = "anthropic",
     images: list[Path] | None = None,
     artigo_id: str = "",
+    client: object | None = None,
 ) -> tuple[str, CascadeMetrics]:
     """
     Extrai CIMO usando API (Anthropic/OpenAI).
@@ -286,6 +314,7 @@ def extract_with_api(
         provider: Provider da API
         images: Imagens opcionais
         artigo_id: ID do artigo
+        client: LLMClient existente (evita criar novo a cada chamada)
 
     Returns:
         Tuple (yaml_content, metrics)
@@ -300,28 +329,43 @@ def extract_with_api(
     metrics = CascadeMetrics()
     start_time = time.time()
 
-    logger.info(f"[{artigo_id}] Extração API com {provider}")
+    logger.info(
+        "API extraction started",
+        extra={"artigo_id": artigo_id, "provider": provider, "action": "extract_api"},
+    )
 
     try:
-        # Criar contexto e cliente
-        ctx = make_context()
-        client = LLMClient(ctx)
+        # Reutilizar cliente existente ou criar novo
+        if client is None:
+            ctx = make_context()
+            client = LLMClient(ctx)
 
-        # Montar prompt
+        # Montar prompt com texto do artigo embutido
         full_prompt = prompt_template.replace("{TEXT}", text[:100000])
 
-        # Extrair usando método existente (assinaturas corretas)
+        # Conteúdo do artigo como blocos na mensagem do usuário
+        text_content: list[dict] = [{"type": "text", "text": text[:100000]}]
+
         if images:
+            try:
+                from . import pdf_vision
+            except ImportError:
+                import pdf_vision
+
+            if provider == "anthropic":
+                image_blocks = pdf_vision.get_images_for_anthropic(images)
+            else:
+                image_blocks = pdf_vision.get_images_for_openai(images)
+
             response = client.extract_with_vision(
-                images=images,
+                images=image_blocks,
                 prompt=full_prompt,
                 artigo_id=artigo_id,
                 provider=provider,
             )
         else:
-            # Usar extract_with_hybrid que é o método principal
             response = client.extract_with_hybrid(
-                content=[],
+                content=text_content,
                 prompt=full_prompt,
                 artigo_id=artigo_id,
                 provider=provider,
@@ -352,10 +396,16 @@ def extract_with_api(
 
         return yaml_content, metrics
 
-    except Exception as e:
-        logger.error(f"[{artigo_id}] Erro na extração API: {e}")
+    except ExtractError:
         metrics.total_time_ms = (time.time() - start_time) * 1000
-        raise ExtractError(f"API extraction failed: {e}")
+        raise
+    except Exception as e:
+        logger.error(
+            "API extraction error: %s", e,
+            extra={"artigo_id": artigo_id, "provider": provider, "action": "extract_api"},
+        )
+        metrics.total_time_ms = (time.time() - start_time) * 1000
+        raise ExtractError(f"API extraction failed: {e}") from e
 
 
 # ============================================================
@@ -399,20 +449,23 @@ def extract_cascade(
         Literal["local_first", "api_first", "local_only", "api_only"],
         strategy or local_config.EXTRACTION_STRATEGY,
     )
-    confidence_threshold = (
-        confidence_threshold or local_config.LOCAL_CONFIDENCE_THRESHOLD
-    )
+    resolved_confidence_threshold = confidence_threshold
+    if resolved_confidence_threshold is None:
+        resolved_confidence_threshold = float(local_config.LOCAL_CONFIDENCE_THRESHOLD)
 
     total_metrics = CascadeMetrics()
     start_time = time.time()
 
-    logger.info(f"[{artigo_id}] Iniciando extração cascata (strategy={strategy})")
+    logger.info(
+        "Cascade extraction started",
+        extra={"artigo_id": artigo_id, "action": "cascade_step", "strategy": strategy},
+    )
 
     # ========================================
     # Estratégia: API Only
     # ========================================
     if strategy == "api_only":
-        api_provider = _resolve_api_provider(llm_config.PRIMARY_PROVIDER)
+        api_provider = _resolve_api_provider(_select_cascade_api_provider())
         api_source = _source_for_api_provider(api_provider)
         try:
             yaml_content, metrics = extract_with_api(
@@ -475,12 +528,13 @@ def extract_cascade(
             confidence = _estimate_confidence(yaml_content, validation)
 
             logger.info(
-                f"[{artigo_id}] Local attempt {attempt + 1}: confidence={confidence:.2f}"
+                "Local attempt %d: confidence=%.2f", attempt + 1, confidence,
+                extra={"artigo_id": artigo_id, "action": "confidence", "attempt": attempt + 1},
             )
 
             # Aceitar se passar no threshold
             if (
-                confidence >= confidence_threshold
+                confidence >= resolved_confidence_threshold
                 and validation
                 and validation.is_valid
             ):
@@ -500,7 +554,10 @@ def extract_cascade(
                 and not validation.is_valid
                 and attempt < max_local_retries - 1
             ):
-                logger.info(f"[{artigo_id}] Tentando repair local...")
+                logger.info(
+                    "Attempting local repair",
+                    extra={"artigo_id": artigo_id, "action": "repair_local"},
+                )
                 errors = validation.errors[:5]  # errors já é list[str]
                 yaml_content, repair_metrics = repair_with_ollama(
                     yaml_content,
@@ -511,7 +568,10 @@ def extract_cascade(
                 total_metrics.local_tokens += repair_metrics.local_tokens
 
         except Exception as e:
-            logger.warning(f"[{artigo_id}] Local attempt {attempt + 1} failed: {e}")
+            logger.warning(
+                "Local attempt %d failed: %s", attempt + 1, e,
+                extra={"artigo_id": artigo_id, "action": "extract_local", "attempt": attempt + 1},
+            )
 
     # ========================================
     # Escalar para API (se local_first)
@@ -529,14 +589,17 @@ def extract_cascade(
         )
 
     # Escalar para API
-    logger.info(f"[{artigo_id}] Escalando para API (confidence={confidence:.2f})")
+    logger.info(
+        "Escalating to API, confidence=%.2f", confidence,
+        extra={"artigo_id": artigo_id, "action": "fallback"},
+    )
     total_metrics.escalated = True
     total_metrics.escalation_reason = (
         f"Low confidence ({confidence:.2f}) or validation failed"
     )
 
     try:
-        api_provider = _resolve_api_provider(llm_config.PRIMARY_PROVIDER)
+        api_provider = _resolve_api_provider(_select_cascade_api_provider())
         api_source = _source_for_api_provider(api_provider)
         yaml_content, api_metrics = extract_with_api(
             text,
@@ -607,7 +670,10 @@ def _validate_yaml(yaml_content: str, artigo_id: str) -> ValidationResult | None
     try:
         return validate_yaml(yaml_content)
     except Exception as e:
-        logger.warning(f"[{artigo_id}] Validação falhou: {e}")
+        logger.warning(
+            "Validation failed: %s", e,
+            extra={"artigo_id": artigo_id, "action": "validate"},
+        )
         return None
 
 
@@ -642,11 +708,15 @@ def _estimate_confidence(
     if 500 < len(yaml_content) < 20000:
         confidence += 0.1
 
-    # Campos obrigatórios presentes
-    required_fields = ["ArtigoID", "Contexto", "Intervencao", "Outcome"]
+    # Campos obrigatórios do schema CIMO presentes
+    required_fields = [
+        "ArtigoID", "ClasseIA", "Mecanismo_Estruturado", "Quotes",
+        "ProblemaNegócio_Contexto", "Intervenção_Descrição",
+        "ResultadoTipo", "NívelEvidência",
+    ]
     for field in required_fields:
         if field in yaml_content:
-            confidence += 0.025
+            confidence += 0.0125
 
     return max(0.0, min(1.0, confidence))
 
@@ -661,7 +731,7 @@ if __name__ == "__main__":
     # Testar com texto simples
     test_text = """
     This paper presents an AI-based approach for supply chain risk management
-    in the oil and gas industry. We use machine learning to predict disruptions.
+    in a complex industrial network. We use machine learning to predict disruptions.
     The results show a 25% improvement in prediction accuracy.
     """
 

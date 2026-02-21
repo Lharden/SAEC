@@ -175,7 +175,10 @@ def convert_pdf_to_markdown(
         output_dir.mkdir(parents=True, exist_ok=True)
 
         # Configurar modelos
-        logger.info(f"Carregando modelos marker-pdf (GPU: {is_gpu_available()})...")
+        logger.info(
+            "Loading marker-pdf models (GPU: %s)", is_gpu_available(),
+            extra={"action": "convert", "gpu": is_gpu_available()},
+        )
         model_dict = create_model_dict()
 
         # Criar conversor
@@ -184,7 +187,10 @@ def convert_pdf_to_markdown(
         )
 
         # Converter PDF
-        logger.info(f"Convertendo {pdf_path.name}...")
+        logger.info(
+            "Converting %s", pdf_path.name,
+            extra={"action": "convert", "file": pdf_path.name},
+        )
         rendered = converter(str(pdf_path))
 
         # Processar resultado
@@ -227,9 +233,9 @@ def convert_pdf_to_markdown(
         elapsed_ms = (time.time() - start_time) * 1000
 
         logger.info(
-            f"Conversão concluída: {len(pages)} páginas, "
-            f"{sum(p.word_count for p in pages)} palavras, "
-            f"{elapsed_ms:.0f}ms"
+            "Conversion done: %d pages, %d words, %.0fms",
+            len(pages), sum(p.word_count for p in pages), elapsed_ms,
+            extra={"action": "stats", "pages": len(pages), "time_ms": elapsed_ms},
         )
 
         return MarkerResult(
@@ -244,7 +250,10 @@ def convert_pdf_to_markdown(
         )
 
     except Exception as e:  # Broad: PDF libraries raise diverse error types
-        logger.error(f"Erro na conversão marker-pdf: {e}")
+        logger.error(
+            "Marker-pdf conversion error: %s", e,
+            extra={"action": "convert"},
+        )
         raise IngestError(f"Marker conversion failed: {e}")
 
 
@@ -330,7 +339,10 @@ def analyze_pdf_quality(pdf_path: Path) -> dict:
         }
 
     except Exception as e:  # Broad: PDF libraries raise diverse error types
-        logger.warning(f"Erro ao analisar PDF: {e}")
+        logger.warning(
+            "PDF analysis error: %s", e,
+            extra={"action": "analyze"},
+        )
         return {
             "total_pages": 0,
             "avg_chars_per_page": 0,

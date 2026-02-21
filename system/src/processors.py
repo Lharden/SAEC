@@ -228,7 +228,7 @@ class ArticleProcessor:
             return rag_text
         except Exception as e:  # Broad: RAG subsystem (embeddings, vector DB) raises diverse errors
             self.logger.warning(
-                f"RAG falhou, usando conteudo completo: {e}",
+                "RAG falhou, usando conteudo completo: %s", e,
                 extra={"artigo_id": artigo_id, "provider": "-", "action": "rag"},
             )
             return None
@@ -326,10 +326,9 @@ class ArticleProcessor:
         for provider in fallbacks.get(candidate, ["ollama", "openai", "anthropic"]):
             if available.get(provider, False):
                 self.logger.warning(
-                    "Provider '%s' indisponível para %s; usando '%s'.",
-                    candidate,
-                    action,
-                    provider,
+                    "Provider '%s' indisponivel para %s; usando '%s'",
+                    candidate, action, provider,
+                    extra={"action": action, "provider": provider},
                 )
                 return cast(Provider, provider)
 
