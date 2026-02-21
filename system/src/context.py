@@ -6,11 +6,11 @@ import logging
 from dataclasses import dataclass, field
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
-from typing import Optional
+from typing import Any, Optional
 
 try:
     from .config import Paths, LLMConfig, ExtractionConfig
-except Exception:  # pragma: no cover - standalone usage
+except (ImportError, ModuleNotFoundError):  # pragma: no cover - standalone usage
     from config import Paths, LLMConfig, ExtractionConfig
 
 
@@ -71,9 +71,9 @@ def setup_logging(
 class AppContext:
     """Lightweight context container for dependency injection."""
 
-    paths: Paths
-    llm_config: LLMConfig
-    extraction_config: ExtractionConfig
+    paths: Any
+    llm_config: Any
+    extraction_config: Any
     logger: logging.Logger = field(default_factory=lambda: logging.getLogger("saec"))
 
 

@@ -6,23 +6,24 @@ import importlib
 import logging
 from typing import Any, Tuple, TYPE_CHECKING
 
+_fuzz: Any = None
 try:
-    from rapidfuzz import fuzz as _fuzz  # type: ignore
-except Exception:  # pragma: no cover
+    from rapidfuzz import fuzz as _fuzz
+except (ImportError, ModuleNotFoundError):  # pragma: no cover
     _fuzz = None
 
 
 def _load_llm_config():
     try:
         return importlib.import_module(".config", package=__package__).llm_config
-    except Exception:  # pragma: no cover - standalone usage
+    except (ImportError, ModuleNotFoundError, TypeError):  # pragma: no cover - standalone usage
         return importlib.import_module("config").llm_config
 
 
 def _load_extract_yaml_from_response():
     try:
         return importlib.import_module(".llm_utils", package=__package__).extract_yaml_from_response
-    except Exception:  # pragma: no cover - standalone usage
+    except (ImportError, ModuleNotFoundError, TypeError):  # pragma: no cover - standalone usage
         return importlib.import_module("llm_utils").extract_yaml_from_response
 
 
@@ -32,7 +33,7 @@ extract_yaml_from_response = _load_extract_yaml_from_response()
 def _load_extraction_config():
     try:
         return importlib.import_module(".config", package=__package__).extraction_config
-    except Exception:  # pragma: no cover
+    except (ImportError, ModuleNotFoundError, TypeError):  # pragma: no cover
         return importlib.import_module("config").extraction_config
 
 extraction_config = _load_extraction_config()
@@ -45,6 +46,34 @@ else:
     ValidationResult = Any
 
 logger = logging.getLogger(__name__)
+
+
+def _openai_image_to_anthropic_block(block: dict[str, Any]) -> dict[str, Any] | None:
+    if block.get("type") == "image":
+        return block
+    if block.get("type") != "image_url":
+        return None
+
+    image_url = block.get("image_url")
+    if not isinstance(image_url, dict):
+        return None
+    url = str(image_url.get("url") or "").strip()
+    if not url.startswith("data:") or ";base64," not in url:
+        return None
+
+    header, data = url.split(";base64,", 1)
+    media_type = header[5:] if header.startswith("data:") else "image/png"
+    if not data:
+        return None
+
+    return {
+        "type": "image",
+        "source": {
+            "type": "base64",
+            "media_type": media_type or "image/png",
+            "data": data,
+        },
+    }
 
 
 class LLMClientQuotesMixin:
@@ -84,7 +113,7 @@ class LLMClientQuotesMixin:
 
         try:
             validators_mod = importlib.import_module(".validators", package=__package__)
-        except Exception:  # pragma: no cover - standalone usage
+        except (ImportError, ModuleNotFoundError, TypeError):  # pragma: no cover - standalone usage
             validators_mod = importlib.import_module("validators")
 
         validate_yaml = validators_mod.validate_yaml
@@ -290,10 +319,16 @@ Quotes:
             return response.choices[0].message.content
 
         if provider == "anthropic":
+            anthropic_content: list[dict[str, Any]] = []
+            for block in images:
+                converted = _openai_image_to_anthropic_block(block)
+                if converted is not None:
+                    anthropic_content.append(converted)
+            anthropic_content.append({"type": "text", "text": prompt})
             response = self.anthropic.messages.create(
                 model=llm_config.ANTHROPIC_MODEL,
                 max_tokens=max_tokens,
-                messages=[{"role": "user", "content": content}],
+                messages=[{"role": "user", "content": anthropic_content}],
             )
             return response.content[0].text
 

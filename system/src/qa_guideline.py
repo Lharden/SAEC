@@ -37,6 +37,18 @@ import pandas as pd
 import yaml
 from rapidfuzz import fuzz
 
+
+def _load_profile_engine():
+    try:
+        if __package__:
+            return __import__(f"{__package__}.profile_engine", fromlist=["dummy"])
+        return __import__("profile_engine", fromlist=["dummy"])
+    except (ImportError, ModuleNotFoundError):
+        return None
+
+
+_profile_engine = _load_profile_engine()
+
 def _load_paths():
     try:
         from .config import paths as cfg_paths
@@ -151,22 +163,24 @@ def audit_yaml_file(yaml_path: Path, threshold: float = 80.0) -> Dict[str, Any]:
     matched_q = sum(1 for q in qa_quotes if q.score >= threshold)
     match_rate = (matched_q / total_q) if total_q else 0.0
 
-    # Campos críticos (ajustável conforme Guia v3.3)
-    critical_fields = [
-        "SegmentoO&G",
-        "ProcessoSCM_Alvo",
-        "TipoRisco_SCRM",
-        "ObjetoCrítico",
-        "ClasseIA",
-        "TarefaAnalítica",
-        "FamíliaModelo",
-        "TipoDado",
-        "CategoriaMecanismo",
-        "Mecanismo_Estruturado",
-        "Resultados_Quant",
-        "Limitações_Artigo",
-        "NívelEvidência",
-    ]
+    # Campos críticos (perfil ativo ou fallback Guia v3.3)
+    critical_fields = _resolve_runtime_critical_fields()
+    if not critical_fields:
+        critical_fields = [
+            "SegmentoSetorial",
+            "ProcessoSCM_Alvo",
+            "TipoRisco_SCRM",
+            "ObjetoCrítico",
+            "ClasseIA",
+            "TarefaAnalítica",
+            "FamíliaModelo",
+            "TipoDado",
+            "CategoriaMecanismo",
+            "Mecanismo_Estruturado",
+            "Resultados_Quant",
+            "Limitações_Artigo",
+            "NívelEvidência",
+        ]
     nr_critical = 0
     for k in critical_fields:
         v = _norm_text(doc.get(k, ""))
@@ -237,6 +251,27 @@ def audit_yaml_file(yaml_path: Path, threshold: float = 80.0) -> Dict[str, Any]:
     }
 
 
+def _resolve_runtime_critical_fields() -> List[str]:
+    if _profile_engine is None:
+        return []
+    try:
+        project_root = _profile_engine.resolve_runtime_project_root()
+    except Exception:
+        return []
+    if project_root is None:
+        return []
+    try:
+        spec, _ref = _profile_engine.load_active_profile_spec(project_root)
+    except Exception:
+        return []
+    fields: List[str] = []
+    for field in spec.fields:
+        # Prefer mandatory contextual and outcome-like fields.
+        if field.required and field.section in {"context", "intervention", "mechanism", "outcome"}:
+            fields.append(field.field_id)
+    return fields[:20]
+
+
 def run_qa(threshold: float = 80.0, export: bool = True) -> Tuple[pd.DataFrame, Optional[Path]]:
     rows: List[Dict[str, Any]] = []
     for yp in sorted(paths.YAMLS.glob("ART_*.yaml")):
@@ -251,3 +286,4 @@ def run_qa(threshold: float = 80.0, export: bool = True) -> Tuple[pd.DataFrame, 
         df.to_csv(out_path, index=False, sep=";", encoding="utf-8")
 
     return df, out_path
+

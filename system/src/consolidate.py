@@ -14,17 +14,30 @@ import importlib
 def _load_validators():
     try:
         return importlib.import_module(".validators", package=__package__)
-    except Exception:  # pragma: no cover - standalone usage
+    except (ImportError, ModuleNotFoundError, TypeError):  # pragma: no cover - standalone usage
         return importlib.import_module("validators")
 
 
 _validators = _load_validators()
 _validate_yaml_file = _validators.validate_yaml_file
 
+
+def _load_profile_engine():
+    try:
+        return importlib.import_module(".profile_engine", package=__package__)
+    except (ImportError, ModuleNotFoundError, TypeError):  # pragma: no cover - standalone usage
+        try:
+            return importlib.import_module("profile_engine")
+        except (ImportError, ModuleNotFoundError):
+            return None
+
+
+_profile_engine = _load_profile_engine()
+
 def _load_qa_ok_ids(qa_report_path: Path) -> Set[str]:
     try:
         mod = importlib.import_module(".qa_utils", package=__package__)
-    except Exception:  # pragma: no cover - standalone usage
+    except (ImportError, ModuleNotFoundError, TypeError):  # pragma: no cover - standalone usage
         mod = importlib.import_module("qa_utils")
     return mod.load_qa_ok_ids(qa_report_path)
 
@@ -34,8 +47,12 @@ logger = logging.getLogger(__name__)
 
 def load_yaml(yaml_path: Path) -> dict:
     """Carrega um arquivo YAML."""
-    with open(yaml_path, "r", encoding="utf-8") as f:
-        return yaml.safe_load(f)
+    raw = yaml_path.read_text(encoding="utf-8", errors="replace")
+    docs = list(yaml.safe_load_all(raw))
+    for doc in docs:
+        if isinstance(doc, dict):
+            return doc
+    return {}
 
 
 def flatten_extraction(data: dict) -> dict:
@@ -46,10 +63,14 @@ def flatten_extraction(data: dict) -> dict:
     """
     flat: dict[str, Any] = {}
 
-    # Campos simples (copiar diretamente)
+    profile_fields = _resolve_runtime_profile_fields()
+    if profile_fields:
+        return _flatten_dynamic_by_profile(data, profile_fields)
+
+    # Campos simples (copiar diretamente) - fallback legacy CIMO
     simple_fields = [
         "ArtigoID", "Ano", "TipoPublicação", "Referência_Curta", "DOI",
-        "SegmentoO&G", "SegmentoO&G_Confiança", "Ambiente", "Complexidade",
+        "SegmentoSetorial", "SegmentoSetorial_Confiança", "Ambiente", "Complexidade",
         "Complexidade_Justificativa", "ProcessoSCM_Alvo", "TipoRisco_SCRM",
         "ObjetoCrítico", "ClasseIA", "ClasseIA_Confiança", "TarefaAnalítica",
         "FamíliaModelo", "TipoDado", "Maturidade", "Maturidade_Confiança",
@@ -92,6 +113,55 @@ def flatten_extraction(data: dict) -> dict:
     flat["Quotes_Summary"] = " || ".join(quotes_summary)
 
     return flat
+
+
+def _flatten_dynamic_by_profile(data: dict, field_ids: list[str]) -> dict:
+    flat: dict[str, Any] = {}
+    for field in field_ids:
+        value = data.get(field, "")
+        if isinstance(value, (list, dict)):
+            flat[field] = yaml.safe_dump(
+                value,
+                allow_unicode=True,
+                sort_keys=False,
+            ).strip()
+        elif value is None:
+            flat[field] = ""
+        else:
+            flat[field] = str(value).strip()
+
+    quotes = data.get("Quotes", [])
+    if isinstance(quotes, list):
+        flat["Quotes_Count"] = len(quotes)
+        quotes_summary: list[str] = []
+        for q in quotes[:5]:
+            if not isinstance(q, dict):
+                continue
+            tipo = q.get("TipoQuote", "?")
+            trecho = str(q.get("Trecho", ""))[:80]
+            pagina = q.get("Página", "")
+            quotes_summary.append(f"[{tipo}|{pagina}] {trecho}...")
+        flat["Quotes_Summary"] = " || ".join(quotes_summary)
+    else:
+        flat["Quotes_Count"] = 0
+        flat["Quotes_Summary"] = ""
+    return flat
+
+
+def _resolve_runtime_profile_fields() -> list[str]:
+    if _profile_engine is None:
+        return []
+    try:
+        project_root = _profile_engine.resolve_runtime_project_root()
+    except Exception:
+        return []
+    if project_root is None:
+        return []
+    try:
+        spec, _ref = _profile_engine.load_active_profile_spec(project_root)
+    except Exception:
+        return []
+    return [field.field_id for field in spec.fields]
 
 
 def consolidate_yamls(
@@ -239,7 +309,7 @@ def consolidate_yamls(
             "Valor": "v3.3"
         }, {
             "Campo": "Sistema",
-            "Valor": "SAEC-O&G v1.0"
+            "Valor": "SAEC v1.0"
         }])
         meta_df.to_excel(writer, sheet_name="Metadata", index=False)
 
@@ -269,7 +339,7 @@ def generate_statistics(df: pd.DataFrame) -> dict:
 
     # Campos categóricos para estatísticas
     categorical_fields = [
-        "SegmentoO&G", "Ambiente", "Complexidade", "ClasseIA",
+        "SegmentoSetorial", "Ambiente", "Complexidade", "ClasseIA",
         "TarefaAnalítica", "Maturidade", "CategoriaMecanismo",
         "ResultadoTipo", "NívelEvidência", "TipoRisco_SCRM"
     ]
@@ -334,3 +404,5 @@ if __name__ == "__main__":
     print("  - consolidate_yamls(yamls_dir, output_excel)")
     print("  - generate_statistics(df)")
     print("  - print_statistics(stats)")
+
+

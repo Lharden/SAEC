@@ -9,26 +9,28 @@ import time
 
 try:  # Optional imports for robust retry detection
     import httpx
-except Exception:  # pragma: no cover
+except (ImportError, ModuleNotFoundError):  # pragma: no cover
     httpx = None  # type: ignore[assignment]
 
 try:
     import anthropic
-except Exception:  # pragma: no cover
+except (ImportError, ModuleNotFoundError):  # pragma: no cover
     anthropic = None  # type: ignore[assignment]
 
 try:
     import openai
-except Exception:  # pragma: no cover
+except (ImportError, ModuleNotFoundError):  # pragma: no cover
     openai = None  # type: ignore[assignment]
 
 _F = TypeVar("_F", bound=Callable[..., str])
 Provider = Literal["anthropic", "openai", "ollama"]
 
 try:
-    from .exceptions import LLMError
-except Exception:  # pragma: no cover - standalone usage
-    from exceptions import LLMError
+    from . import exceptions as _exceptions
+except (ImportError, ModuleNotFoundError):  # pragma: no cover - standalone usage
+    import exceptions as _exceptions
+
+LLMError = _exceptions.LLMError
 
 
 def retry_with_backoff(
@@ -86,11 +88,11 @@ def is_retriable(exc: Exception) -> bool:
             return True
 
     if anthropic is not None:
-        if isinstance(exc, (anthropic.APIConnectionError, anthropic.RateLimitError)):  # type: ignore[attr-defined]
+        if isinstance(exc, (anthropic.APIConnectionError, anthropic.RateLimitError)):
             return True
 
     if openai is not None:
-        if isinstance(exc, openai.RateLimitError):  # type: ignore[attr-defined]
+        if isinstance(exc, openai.RateLimitError):
             return True
 
     # status_code on exception

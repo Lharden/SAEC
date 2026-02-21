@@ -30,10 +30,10 @@ def _apply_deterministic_postprocess(yaml_content: str) -> str:
 
     try:
         postprocess_mod = importlib.import_module(".postprocess", package=__package__)
-    except Exception:
+    except (ImportError, ModuleNotFoundError, TypeError):
         try:
             postprocess_mod = importlib.import_module("postprocess")
-        except Exception:
+        except (ImportError, ModuleNotFoundError, TypeError):
             return yaml_content
 
     fn = postprocess_mod.postprocess_yaml

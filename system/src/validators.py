@@ -13,13 +13,26 @@ import importlib
 def _load_schemas():
     try:
         return importlib.import_module(".schemas", package=__package__)
-    except Exception:  # pragma: no cover - standalone usage
+    except (ImportError, ModuleNotFoundError, TypeError):  # pragma: no cover - standalone usage
         return importlib.import_module("schemas")
 
 
 _schemas = _load_schemas()
 ExtractionSchema = _schemas.ExtractionSchema
 validate_extraction_dict = _schemas.validate_extraction_dict
+
+
+def _load_profile_engine():
+    try:
+        return importlib.import_module(".profile_engine", package=__package__)
+    except (ImportError, ModuleNotFoundError, TypeError):  # pragma: no cover - standalone usage
+        try:
+            return importlib.import_module("profile_engine")
+        except (ImportError, ModuleNotFoundError):
+            return None
+
+
+_profile_engine = _load_profile_engine()
 
 
 @dataclass
@@ -403,18 +416,121 @@ class YAMLValidator:
         return self.validate(content)
 
 
+def _should_use_dynamic_profile_validator() -> tuple[bool, Any, Any]:
+    """Return whether a non-default project profile is active in runtime env."""
+    if _profile_engine is None:
+        return False, None, None
+
+    try:
+        project_root = _profile_engine.resolve_runtime_project_root()
+    except Exception:
+        return False, None, None
+    if project_root is None:
+        return False, None, None
+
+    try:
+        ref = _profile_engine.get_active_profile_ref(project_root)
+    except Exception:
+        return False, None, None
+    if ref is None:
+        return False, None, None
+
+    profile_id = str(getattr(ref, "profile_id", "")).strip().lower()
+    if profile_id in {"", "cimo_v3_3"}:
+        return False, None, None
+    return True, project_root, ref
+
+
+def _validate_dict_with_dynamic_profile(data: dict, project_root: Path) -> ValidationResult:
+    if _profile_engine is None:
+        return ValidationResult(
+            is_valid=False,
+            errors=["[PROFILE] Dynamic profile engine unavailable."],
+            warnings=[],
+            rules_passed=[],
+            rules_failed=[],
+        )
+
+    try:
+        spec, _ref = _profile_engine.load_active_profile_spec(project_root)
+        errors, warnings, rules_passed, rules_failed = _profile_engine.validate_dict_with_profile(
+            data,
+            spec,
+        )
+    except Exception as exc:
+        return ValidationResult(
+            is_valid=False,
+            errors=[f"[PROFILE] Dynamic profile validation failed: {exc}"],
+            warnings=[],
+            rules_passed=[],
+            rules_failed=[],
+        )
+
+    return ValidationResult(
+        is_valid=len(errors) == 0,
+        errors=errors,
+        warnings=warnings,
+        rules_passed=rules_passed,
+        rules_failed=rules_failed,
+    )
+
+
+def _validate_yaml_with_project_profile(yaml_content: str) -> ValidationResult | None:
+    enabled, project_root, _ref = _should_use_dynamic_profile_validator()
+    if not enabled:
+        return None
+
+    validator = YAMLValidator()
+    normalized = validator._normalize_yaml_text(yaml_content)
+
+    try:
+        docs = list(yaml.safe_load_all(normalized))
+        data = docs[0] if docs else None
+    except yaml.YAMLError as exc:
+        return ValidationResult(
+            is_valid=False,
+            errors=[f"[PARSE] YAML inválido: {str(exc)[:200]}"],
+            warnings=[],
+            rules_passed=[],
+            rules_failed=[],
+        )
+    if not isinstance(data, dict):
+        return ValidationResult(
+            is_valid=False,
+            errors=["[PARSE] YAML deve ser um dicionário/mapeamento"],
+            warnings=[],
+            rules_passed=[],
+            rules_failed=[],
+        )
+    return _validate_dict_with_dynamic_profile(data, Path(project_root))
+
+
+def _validate_yaml_file_with_project_profile(yaml_path: Path) -> ValidationResult | None:
+    enabled, _project_root, _ref = _should_use_dynamic_profile_validator()
+    if not enabled:
+        return None
+    content = yaml_path.read_text(encoding="utf-8", errors="replace")
+    return _validate_yaml_with_project_profile(content)
+
+
 # ============================================================
 # Funções Helper
 # ============================================================
 
 def validate_yaml(yaml_content: str) -> ValidationResult:
     """Função helper para validação rápida."""
+    dynamic = _validate_yaml_with_project_profile(yaml_content)
+    if dynamic is not None:
+        return dynamic
     validator = YAMLValidator()
     return validator.validate(yaml_content)
 
 
 def validate_yaml_file(yaml_path: Path) -> ValidationResult:
     """Função helper para validar arquivo."""
+    dynamic = _validate_yaml_file_with_project_profile(yaml_path)
+    if dynamic is not None:
+        return dynamic
     validator = YAMLValidator()
     return validator.validate_file(yaml_path)
 
@@ -432,8 +548,8 @@ TipoPublicação: "Journal"
 Referência_Curta: "Silva et al., 2024"
 DOI: "https://doi.org/10.1000/example"
 
-SegmentoO&G: "Upstream (E&P)"
-SegmentoO&G_Confiança: "Alta"
+SegmentoSetorial: "Operacao Primaria"
+SegmentoSetorial_Confiança: "Alta"
 Ambiente: "Offshore"
 Complexidade: "Alta"
 Complexidade_Justificativa: "F1=1 (offshore), F2=1 (>5 fornecedores), F3=1 (risco crítico)"
@@ -495,3 +611,5 @@ Quotes:
     print("=== Teste do Validador ===\n")
     result = validate_yaml(test_yaml)
     print(result)
+
+

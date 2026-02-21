@@ -17,10 +17,10 @@ logger = logging.getLogger(__name__)
 def _load_extraction_config():
     try:
         from .config import extraction_config as cfg
-    except Exception:  # pragma: no cover - standalone usage
+    except (ImportError, ModuleNotFoundError):  # pragma: no cover - standalone usage
         try:
             from config import extraction_config as cfg
-        except Exception:
+        except (ImportError, ModuleNotFoundError):
             cfg = None
     return cfg
 

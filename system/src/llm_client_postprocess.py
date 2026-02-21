@@ -4,19 +4,31 @@ from __future__ import annotations
 
 import logging
 import importlib
+from pathlib import Path
 from typing import Any
 
 
 def _load_llm_config():
     try:
         return importlib.import_module(".config", package=__package__).llm_config
-    except Exception:  # pragma: no cover - standalone usage
+    except (ImportError, ModuleNotFoundError, TypeError):  # pragma: no cover - standalone usage
         return importlib.import_module("config").llm_config
 
 
 llm_config = _load_llm_config()
 
 logger = logging.getLogger(__name__)
+
+_postprocess_module: Any
+try:
+    from . import postprocess as _postprocess_import
+    _postprocess_module = _postprocess_import
+except (ImportError, ModuleNotFoundError):  # pragma: no cover - standalone usage
+    try:
+        import postprocess as _postprocess_import
+        _postprocess_module = _postprocess_import
+    except (ImportError, ModuleNotFoundError):  # pragma: no cover - optional dependency
+        _postprocess_module = None
 
 
 class LLMClientPostprocessMixin:
@@ -111,20 +123,40 @@ YAML formatado:"""
         """Pipeline completo de pós-processamento."""
         result = self.normalize_yaml(yaml_content)
 
-        try:
-            postprocess_mod = importlib.import_module(".postprocess", package=__package__)
-        except Exception:
-            try:
-                postprocess_mod = importlib.import_module("postprocess")
-            except Exception:
-                postprocess_mod = None
+        postprocess_mod = _postprocess_module
 
-        if postprocess_mod is not None:
+        if postprocess_mod is not None and self._should_apply_domain_postprocess():
             result = postprocess_mod.postprocess_yaml(result)
         else:
-            logger.warning("postprocess module not found, skipping deterministic corrections")
+            logger.debug("Skipping deterministic postprocess for current profile/runtime.")
 
         if use_llm_format and self.ollama:
             result = self.format_yaml(result)
 
         return result
+
+    @staticmethod
+    def _should_apply_domain_postprocess() -> bool:
+        """Keep deterministic postprocess only for default CIMO profile."""
+        try:
+            if __package__:
+                profile_mod = importlib.import_module(
+                    ".profile_engine.project_profiles",
+                    package=__package__,
+                )
+            else:  # pragma: no cover - standalone usage
+                profile_mod = importlib.import_module("profile_engine.project_profiles")
+        except Exception:
+            return True
+
+        try:
+            project_root = profile_mod.resolve_runtime_project_root()
+        except Exception:
+            project_root = None
+        if project_root is None:
+            return True
+
+        try:
+            return profile_mod.is_default_cimo_profile(Path(project_root))
+        except Exception:
+            return True
