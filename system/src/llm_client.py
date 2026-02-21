@@ -27,6 +27,29 @@ except ImportError:
 # Configurar logger
 logger = logging.getLogger(__name__)
 
+# ---------------------------------------------------------------------------
+# Specific exception types for LLM provider API calls
+# ---------------------------------------------------------------------------
+_LLM_API_ERRORS: tuple[type[Exception], ...] = (ConnectionError, TimeoutError, OSError)
+try:
+    import httpx
+
+    _LLM_API_ERRORS = (*_LLM_API_ERRORS, httpx.HTTPError, httpx.TimeoutException)
+except (ImportError, ModuleNotFoundError):
+    pass
+try:
+    from anthropic import APIError as _AnthropicAPIError, APIConnectionError as _AnthropicConnError
+
+    _LLM_API_ERRORS = (*_LLM_API_ERRORS, _AnthropicAPIError, _AnthropicConnError)
+except (ImportError, ModuleNotFoundError):
+    pass
+try:
+    from openai import OpenAIError as _OpenAIError
+
+    _LLM_API_ERRORS = (*_LLM_API_ERRORS, _OpenAIError)
+except (ImportError, ModuleNotFoundError):
+    pass
+
 
 class LLMClient(LLMClientPostprocessMixin, LLMClientQuotesMixin):
     """Cliente unificado para chamadas de LLM com visão.
@@ -70,9 +93,14 @@ class LLMClient(LLMClientPostprocessMixin, LLMClientQuotesMixin):
             self.llm_config.OPENAI_API_KEY
             and not self.llm_config.OPENAI_API_KEY.startswith("sk-sua")
         ):
-            self.openai = OpenAI(
-                api_key=self.llm_config.OPENAI_API_KEY, timeout=timeout
-            )
+            kwargs = {
+                "api_key": self.llm_config.OPENAI_API_KEY,
+                "timeout": timeout,
+            }
+            openai_base_url = getattr(self.llm_config, "OPENAI_BASE_URL", "").strip()
+            if openai_base_url:
+                kwargs["base_url"] = openai_base_url
+            self.openai = OpenAI(**kwargs)
 
         # Ollama (local) via OpenAI-compatible API
         if getattr(self.llm_config, "OLLAMA_ENABLED", False):
@@ -101,7 +129,7 @@ class LLMClient(LLMClientPostprocessMixin, LLMClientQuotesMixin):
                 success=True,
             )
             return result
-        except Exception as e:
+        except Exception as e:  # Intentional: catch-all for retry/fallback logic
             log_llm_call(
                 artigo_id=artigo_id or "-",
                 provider=provider,
@@ -158,6 +186,41 @@ class LLMClient(LLMClientPostprocessMixin, LLMClientQuotesMixin):
             return prompt
         # OpenAI/Ollama: usar system role (cache automático por prefixo)
         return prompt
+
+    def _create_openai_chat_completion(
+        self,
+        *,
+        model: str,
+        max_tokens: int,
+        messages: list[dict],
+        use_prompt_cache: bool,
+    ):
+        kwargs = {
+            "model": model,
+            "max_completion_tokens": max_tokens,
+            "messages": messages,
+        }
+        if use_prompt_cache:
+            kwargs["prompt_cache_key"] = self.llm_config.PROMPT_CACHE_KEY
+            kwargs["prompt_cache_retention"] = self.llm_config.PROMPT_CACHE_RETENTION
+
+        try:
+            return self.openai.chat.completions.create(**kwargs)
+        except TypeError as exc:
+            # Compatibilidade com SDKs que ainda não suportam prompt cache kwargs.
+            err_text = str(exc)
+            unsupported = (
+                "prompt_cache_key" in err_text
+                or "prompt_cache_retention" in err_text
+            )
+            if unsupported and use_prompt_cache:
+                logger.warning(
+                    "OpenAI SDK sem suporte a prompt cache kwargs; repetindo chamada sem cache."
+                )
+                kwargs.pop("prompt_cache_key", None)
+                kwargs.pop("prompt_cache_retention", None)
+                return self.openai.chat.completions.create(**kwargs)
+            raise
 
     def _check_provider(self, provider: Provider) -> None:
         """Verifica se o provider está disponível."""
@@ -383,7 +446,7 @@ Comece o YAML com --- e termine com ---
                 action="extract_hybrid",
                 artigo_id=artigo_id,
             )
-        except Exception as e:
+        except _LLM_API_ERRORS as e:
             logger.error(f"Anthropic API error: {e}")
             raise LLMError(str(e), provider="anthropic", retriable=True)
 
@@ -404,16 +467,11 @@ Comece o YAML com --- e termine com ---
             if system_prompt:
                 messages.append({"role": "system", "content": system_prompt})
             messages.append({"role": "user", "content": message_content})
-            response = self.openai.chat.completions.create(
+            response = self._create_openai_chat_completion(
                 model=self.llm_config.OPENAI_MODEL,
-                max_completion_tokens=max_tokens,
+                max_tokens=max_tokens,
                 messages=messages,
-                prompt_cache_key=self.llm_config.PROMPT_CACHE_KEY
-                if self.llm_config.PROMPT_CACHE_ENABLED
-                else None,
-                prompt_cache_retention=self.llm_config.PROMPT_CACHE_RETENTION
-                if self.llm_config.PROMPT_CACHE_ENABLED
-                else None,
+                use_prompt_cache=bool(self.llm_config.PROMPT_CACHE_ENABLED),
             )
             usage = getattr(response, "usage", None)
             if usage:
@@ -441,7 +499,7 @@ Comece o YAML com --- e termine com ---
                 action="extract_hybrid",
                 artigo_id=artigo_id,
             )
-        except Exception as e:
+        except _LLM_API_ERRORS as e:
             logger.error(f"OpenAI API error: {e}")
             raise LLMError(str(e), provider="openai", retriable=True)
 
@@ -481,7 +539,7 @@ Comece o YAML com --- e termine com ---
                 action="extract_hybrid",
                 artigo_id=artigo_id,
             )
-        except Exception as e:
+        except _LLM_API_ERRORS as e:
             logger.error(f"Ollama API error: {e}")
             raise LLMError(str(e), provider="ollama", retriable=True)
 
@@ -540,7 +598,7 @@ Comece o YAML com --- e termine com ---
                 action="extract_vision",
                 artigo_id=artigo_id,
             )
-        except Exception as e:
+        except _LLM_API_ERRORS as e:
             logger.error(f"Anthropic Vision API error: {e}")
             raise LLMError(str(e), provider="anthropic", retriable=True)
 
@@ -561,16 +619,11 @@ Comece o YAML com --- e termine com ---
             if system_prompt:
                 messages.append({"role": "system", "content": system_prompt})
             messages.append({"role": "user", "content": content})
-            response = self.openai.chat.completions.create(
+            response = self._create_openai_chat_completion(
                 model=self.llm_config.OPENAI_MODEL,
-                max_completion_tokens=max_tokens,
+                max_tokens=max_tokens,
                 messages=messages,
-                prompt_cache_key=self.llm_config.PROMPT_CACHE_KEY
-                if self.llm_config.PROMPT_CACHE_ENABLED
-                else None,
-                prompt_cache_retention=self.llm_config.PROMPT_CACHE_RETENTION
-                if self.llm_config.PROMPT_CACHE_ENABLED
-                else None,
+                use_prompt_cache=bool(self.llm_config.PROMPT_CACHE_ENABLED),
             )
             usage = getattr(response, "usage", None)
             if usage:
@@ -598,7 +651,7 @@ Comece o YAML com --- e termine com ---
                 action="extract_vision",
                 artigo_id=artigo_id,
             )
-        except Exception as e:
+        except _LLM_API_ERRORS as e:
             logger.error(f"OpenAI Vision API error: {e}")
             raise LLMError(str(e), provider="openai", retriable=True)
 
@@ -634,7 +687,7 @@ Comece o YAML com --- e termine com ---
                 action="extract_vision",
                 artigo_id=artigo_id,
             )
-        except Exception as e:
+        except _LLM_API_ERRORS as e:
             logger.error(f"Ollama Vision API error: {e}")
             raise LLMError(str(e), provider="ollama", retriable=True)
 
@@ -642,40 +695,16 @@ Comece o YAML com --- e termine com ---
         self,
         yaml_content: str,
         errors: list[str],
-        provider: Provider = "ollama",  # Prioriza cadeia cloud/local para economia
+        provider: Provider = "ollama",
         max_tokens: int = 8000,
     ) -> str:
         """
         Repara YAML com erros de validação.
 
-        Args:
-            yaml_content: YAML com erros
-            errors: Lista de erros encontrados
-            provider: LLM para usar (default: ollama, com fallback em cadeia)
-            max_tokens: Limite de tokens
-
-        Returns:
-            YAML corrigido
+        O caller (processors.py) resolve o provider via _resolve_provider_for_task.
+        Para Ollama, tenta cadeia de modelos (cloud → cloud_fallback).
+        Todas as chamadas usam retry com backoff.
         """
-        # Roteamento automático para provider solicitado com fallback seguro.
-        if provider == "ollama" and not self.ollama:
-            if self.openai:
-                provider = "openai"
-                logger.warning("Ollama indisponivel, usando OpenAI para repair")
-            elif self.anthropic:
-                provider = "anthropic"
-                logger.warning("Ollama indisponivel, usando Anthropic para repair")
-        elif provider == "openai" and not self.openai:
-            if self.ollama:
-                provider = "ollama"
-            elif self.anthropic:
-                provider = "anthropic"
-        elif provider == "anthropic" and not self.anthropic:
-            if self.ollama:
-                provider = "ollama"
-            elif self.openai:
-                provider = "openai"
-
         self._check_provider(provider)
 
         repair_prompt = f"""Corrija APENAS os erros listados abaixo. Retorne SOMENTE YAML valido.
@@ -701,72 +730,105 @@ REGRAS:
 
 YAML corrigido:"""
 
-        def _call_openai_client(client: OpenAI, model: str) -> str:
-            response = client.chat.completions.create(
-                model=model,
+        repair_system = "Você é um assistente especializado em corrigir YAML. Retorne APENAS YAML válido, sem explicações."
+
+        if provider == "ollama":
+            return self._repair_ollama(repair_prompt, repair_system, max_tokens)
+        if provider == "openai":
+            return self._repair_openai(repair_prompt, repair_system, max_tokens)
+        return self._repair_anthropic(repair_prompt, repair_system, max_tokens)
+
+    def _repair_ollama(
+        self, repair_prompt: str, system_prompt: str, max_tokens: int
+    ) -> str:
+        """Repair via Ollama com cadeia de fallback: Ollama models → OpenAI → Anthropic."""
+        last_error: Exception | None = None
+
+        # Step 1: Tentar cada modelo Ollama
+        if self.ollama:
+            for model in self._iter_ollama_repair_models():
+                def _do_call(m: str = model) -> str:
+                    response = self.ollama.chat.completions.create(
+                        model=m,
+                        max_completion_tokens=max_tokens,
+                        temperature=0.1,
+                        messages=[
+                            {"role": "system", "content": system_prompt},
+                            {"role": "user", "content": repair_prompt},
+                        ],
+                    )
+                    return response.choices[0].message.content or ""
+
+                try:
+                    return self._call_with_retry(
+                        _do_call, provider="ollama", action="repair_yaml"
+                    )
+                except Exception as e:  # Intentional: catch-all for retry/fallback logic
+                    last_error = e
+                    logger.warning("Repair com modelo '%s' falhou: %s", model, e)
+
+        # Step 2: Fallback para OpenAI
+        if self.openai:
+            try:
+                return self._repair_openai(repair_prompt, system_prompt, max_tokens)
+            except Exception as e:  # Intentional: catch-all for retry/fallback logic
+                last_error = e
+
+        # Step 3: Fallback para Anthropic
+        if self.anthropic:
+            try:
+                return self._repair_anthropic(repair_prompt, system_prompt, max_tokens)
+            except Exception as e:  # Intentional: catch-all for retry/fallback logic
+                last_error = e
+
+        if last_error is not None:
+            raise LLMError(str(last_error), provider="ollama", retriable=True)
+        raise LLMError(
+            "Nenhum provider disponível para repair", provider="ollama", retriable=False
+        )
+
+    def _repair_openai(
+        self, repair_prompt: str, system_prompt: str, max_tokens: int
+    ) -> str:
+        """Repair via OpenAI com retry."""
+        def _do_call() -> str:
+            response = self.openai.chat.completions.create(
+                model=self.llm_config.OPENAI_MODEL,
                 max_completion_tokens=max_tokens,
                 temperature=0.1,
                 messages=[
-                    {
-                        "role": "system",
-                        "content": "Você é um assistente especializado em corrigir YAML. Retorne APENAS YAML válido, sem explicações.",
-                    },
+                    {"role": "system", "content": system_prompt},
                     {"role": "user", "content": repair_prompt},
                 ],
             )
             return response.choices[0].message.content or ""
 
-        # Estratégia: preferir Ollama cloud para repairs.
-        # Se falhar, tentar cloud fallback; depois OpenAI; por fim Anthropic.
-        if provider == "ollama":
-            last_error: Exception | None = None
-            if self.ollama:
-                for model in self._iter_ollama_repair_models():
-                    try:
-                        return _call_openai_client(self.ollama, model)
-                    except Exception as e:
-                        last_error = e
-
-            # Fallback 2: OpenAI
-            if self.openai:
-                try:
-                    return _call_openai_client(
-                        self.openai, self.llm_config.OPENAI_MODEL
-                    )
-                except Exception as e:
-                    last_error = e
-
-            # Fallback 3: Anthropic
-            if self.anthropic:
-                try:
-                    response = self.anthropic.messages.create(
-                        model=self.llm_config.ANTHROPIC_MODEL,
-                        max_tokens=max_tokens,
-                        messages=[{"role": "user", "content": repair_prompt}],
-                    )
-                    return response.content[0].text or ""
-                except Exception as e:
-                    last_error = e
-
-            if last_error is not None:
-                raise last_error
-
-            raise LLMError(
-                "Nenhum provider disponível para repair_yaml",
-                provider="ollama",
-                retriable=False,
+        try:
+            return self._call_with_retry(
+                _do_call, provider="openai", action="repair_yaml"
             )
+        except _LLM_API_ERRORS as e:
+            raise LLMError(str(e), provider="openai", retriable=True)
 
-        if provider == "openai":
-            return _call_openai_client(self.openai, self.llm_config.OPENAI_MODEL)
+    def _repair_anthropic(
+        self, repair_prompt: str, system_prompt: str, max_tokens: int
+    ) -> str:
+        """Repair via Anthropic com retry."""
+        def _do_call() -> str:
+            response = self.anthropic.messages.create(
+                model=self.llm_config.ANTHROPIC_MODEL,
+                max_tokens=max_tokens,
+                system=system_prompt,
+                messages=[{"role": "user", "content": repair_prompt}],
+            )
+            return response.content[0].text or ""
 
-        # provider == anthropic
-        response = self.anthropic.messages.create(
-            model=self.llm_config.ANTHROPIC_MODEL,
-            max_tokens=max_tokens,
-            messages=[{"role": "user", "content": repair_prompt}],
-        )
-        return response.content[0].text or ""
+        try:
+            return self._call_with_retry(
+                _do_call, provider="anthropic", action="repair_yaml"
+            )
+        except _LLM_API_ERRORS as e:
+            raise LLMError(str(e), provider="anthropic", retriable=True)
 
 
 if __name__ == "__main__":
