@@ -76,7 +76,7 @@ def _get_references_page_from_toc(doc) -> int | None:
                     return page_num  # Já é 1-indexed no PyMuPDF TOC
 
         return None
-    except Exception:
+    except (OSError, ValueError, RuntimeError):
         return None
 
 
@@ -150,7 +150,7 @@ def _has_relevant_images(page) -> bool:
                 if area_ratio >= MIN_IMAGE_AREA_RATIO:
                     return True  # Imagem relevante encontrada
 
-        except Exception as e:
+        except (OSError, ValueError, RuntimeError) as e:
             logger.debug(f"Could not get image rect: {e}")
             continue
 

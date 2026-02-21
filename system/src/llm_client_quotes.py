@@ -125,7 +125,7 @@ class LLMClientQuotesMixin:
         try:
             docs = list(_yaml.safe_load_all(yaml_only))
             data = docs[0] if docs else None
-        except Exception:
+        except (_yaml.YAMLError, ValueError, KeyError, TypeError):
             return yaml_only, validate_yaml(yaml_only)
 
         if not isinstance(data, dict):
@@ -149,7 +149,8 @@ class LLMClientQuotesMixin:
                             provider=provider,
                             max_tokens=max_tokens,
                         )
-                    except Exception:
+                    except (ConnectionError, TimeoutError, OSError, ValueError) as e:
+                        logger.debug("Requote attempt failed: %s", e)
                         if provider != fallback_provider:
                             quotes_section = self.reextract_quotes(
                                 images=images,
@@ -250,7 +251,8 @@ class LLMClientQuotesMixin:
                     provider=provider,
                     max_tokens=max_tokens,
                 )
-            except Exception:
+            except (ConnectionError, TimeoutError, OSError, ValueError) as e:
+                logger.debug("Requote attempt failed: %s", e)
                 if provider != fallback_provider:
                     quotes_section = self.reextract_quotes(
                         images=images,

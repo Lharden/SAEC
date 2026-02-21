@@ -30,6 +30,18 @@ logger = logging.getLogger(__name__)
 # Data Classes
 # ============================================================
 
+
+def _normalize_text_payload(payload: object) -> str:
+    """Normaliza payload textual dinâmico para string."""
+    if isinstance(payload, str):
+        return payload
+    if isinstance(payload, list):
+        return "\n".join(str(item) for item in payload)
+    if isinstance(payload, dict):
+        return "\n".join(f"{key}: {value}" for key, value in payload.items())
+    return str(payload)
+
+
 @dataclass
 class MarkerPage:
     """Informações de uma página processada pelo marker."""
@@ -103,7 +115,7 @@ def is_gpu_available() -> bool:
 
 def get_marker_info() -> dict:
     """Retorna informações sobre a instalação do marker."""
-    info = {
+    info: dict[str, object] = {
         "available": is_marker_available(),
         "gpu_available": is_gpu_available(),
         "version": None,
@@ -112,8 +124,9 @@ def get_marker_info() -> dict:
     if info["available"]:
         try:
             import marker
-            info["version"] = getattr(marker, "__version__", "unknown")
-        except Exception:
+            version = getattr(marker, "__version__", None)
+            info["version"] = str(version) if version is not None else "unknown"
+        except (AttributeError, ImportError, TypeError):
             pass
 
     return info
@@ -230,7 +243,7 @@ def convert_pdf_to_markdown(
             output_dir=output_dir,
         )
 
-    except Exception as e:
+    except Exception as e:  # Broad: PDF libraries raise diverse error types
         logger.error(f"Erro na conversão marker-pdf: {e}")
         raise IngestError(f"Marker conversion failed: {e}")
 
@@ -300,7 +313,7 @@ def analyze_pdf_quality(pdf_path: Path) -> dict:
 
         for i in range(sample_pages):
             page = doc[i]
-            text_chars += len(page.get_text())
+            text_chars += len(_normalize_text_payload(page.get_text()))
             image_count += len(page.get_images())
 
         doc.close()
@@ -316,7 +329,7 @@ def analyze_pdf_quality(pdf_path: Path) -> dict:
             "recommended_strategy": "ocr" if is_likely_scanned else "text",
         }
 
-    except Exception as e:
+    except Exception as e:  # Broad: PDF libraries raise diverse error types
         logger.warning(f"Erro ao analisar PDF: {e}")
         return {
             "total_pages": 0,
@@ -345,10 +358,11 @@ def compare_with_pymupdf(pdf_path: Path) -> dict:
 
     # Extrair com PyMuPDF
     doc = fitz.open(pdf_path)
-    pymupdf_text = ""
+    pymupdf_text_parts: list[str] = []
     for page in doc:
-        pymupdf_text += page.get_text()
+        pymupdf_text_parts.append(_normalize_text_payload(page.get_text()))
     doc.close()
+    pymupdf_text = "\n".join(pymupdf_text_parts)
     pymupdf_words = len(pymupdf_text.split())
 
     # Extrair com marker
@@ -357,7 +371,7 @@ def compare_with_pymupdf(pdf_path: Path) -> dict:
             result = convert_pdf_to_markdown(pdf_path, Path(tmpdir))
             marker_words = result.total_words
             marker_time = result.processing_time_ms
-        except Exception as e:
+        except Exception as e:  # Broad: PDF libraries raise diverse error types
             marker_words = 0
             marker_time = 0
 

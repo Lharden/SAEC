@@ -153,13 +153,13 @@ def _resolve_runtime_profile_fields() -> list[str]:
         return []
     try:
         project_root = _profile_engine.resolve_runtime_project_root()
-    except Exception:
+    except (ImportError, ModuleNotFoundError, AttributeError, OSError):
         return []
     if project_root is None:
         return []
     try:
         spec, _ref = _profile_engine.load_active_profile_spec(project_root)
-    except Exception:
+    except (ImportError, ModuleNotFoundError, AttributeError, OSError):
         return []
     return [field.field_id for field in spec.fields]
 
@@ -238,7 +238,7 @@ def consolidate_yamls(
             flat["_valid"] = validation.is_valid
             rows.append(flat)
 
-        except Exception as e:
+        except (yaml.YAMLError, ValueError, KeyError, TypeError) as e:
             errors.append({
                 "ArtigoID": artigo_id,
                 "Erro": str(e)[:200]
@@ -279,7 +279,7 @@ def consolidate_yamls(
                         "Trecho": q.get("Trecho", ""),
                         "Página": q.get("Página", "")
                     })
-            except Exception as e:
+            except (yaml.YAMLError, ValueError, KeyError, TypeError) as e:
                 logger.warning(f"Failed to load quotes from {yaml_path.name}: {e}")
 
         if quotes_rows:

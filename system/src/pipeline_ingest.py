@@ -9,9 +9,11 @@ from typing import Optional
 
 try:
     from .config import load_mapping
+    from .exceptions import IngestError
     from .pdf_vision import get_pdf_info, check_pdf_quality, analyze_pdf_pages, extract_hybrid
-except Exception:  # pragma: no cover - standalone usage
+except (ImportError, ModuleNotFoundError):  # pragma: no cover - standalone usage
     from config import load_mapping
+    from exceptions import IngestError
     from pdf_vision import get_pdf_info, check_pdf_quality, analyze_pdf_pages, extract_hybrid
 
 
@@ -39,25 +41,25 @@ def run_ingest(
     logger: logging.Logger | None = None,
 ) -> dict:
     log = logger or logging.getLogger("saec")
-    mapping = load_mapping(paths.MAPPING_CSV)
+    mapping: list[dict[str, str]] = load_mapping(paths.MAPPING_CSV)
 
-    ingested = []
-    pending = []
+    candidates = []
     for article in mapping:
         aid = article["ArtigoID"]
         hybrid_file = paths.WORK / aid / "hybrid.json"
-        if hybrid_file.exists():
-            ingested.append(article)
-        else:
-            pending.append(article)
+        if force or not hybrid_file.exists():
+            candidates.append(article)
 
     if artigo_id:
-        article = next((a for a in mapping if a["ArtigoID"] == artigo_id), None)
-        if not article:
+        article: dict[str, str] | None = next(
+            (a for a in mapping if a["ArtigoID"] == artigo_id),
+            None,
+        )
+        if article is None:
             raise IngestError(f"Artigo {artigo_id} não encontrado no mapping")
         articles_to_process = [article]
     else:
-        articles_to_process = pending
+        articles_to_process = candidates
 
     results = {"success": 0, "cached": 0, "error": 0, "total": len(articles_to_process)}
 
@@ -112,7 +114,7 @@ def run_ingest(
             )
             results["success"] += 1
 
-        except Exception as e:
+        except (OSError, ValueError, RuntimeError) as e:
             results["error"] += 1
             log.warning(
                 "Falha na ingestao",

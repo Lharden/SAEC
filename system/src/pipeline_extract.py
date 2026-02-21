@@ -10,7 +10,7 @@ from typing import Optional
 try:
     from .config import load_mapping
     from .processors import ArticleProcessor
-except Exception:  # pragma: no cover - standalone usage
+except (ImportError, ModuleNotFoundError):  # pragma: no cover - standalone usage
     from config import load_mapping
     from processors import ArticleProcessor
 
@@ -27,25 +27,33 @@ def run_extract(
     guia_path: Path,
     output_dir: Path,
     artigo_id: Optional[str] = None,
+    force: bool = False,
     dry_run: bool = False,
     logger: logging.Logger | None = None,
 ) -> dict:
     log = logger or logging.getLogger("saec")
-    mapping = load_mapping(paths.MAPPING_CSV)
+    mapping: list[dict[str, str]] = load_mapping(paths.MAPPING_CSV)
 
     ready = []
     for article in mapping:
         aid = article["ArtigoID"]
         hybrid_file = paths.WORK / aid / "hybrid.json"
         yaml_file = paths.YAMLS / f"{aid}.yaml"
-        if hybrid_file.exists() and not yaml_file.exists():
+        should_process = hybrid_file.exists() and (force or not yaml_file.exists())
+        if should_process:
             ready.append(article)
 
     if artigo_id:
-        article = next((a for a in ready if a["ArtigoID"] == artigo_id), None)
-        if not article:
-            raise ValueError(f"Artigo {artigo_id} não encontrado ou já processado")
-        articles_to_process = [article]
+        article: dict[str, str] | None = next(
+            (a for a in ready if a["ArtigoID"] == artigo_id),
+            None,
+        )
+        if article is None:
+            raise ValueError(
+                f"Artigo {artigo_id} não encontrado, sem ingestão, ou já processado sem force."
+            )
+        selected_article: dict[str, str] = article
+        articles_to_process: list[dict[str, str]] = [selected_article]
     else:
         articles_to_process = ready
 
@@ -77,7 +85,7 @@ def run_extract(
                 f.write(yaml_content)
             results["success"] += 1
 
-        except Exception:
+        except Exception:  # Broad: catches SAECError, API errors, I/O errors from full pipeline
             results["error"] += 1
             log.warning(
                 "Falha na extracao",

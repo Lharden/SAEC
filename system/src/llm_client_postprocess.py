@@ -78,7 +78,7 @@ YAML formatado:"""
             result = response.choices[0].message.content
             logger.debug("YAML formatado via Ollama")
             return result
-        except Exception as e:
+        except (ConnectionError, TimeoutError, OSError, ValueError) as e:
             logger.warning("Falha ao formatar YAML via Ollama: %s", e)
             return raw_yaml
 
@@ -146,17 +146,17 @@ YAML formatado:"""
                 )
             else:  # pragma: no cover - standalone usage
                 profile_mod = importlib.import_module("profile_engine.project_profiles")
-        except Exception:
+        except (ImportError, ModuleNotFoundError, TypeError):
             return True
 
         try:
             project_root = profile_mod.resolve_runtime_project_root()
-        except Exception:
+        except (ImportError, ModuleNotFoundError, AttributeError, OSError):
             project_root = None
         if project_root is None:
             return True
 
         try:
             return profile_mod.is_default_cimo_profile(Path(project_root))
-        except Exception:
+        except (ImportError, ModuleNotFoundError, AttributeError, OSError):
             return True

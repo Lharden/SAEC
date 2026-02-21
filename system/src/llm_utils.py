@@ -5,6 +5,7 @@ from __future__ import annotations
 import re
 from datetime import datetime
 import logging
+import yaml
 
 def _load_paths():
     try:
@@ -42,7 +43,7 @@ def _apply_deterministic_postprocess(yaml_content: str) -> str:
         buf = io.StringIO()
         with redirect_stdout(buf):
             return fn(yaml_content)
-    except Exception:
+    except (yaml.YAMLError, ValueError, KeyError, TypeError):
         return yaml_content
 
 

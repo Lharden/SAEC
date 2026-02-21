@@ -24,7 +24,7 @@ import importlib
 def _load_qa_ok_ids(qa_report_path: Path) -> set[str]:
     try:
         mod = importlib.import_module(".qa_utils", package=__package__)
-    except Exception:  # pragma: no cover - standalone usage
+    except (ImportError, ModuleNotFoundError, TypeError):  # pragma: no cover - standalone usage
         mod = importlib.import_module("qa_utils")
     return mod.load_qa_ok_ids(qa_report_path)
 
@@ -55,7 +55,7 @@ def _load_valid_yaml_ids(yamls_dir: Path) -> set[str]:
 
     try:
         validators_mod = importlib.import_module(".validators", package=__package__)
-    except Exception:  # pragma: no cover - standalone usage
+    except (ImportError, ModuleNotFoundError, TypeError):  # pragma: no cover - standalone usage
         validators_mod = importlib.import_module("validators")
 
     validate_yaml_file = validators_mod.validate_yaml_file
@@ -66,7 +66,7 @@ def _load_valid_yaml_ids(yamls_dir: Path) -> set[str]:
             result = validate_yaml_file(path)
             if result.is_valid:
                 valid_ids.add(path.stem)
-        except Exception:
+        except (OSError, ValueError, KeyError, TypeError):
             # Se não for possível validar, não promover o artigo.
             continue
     return valid_ids

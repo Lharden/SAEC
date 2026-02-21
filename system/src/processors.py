@@ -5,22 +5,32 @@ from __future__ import annotations
 import json
 import logging
 from pathlib import Path
-from typing import Any, Tuple
+from typing import Any, Literal, Tuple, cast
 
 try:
     from .exceptions import ExtractError, ValidationError
     from .llm_client import LLMClient
+    from .llm_client_types import Provider
     from .llm_utils import extract_yaml_from_response
     from .validators import validate_yaml, ValidationResult
     from .config import local_config
     from . import pdf_vision
-except Exception:  # pragma: no cover - standalone usage
+except (ImportError, ModuleNotFoundError):  # pragma: no cover - standalone usage
     from exceptions import ExtractError, ValidationError
     from llm_client import LLMClient
+    from llm_client_types import Provider
     from llm_utils import extract_yaml_from_response
     from validators import validate_yaml, ValidationResult
     from config import local_config
     import pdf_vision
+
+try:
+    if __package__:
+        from .adapters import rag_store as _rag_store
+    else:  # pragma: no cover - standalone usage
+        from adapters import rag_store as _rag_store
+except (ImportError, ModuleNotFoundError):  # pragma: no cover - optional dependency
+    _rag_store: Any = None
 
 
 class ArticleProcessor:
@@ -179,17 +189,11 @@ class ArticleProcessor:
             return None
 
         try:
-            import importlib
-
-            try:
-                rag_store = importlib.import_module(
-                    ".adapters.rag_store", package=__package__
-                )
-            except Exception:  # pragma: no cover - standalone usage
-                rag_store = importlib.import_module("adapters.rag_store")
+            if _rag_store is None:
+                raise ModuleNotFoundError("adapters.rag_store")
 
             persist_dir = work_dir.parent / "rag_index"
-            store = rag_store.get_default_store(persist_dir=persist_dir)
+            store = _rag_store.get_default_store(persist_dir=persist_dir)
 
             indexed = set(store.list_articles())
             if artigo_id not in indexed:
@@ -222,7 +226,7 @@ class ArticleProcessor:
                 return None
 
             return rag_text
-        except Exception as e:
+        except Exception as e:  # Broad: RAG subsystem (embeddings, vector DB) raises diverse errors
             self.logger.warning(
                 f"RAG falhou, usando conteudo completo: {e}",
                 extra={"artigo_id": artigo_id, "provider": "-", "action": "rag"},
@@ -268,19 +272,90 @@ class ArticleProcessor:
             return content_anthropic_llm, content_openai_full
         return content_openai_llm, content_openai_full
 
-    def _choose_fallback(self, primary: str) -> str:
+    def _choose_fallback(self, primary: Provider) -> Provider:
         if primary == "anthropic":
             return "openai" if self.client.openai else "ollama"
         if primary == "openai":
             return "anthropic" if self.client.anthropic else "ollama"
         return "openai" if self.client.openai else "anthropic"
 
+    @staticmethod
+    def _normalize_provider_choice(value: str | None) -> str:
+        normalized = (value or "").strip().lower()
+        return normalized or "auto"
+
+    def _configured_provider(self, key: str) -> str:
+        raw = getattr(self.client.llm_config, key, "auto")
+        return self._normalize_provider_choice(str(raw))
+
+    def _available_providers(self) -> dict[str, bool]:
+        return {
+            "anthropic": bool(getattr(self.client, "anthropic", None)),
+            "openai": bool(getattr(self.client, "openai", None)),
+            "ollama": bool(getattr(self.client, "ollama", None)),
+        }
+
+    def _resolve_provider_for_task(
+        self,
+        *,
+        requested: str,
+        default: str,
+        action: str,
+    ) -> Provider:
+        available = self._available_providers()
+        candidate = self._normalize_provider_choice(requested)
+        resolved_default = self._normalize_provider_choice(default)
+        if resolved_default == "auto":
+            resolved_default = self._normalize_provider_choice(
+                getattr(self.client.llm_config, "PRIMARY_PROVIDER", "ollama")
+            )
+
+        if candidate == "auto":
+            candidate = resolved_default
+        if candidate not in available:
+            candidate = resolved_default
+
+        if available.get(candidate, False):
+            return cast(Provider, candidate)
+
+        fallbacks = {
+            "ollama": ["openai", "anthropic"],
+            "openai": ["anthropic", "ollama"],
+            "anthropic": ["openai", "ollama"],
+        }
+        for provider in fallbacks.get(candidate, ["ollama", "openai", "anthropic"]):
+            if available.get(provider, False):
+                self.logger.warning(
+                    "Provider '%s' indisponível para %s; usando '%s'.",
+                    candidate,
+                    action,
+                    provider,
+                )
+                return cast(Provider, provider)
+
+        raise ExtractError(
+            (
+                f"Nenhum provider disponível para {action}. "
+                "Configure Ollama ou API keys válidas."
+            )
+        )
+
+    def _provider_from_cascade_source(self, source: Any, default: Provider) -> Provider:
+        source_name = str(getattr(source, "name", "")).upper()
+        if source_name in {"LOCAL_OLLAMA", "LOCAL_OLLAMA_VISION"}:
+            return "ollama"
+        if source_name == "API_OPENAI":
+            return "openai"
+        if source_name == "API_ANTHROPIC":
+            return "anthropic"
+        return default
+
     def extract_with_llm(
         self,
         content: list[dict],
         *,
         artigo_id: str,
-        provider: str,
+        provider: Provider,
         max_tokens: int = 8000,
     ) -> str:
         prompt = self._load_prompt()
@@ -297,7 +372,7 @@ class ArticleProcessor:
         self,
         yaml_content: str,
         *,
-        provider: str,
+        provider: Provider,
         artigo_id: str,
     ) -> Tuple[str, ValidationResult]:
         current = extract_yaml_from_response(yaml_content)
@@ -317,7 +392,7 @@ class ArticleProcessor:
                     errors=last_result.errors,
                     provider=provider,
                 )
-            except Exception as e:
+            except (ConnectionError, TimeoutError, OSError, ValueError) as e:
                 self.logger.warning(
                     "Repair falhou",
                     extra={
@@ -350,7 +425,7 @@ class ArticleProcessor:
         yaml_content: str,
         content_openai: list[dict] | None,
         artigo_id: str,
-        provider: str,
+        provider: Provider,
         validation_result: ValidationResult | None = None,
     ) -> Tuple[str, ValidationResult]:
         # Se já está válido, evitar reextração/quotes
@@ -378,8 +453,13 @@ class ArticleProcessor:
         work_dir: Path,
         provider: str | None = None,
     ) -> Tuple[str, ValidationResult]:
-        if provider is None:
-            provider = self.client.llm_config.PRIMARY_PROVIDER
+        extract_route = self._configured_provider("PROVIDER_EXTRACT")
+        provider = self._resolve_provider_for_task(
+            requested=provider or extract_route,
+            default=self.client.llm_config.PRIMARY_PROVIDER,
+            action="extração",
+        )
+        effective_provider = provider
 
         content, content_openai = self.prepare_content(
             hybrid_meta=hybrid_meta,
@@ -401,32 +481,51 @@ class ArticleProcessor:
                         content, artigo_id=artigo_id, provider=provider
                     )
                 else:
-                    result = extract_cascade(
+                    cascade_result = extract_cascade(
                         artigo_id=artigo_id,
                         text=full_text,
                         prompt_template=prompt_template,
-                        strategy=local_config.EXTRACTION_STRATEGY,
+                        strategy=cast(
+                            Literal["local_first", "api_first", "local_only", "api_only"],
+                            str(getattr(local_config, "EXTRACTION_STRATEGY", "local_first")),
+                        ),
                         images=None,
                     )
-                    raw = result.yaml_content
+                    raw = cascade_result.yaml_content
+                    effective_provider = self._provider_from_cascade_source(
+                        cascade_result.source, provider
+                    )
             else:
                 raw = self.extract_with_llm(
                     content, artigo_id=artigo_id, provider=provider
                 )
-        except Exception as e:
+        except Exception as e:  # Broad: cascade/LLM extraction raises diverse API and pipeline errors
             raise ExtractError(str(e)) from e
+
+        repair_route = self._configured_provider("PROVIDER_REPAIR")
+        repair_provider = self._resolve_provider_for_task(
+            requested=repair_route,
+            default=effective_provider,
+            action="repair",
+        )
 
         repaired, result = self.validate_and_repair(
             yaml_content=raw,
-            provider=provider,
+            provider=repair_provider,
             artigo_id=artigo_id,
         )
 
+        quotes_route = self._configured_provider("PROVIDER_QUOTES")
+        quotes_provider = self._resolve_provider_for_task(
+            requested=quotes_route,
+            default=repair_provider,
+            action="quotes",
+        )
         final_yaml, final_result = self.verify_quotes(
             yaml_content=repaired,
             content_openai=content_openai,
             artigo_id=artigo_id,
-            provider=provider,
+            provider=quotes_provider,
             validation_result=result,
         )
 

@@ -423,14 +423,14 @@ def _should_use_dynamic_profile_validator() -> tuple[bool, Any, Any]:
 
     try:
         project_root = _profile_engine.resolve_runtime_project_root()
-    except Exception:
+    except (ImportError, ModuleNotFoundError, AttributeError, OSError):
         return False, None, None
     if project_root is None:
         return False, None, None
 
     try:
         ref = _profile_engine.get_active_profile_ref(project_root)
-    except Exception:
+    except (ImportError, ModuleNotFoundError, AttributeError, OSError):
         return False, None, None
     if ref is None:
         return False, None, None
@@ -457,7 +457,7 @@ def _validate_dict_with_dynamic_profile(data: dict, project_root: Path) -> Valid
             data,
             spec,
         )
-    except Exception as exc:
+    except (ImportError, ModuleNotFoundError, AttributeError, OSError, ValueError) as exc:
         return ValidationResult(
             is_valid=False,
             errors=[f"[PROFILE] Dynamic profile validation failed: {exc}"],
