@@ -239,6 +239,11 @@ class ArticleProcessor:
         work_dir: Path,
         provider: str,
     ) -> Tuple[list[dict], list[dict] | None]:
+        """Build LLM input from hybrid content, selecting text vs vision based on page quality scores.
+
+        When RAG is available and sufficient, replace text blocks with RAG context
+        and keep only image blocks. Returns (provider-specific content, openai fallback).
+        """
         hybrid_result = self._build_hybrid_result(hybrid_meta, work_dir)
         content_openai_full = pdf_vision.get_hybrid_content_for_openai(hybrid_result)
         content_anthropic_full = pdf_vision.get_hybrid_content_for_anthropic(
@@ -374,6 +379,7 @@ class ArticleProcessor:
         provider: Provider,
         artigo_id: str,
     ) -> Tuple[str, ValidationResult]:
+        """Validate YAML against schema and profile rules; attempt LLM repair up to max_retries on failure."""
         current = extract_yaml_from_response(yaml_content)
         current = self.client.postprocess_extraction(current, use_llm_format=False)
         result = validate_yaml(current)
@@ -427,6 +433,7 @@ class ArticleProcessor:
         provider: Provider,
         validation_result: ValidationResult | None = None,
     ) -> Tuple[str, ValidationResult]:
+        """Cross-check extracted quotes against source text, flagging or correcting mismatches."""
         # Se já está válido, evitar reextração/quotes
         if validation_result and validation_result.is_valid:
             return yaml_content, validation_result

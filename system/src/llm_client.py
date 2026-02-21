@@ -113,6 +113,7 @@ class LLMClient(LLMClientPostprocessMixin, LLMClientQuotesMixin):
     def _call_with_retry(
         self, fn, provider: str, action: str, artigo_id: str | None = None
     ) -> str:
+        """Execute LLM call with exponential backoff, jitter, and configurable max retries."""
         wrapped = retry_with_backoff(
             max_retries=self.llm_config.RETRY_MAX_RETRIES,
             base_delay=self.llm_config.RETRY_BASE_DELAY,
