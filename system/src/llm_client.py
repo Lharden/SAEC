@@ -215,7 +215,8 @@ class LLMClient(LLMClientPostprocessMixin, LLMClientQuotesMixin):
             )
             if unsupported and use_prompt_cache:
                 logger.warning(
-                    "OpenAI SDK sem suporte a prompt cache kwargs; repetindo chamada sem cache."
+                    "OpenAI SDK sem suporte a prompt cache kwargs; repetindo chamada sem cache",
+                    extra={"provider": "openai", "action": "extract"},
                 )
                 kwargs.pop("prompt_cache_key", None)
                 kwargs.pop("prompt_cache_retention", None)
@@ -447,7 +448,10 @@ Comece o YAML com --- e termine com ---
                 artigo_id=artigo_id,
             )
         except _LLM_API_ERRORS as e:
-            logger.error(f"Anthropic API error: {e}")
+            logger.error(
+                "Anthropic hybrid API error: %s", e,
+                extra={"provider": "anthropic", "action": "extract_hybrid", "artigo_id": artigo_id or "-"},
+            )
             raise LLMError(str(e), provider="anthropic", retriable=True)
 
     def _call_openai_hybrid(
@@ -500,7 +504,10 @@ Comece o YAML com --- e termine com ---
                 artigo_id=artigo_id,
             )
         except _LLM_API_ERRORS as e:
-            logger.error(f"OpenAI API error: {e}")
+            logger.error(
+                "OpenAI hybrid API error: %s", e,
+                extra={"provider": "openai", "action": "extract_hybrid", "artigo_id": artigo_id or "-"},
+            )
             raise LLMError(str(e), provider="openai", retriable=True)
 
     def _call_ollama_hybrid(
@@ -540,7 +547,10 @@ Comece o YAML com --- e termine com ---
                 artigo_id=artigo_id,
             )
         except _LLM_API_ERRORS as e:
-            logger.error(f"Ollama API error: {e}")
+            logger.error(
+                "Ollama hybrid API error: %s", e,
+                extra={"provider": "ollama", "action": "extract_hybrid", "artigo_id": artigo_id or "-"},
+            )
             raise LLMError(str(e), provider="ollama", retriable=True)
 
     def _call_anthropic_vision(
@@ -599,7 +609,10 @@ Comece o YAML com --- e termine com ---
                 artigo_id=artigo_id,
             )
         except _LLM_API_ERRORS as e:
-            logger.error(f"Anthropic Vision API error: {e}")
+            logger.error(
+                "Anthropic vision API error: %s", e,
+                extra={"provider": "anthropic", "action": "extract_vision", "artigo_id": artigo_id or "-"},
+            )
             raise LLMError(str(e), provider="anthropic", retriable=True)
 
     def _call_openai_vision(
@@ -652,7 +665,10 @@ Comece o YAML com --- e termine com ---
                 artigo_id=artigo_id,
             )
         except _LLM_API_ERRORS as e:
-            logger.error(f"OpenAI Vision API error: {e}")
+            logger.error(
+                "OpenAI vision API error: %s", e,
+                extra={"provider": "openai", "action": "extract_vision", "artigo_id": artigo_id or "-"},
+            )
             raise LLMError(str(e), provider="openai", retriable=True)
 
     def _call_ollama_vision(
@@ -688,7 +704,10 @@ Comece o YAML com --- e termine com ---
                 artigo_id=artigo_id,
             )
         except _LLM_API_ERRORS as e:
-            logger.error(f"Ollama Vision API error: {e}")
+            logger.error(
+                "Ollama vision API error: %s", e,
+                extra={"provider": "ollama", "action": "extract_vision", "artigo_id": artigo_id or "-"},
+            )
             raise LLMError(str(e), provider="ollama", retriable=True)
 
     def repair_yaml(
@@ -765,7 +784,10 @@ YAML corrigido:"""
                     )
                 except Exception as e:  # Intentional: catch-all for retry/fallback logic
                     last_error = e
-                    logger.warning("Repair com modelo '%s' falhou: %s", model, e)
+                    logger.warning(
+                        "Repair com modelo '%s' falhou: %s", model, e,
+                        extra={"provider": "ollama", "action": "repair", "model": model},
+                    )
 
         # Step 2: Fallback para OpenAI
         if self.openai:
