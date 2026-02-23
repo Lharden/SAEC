@@ -17,6 +17,15 @@ def test_chunk_text_generates_multiple_chunks() -> None:
     assert chunks[0][2] <= 120
 
 
+def test_chunk_text_rejects_invalid_params() -> None:
+    with pytest.raises(ValueError, match="chunk_size must be > 0"):
+        mod.chunk_text("abc", chunk_size=0, chunk_overlap=0)
+    with pytest.raises(ValueError, match="chunk_overlap must be >= 0"):
+        mod.chunk_text("abc", chunk_size=10, chunk_overlap=-1)
+    with pytest.raises(ValueError, match="chunk_overlap must be < chunk_size"):
+        mod.chunk_text("abc", chunk_size=10, chunk_overlap=10)
+
+
 def test_chunk_by_sections_splits_markdown_headers() -> None:
     text = "# Intro\nalpha\n\n# Methods\nbeta"
     chunks = mod.chunk_by_sections(text, max_chunk_size=100)
@@ -84,4 +93,3 @@ def test_get_default_store_is_singleton(monkeypatch, tmp_path: Path) -> None:
 
     assert first is second
     assert first.config.persist_dir == tmp_path / "idx-a"
-

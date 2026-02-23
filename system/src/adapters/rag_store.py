@@ -11,10 +11,8 @@ Funcionalidades:
 from __future__ import annotations
 
 import hashlib
-import json
 import logging
 import re
-import time
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Literal
@@ -93,6 +91,12 @@ def chunk_text(
     """
     if not text:
         return []
+    if chunk_size <= 0:
+        raise ValueError("chunk_size must be > 0")
+    if chunk_overlap < 0:
+        raise ValueError("chunk_overlap must be >= 0")
+    if chunk_overlap >= chunk_size:
+        raise ValueError("chunk_overlap must be < chunk_size")
 
     chunks = []
     start = 0
@@ -139,10 +143,9 @@ def chunk_by_sections(
     # Padrão para headers markdown
     header_pattern = re.compile(r'^(#{1,6})\s+(.+)$', re.MULTILINE)
 
-    sections = []
+    sections: list[tuple[str, str | None]] = []
     current_section = None
-    current_text = []
-    current_start = 0
+    current_text: list[str] = []
 
     lines = text.split('\n')
     pos = 0
@@ -171,7 +174,7 @@ def chunk_by_sections(
             sections.append((section_text, current_section))
 
     # Subdividir seções muito grandes
-    result = []
+    result: list[tuple[str, str | None]] = []
     for section_text, section_name in sections:
         if len(section_text) <= max_chunk_size:
             result.append((section_text, section_name))
@@ -303,7 +306,7 @@ class RAGStore:
         if use_sections:
             raw_chunks = chunk_by_sections(text, self.config.chunk_size)
         else:
-            raw_chunks = [(c, None) for c, _, _ in chunk_text(
+            raw_chunks = [(chunk_content, None) for chunk_content, _, _ in chunk_text(
                 text, self.config.chunk_size, self.config.chunk_overlap
             )]
 
@@ -316,16 +319,16 @@ class RAGStore:
         documents = []
         metadatas = []
 
-        for i, (chunk_text, section) in enumerate(raw_chunks):
+        for i, (chunk_content, section) in enumerate(raw_chunks):
             chunk_id = f"{artigo_id}_chunk_{i:04d}"
             ids.append(chunk_id)
-            documents.append(chunk_text)
+            documents.append(chunk_content)
 
             chunk_meta = {
                 "artigo_id": artigo_id,
                 "chunk_index": i,
                 "section": section or "",
-                "char_count": len(chunk_text),
+                "char_count": len(chunk_content),
             }
             if metadata:
                 chunk_meta.update(metadata)
