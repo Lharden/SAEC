@@ -1,0 +1,66 @@
+{
+  "artigo_id": "ART_019",
+  "arquivo": "Enhancing Supply Chain Efficiency through Predictive Analytics A Systematic Approach to Forecast Unit of Activity.pdf",
+  "analysis": [
+    {
+      "page_num": 1,
+      "strategy": "text",
+      "reason": "Primeira página (metadados)",
+      "text_until": null
+    },
+    {
+      "page_num": 2,
+      "strategy": "text",
+      "reason": "Somente texto",
+      "text_until": null
+    },
+    {
+      "page_num": 3,
+      "strategy": "text",
+      "reason": "Somente texto",
+      "text_until": null
+    },
+    {
+      "page_num": 4,
+      "strategy": "image",
+      "reason": "Contém figuras/tabelas/gráficos",
+      "text_until": null
+    }
+  ],
+  "stats": {
+    "total": 4,
+    "text_pages": 3,
+    "image_pages": 1,
+    "skipped_pages": 0
+  },
+  "pages_info": [
+    {
+      "page_num": 1,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 2,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 3,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 4,
+      "type": "image",
+      "path": "C:\\Users\\Leonardo\\Documents\\Computing\\Projeto_Mestrado\\files\\files\\articles\\00 Dados RSL\\02 T2\\projects\\projects\\teste\\outputs\\work\\ART_019\\pages\\page_004.png"
+    }
+  ],
+  "info": {
+    "num_pages": 4,
+    "title": "",
+    "author": "",
+    "subject": "",
+    "creator": "",
+    "file_size_mb": 0.4601936340332031
+  }
+}

@@ -1,0 +1,210 @@
+{
+  "artigo_id": "ART_029",
+  "arquivo": "Measuring Multidimensional Resilience of China’s Oil and Gas Industry and Forecasting Resilience Under Multiple Scenarios.pdf",
+  "analysis": [
+    {
+      "page_num": 1,
+      "strategy": "text",
+      "reason": "Primeira página (metadados)",
+      "text_until": null
+    },
+    {
+      "page_num": 2,
+      "strategy": "text",
+      "reason": "Somente texto",
+      "text_until": null
+    },
+    {
+      "page_num": 3,
+      "strategy": "text",
+      "reason": "Somente texto",
+      "text_until": null
+    },
+    {
+      "page_num": 4,
+      "strategy": "text",
+      "reason": "Somente texto",
+      "text_until": null
+    },
+    {
+      "page_num": 5,
+      "strategy": "image",
+      "reason": "Contém figuras/tabelas/gráficos",
+      "text_until": null
+    },
+    {
+      "page_num": 6,
+      "strategy": "text",
+      "reason": "Somente texto",
+      "text_until": null
+    },
+    {
+      "page_num": 7,
+      "strategy": "text",
+      "reason": "Somente texto",
+      "text_until": null
+    },
+    {
+      "page_num": 8,
+      "strategy": "image",
+      "reason": "Contém figuras/tabelas/gráficos",
+      "text_until": null
+    },
+    {
+      "page_num": 9,
+      "strategy": "text",
+      "reason": "Somente texto",
+      "text_until": null
+    },
+    {
+      "page_num": 10,
+      "strategy": "text",
+      "reason": "Somente texto",
+      "text_until": null
+    },
+    {
+      "page_num": 11,
+      "strategy": "image",
+      "reason": "Contém figuras/tabelas/gráficos",
+      "text_until": null
+    },
+    {
+      "page_num": 12,
+      "strategy": "image",
+      "reason": "Contém figuras/tabelas/gráficos",
+      "text_until": null
+    },
+    {
+      "page_num": 13,
+      "strategy": "text",
+      "reason": "Somente texto",
+      "text_until": null
+    },
+    {
+      "page_num": 14,
+      "strategy": "text",
+      "reason": "Somente texto",
+      "text_until": null
+    },
+    {
+      "page_num": 15,
+      "strategy": "text",
+      "reason": "Somente texto",
+      "text_until": null
+    },
+    {
+      "page_num": 16,
+      "strategy": "text_partial",
+      "reason": "Texto parcial (até referências)",
+      "text_until": 1366
+    },
+    {
+      "page_num": 17,
+      "strategy": "skip",
+      "reason": "Seção de referências",
+      "text_until": null
+    },
+    {
+      "page_num": 18,
+      "strategy": "skip",
+      "reason": "Seção de referências",
+      "text_until": null
+    }
+  ],
+  "stats": {
+    "total": 18,
+    "text_pages": 12,
+    "image_pages": 4,
+    "skipped_pages": 2
+  },
+  "pages_info": [
+    {
+      "page_num": 1,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 2,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 3,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 4,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 5,
+      "type": "image",
+      "path": "C:\\Users\\Leonardo\\Documents\\Computing\\Projeto_Mestrado\\files\\files\\articles\\00 Dados RSL\\02 T2\\projects\\projects\\teste\\outputs\\work\\ART_029\\pages\\page_005.png"
+    },
+    {
+      "page_num": 6,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 7,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 8,
+      "type": "image",
+      "path": "C:\\Users\\Leonardo\\Documents\\Computing\\Projeto_Mestrado\\files\\files\\articles\\00 Dados RSL\\02 T2\\projects\\projects\\teste\\outputs\\work\\ART_029\\pages\\page_008.png"
+    },
+    {
+      "page_num": 9,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 10,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 11,
+      "type": "image",
+      "path": "C:\\Users\\Leonardo\\Documents\\Computing\\Projeto_Mestrado\\files\\files\\articles\\00 Dados RSL\\02 T2\\projects\\projects\\teste\\outputs\\work\\ART_029\\pages\\page_011.png"
+    },
+    {
+      "page_num": 12,
+      "type": "image",
+      "path": "C:\\Users\\Leonardo\\Documents\\Computing\\Projeto_Mestrado\\files\\files\\articles\\00 Dados RSL\\02 T2\\projects\\projects\\teste\\outputs\\work\\ART_029\\pages\\page_012.png"
+    },
+    {
+      "page_num": 13,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 14,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 15,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 16,
+      "type": "text",
+      "path": null
+    }
+  ],
+  "info": {
+    "num_pages": 18,
+    "title": "Measuring Multidimensional Resilience of China’s Oil and Gas Industry and Forecasting Resilience Under Multiple Scenarios",
+    "author": "Lixia Yao, Zhaoguo Qin, Yanqiu Wang and Xiangyun Li",
+    "subject": "In the context of a rapidly changing global energy landscape and mounting pressures on energy security, enhancing the resilience of the oil and gas industry (OGI) has become a critical task for safeguarding China’s energy security. This study develops a multidimensional resilience indicator system—comprising recovery, adaptability, responsiveness, and innovation—and, based on OGI data for 2001–2022, employs the entropy method to quantitatively assess resilience by sub-dimension and development stage. Leveraging a backpropagation (BP) neural network, we construct a dynamic simulation model to produce long-term, multi-scenario forecasts of China’s OGI resilience for 2023–2032, enabling comparison of development potential across scenarios. The results indicate that overall resilience exhibited a fluctuating upward trend and reached a medium-strength resilience level by 2022, with innovation and recovery gradually emerging as the dominant drivers. Forecasts show that under the green-transition scenario, resilience will improve the most, increasing by 5.49% by 2032 and reaching the threshold for strong resilience earlier than under other scenarios. These findings offer actionable insights for enhancing the reliability and sustainability of energy supply chains in the face of climatic and geopolitical challenges.",
+    "creator": "LaTeX with hyperref",
+    "file_size_mb": 1.3345375061035156
+  }
+}

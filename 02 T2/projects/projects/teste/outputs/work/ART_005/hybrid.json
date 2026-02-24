@@ -1,0 +1,132 @@
+{
+  "artigo_id": "ART_005",
+  "arquivo": "Applying Machine Learning to the Fuel Theft Problem on Pipelines.pdf",
+  "analysis": [
+    {
+      "page_num": 1,
+      "strategy": "text",
+      "reason": "Primeira página (metadados)",
+      "text_until": null
+    },
+    {
+      "page_num": 2,
+      "strategy": "text",
+      "reason": "Somente texto",
+      "text_until": null
+    },
+    {
+      "page_num": 3,
+      "strategy": "image",
+      "reason": "Contém figuras/tabelas/gráficos",
+      "text_until": null
+    },
+    {
+      "page_num": 4,
+      "strategy": "text",
+      "reason": "Somente texto",
+      "text_until": null
+    },
+    {
+      "page_num": 5,
+      "strategy": "text",
+      "reason": "Somente texto",
+      "text_until": null
+    },
+    {
+      "page_num": 6,
+      "strategy": "image",
+      "reason": "Contém figuras/tabelas/gráficos",
+      "text_until": null
+    },
+    {
+      "page_num": 7,
+      "strategy": "image",
+      "reason": "Contém figuras/tabelas/gráficos",
+      "text_until": null
+    },
+    {
+      "page_num": 8,
+      "strategy": "text",
+      "reason": "Somente texto",
+      "text_until": null
+    },
+    {
+      "page_num": 9,
+      "strategy": "image",
+      "reason": "Contém figuras/tabelas/gráficos",
+      "text_until": null
+    },
+    {
+      "page_num": 10,
+      "strategy": "text_partial",
+      "reason": "Texto parcial (até referências)",
+      "text_until": 585
+    }
+  ],
+  "stats": {
+    "total": 10,
+    "text_pages": 6,
+    "image_pages": 4,
+    "skipped_pages": 0
+  },
+  "pages_info": [
+    {
+      "page_num": 1,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 2,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 3,
+      "type": "image",
+      "path": "C:\\Users\\Leonardo\\Documents\\Computing\\Projeto_Mestrado\\files\\files\\articles\\00 Dados RSL\\02 T2\\projects\\projects\\teste\\outputs\\work\\ART_005\\pages\\page_003.png"
+    },
+    {
+      "page_num": 4,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 5,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 6,
+      "type": "image",
+      "path": "C:\\Users\\Leonardo\\Documents\\Computing\\Projeto_Mestrado\\files\\files\\articles\\00 Dados RSL\\02 T2\\projects\\projects\\teste\\outputs\\work\\ART_005\\pages\\page_006.png"
+    },
+    {
+      "page_num": 7,
+      "type": "image",
+      "path": "C:\\Users\\Leonardo\\Documents\\Computing\\Projeto_Mestrado\\files\\files\\articles\\00 Dados RSL\\02 T2\\projects\\projects\\teste\\outputs\\work\\ART_005\\pages\\page_007.png"
+    },
+    {
+      "page_num": 8,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 9,
+      "type": "image",
+      "path": "C:\\Users\\Leonardo\\Documents\\Computing\\Projeto_Mestrado\\files\\files\\articles\\00 Dados RSL\\02 T2\\projects\\projects\\teste\\outputs\\work\\ART_005\\pages\\page_009.png"
+    },
+    {
+      "page_num": 10,
+      "type": "text",
+      "path": null
+    }
+  ],
+  "info": {
+    "num_pages": 10,
+    "title": "Applying Machine Learning to the Fuel Theft Problem on Pipelines",
+    "author": "Rachel Martins Ventriglia1; Leila Figueiredo Dantas, D.Sc.2; Bianca Brandão3; Silvio Hamacher, D.Sc.4; Marcos Vinicius Bellé Rocha5; André Silveira David6; and Frederico Chalita Ribeiro71Engineer, Tecgraf Institute/Dept. of Industrial Engineering, Pontifícia Universidade Católica do Rio de Janeiro, R. Marquês de São Vicente, 225, 22451-900 Rio de Janeiro, Brazil. Email: rachelventriglia@gmail.com2Professor, Tecgraf Institute/Dept. of Industrial Engineering, Pontifícia Universidade Católica do Rio de Janeiro, R. Marquês de São Vicente, 225, 22451-900 Rio de Janeiro, Brazil. Email: leilaffdantas@gmail.com3Engineer, Tecgraf Institute/Dept. of Industrial Engineering, Universidade Católica do Rio de Janeiro, R. Marquês de São Vicente, 225, 22451-900 Rio de Janeiro, Brazil. Email: biancabrandao@tecgraf.puc-rio.br4Professor, Tecgraf Institute/Dept. of Industrial Engineering, Pontifícia Universidade Católica do Rio de Janeiro, R. Marquês de São Vicente, 225, 22451-900 Rio de Janeiro, Brazil (corresponding author). Email: hamacher@puc-rio.br5Engineer, Transpetro, Av. Presidente Vargas, 328, Rio de Janeiro 20091-060, Brazil. Email: mbelle@transpetro.com.br6Engineer, Transpetro, Av. Presidente Vargas, 328, Rio de Janeiro 20091-060, Brazil. Email: andredavid@transpetro.com.br7Engineer, Transpetro, Av. Presidente Vargas, 328, Rio de Janeiro 20091-060, Brazil. Email: fredchalita.prestserv@transpetro.com.br",
+    "subject": "J. Pipeline Syst. Eng. Pract. 2023.14:null-null",
+    "creator": "Arbortext Advanced Print Publisher 9.1.405/W Unicode",
+    "file_size_mb": 1.045802116394043
+  }
+}

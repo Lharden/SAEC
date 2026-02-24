@@ -1,0 +1,166 @@
+{
+  "artigo_id": "ART_032",
+  "arquivo": "Proposed Risk Management Decision Support Methodology for Oil and Gas Construction Projects.pdf",
+  "analysis": [
+    {
+      "page_num": 1,
+      "strategy": "text",
+      "reason": "Primeira página (metadados)",
+      "text_until": null
+    },
+    {
+      "page_num": 2,
+      "strategy": "text",
+      "reason": "Somente texto",
+      "text_until": null
+    },
+    {
+      "page_num": 3,
+      "strategy": "text",
+      "reason": "Somente texto",
+      "text_until": null
+    },
+    {
+      "page_num": 4,
+      "strategy": "text",
+      "reason": "Somente texto",
+      "text_until": null
+    },
+    {
+      "page_num": 5,
+      "strategy": "text",
+      "reason": "Somente texto",
+      "text_until": null
+    },
+    {
+      "page_num": 6,
+      "strategy": "image",
+      "reason": "Contém figuras/tabelas/gráficos",
+      "text_until": null
+    },
+    {
+      "page_num": 7,
+      "strategy": "text",
+      "reason": "Somente texto",
+      "text_until": null
+    },
+    {
+      "page_num": 8,
+      "strategy": "text",
+      "reason": "Somente texto",
+      "text_until": null
+    },
+    {
+      "page_num": 9,
+      "strategy": "text",
+      "reason": "Somente texto",
+      "text_until": null
+    },
+    {
+      "page_num": 10,
+      "strategy": "text",
+      "reason": "Somente texto",
+      "text_until": null
+    },
+    {
+      "page_num": 11,
+      "strategy": "text",
+      "reason": "Somente texto",
+      "text_until": null
+    },
+    {
+      "page_num": 12,
+      "strategy": "text_partial",
+      "reason": "Texto parcial (até referências)",
+      "text_until": 878
+    },
+    {
+      "page_num": 13,
+      "strategy": "skip",
+      "reason": "Seção de referências",
+      "text_until": null
+    },
+    {
+      "page_num": 14,
+      "strategy": "skip",
+      "reason": "Seção de referências",
+      "text_until": null
+    }
+  ],
+  "stats": {
+    "total": 14,
+    "text_pages": 11,
+    "image_pages": 1,
+    "skipped_pages": 2
+  },
+  "pages_info": [
+    {
+      "page_num": 1,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 2,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 3,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 4,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 5,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 6,
+      "type": "image",
+      "path": "C:\\Users\\Leonardo\\Documents\\Computing\\Projeto_Mestrado\\files\\files\\articles\\00 Dados RSL\\02 T2\\projects\\projects\\teste\\outputs\\work\\ART_032\\pages\\page_006.png"
+    },
+    {
+      "page_num": 7,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 8,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 9,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 10,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 11,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 12,
+      "type": "text",
+      "path": null
+    }
+  ],
+  "info": {
+    "num_pages": 14,
+    "title": "",
+    "author": "",
+    "subject": "",
+    "creator": "",
+    "file_size_mb": 0.34100818634033203
+  }
+}

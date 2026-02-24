@@ -194,19 +194,19 @@ class LLMConfig:
     OLLAMA_MODEL_CLOUD: str = field(
         default_factory=lambda: _env_str(
             "OLLAMA_MODEL_CLOUD",
-            "glm-4.7:cloud",
+            "qwen3-coder-next:cloud",
         )
     )
     OLLAMA_MODEL_CLOUD_FALLBACK: str = field(
         default_factory=lambda: _env_str(
             "OLLAMA_MODEL_CLOUD_FALLBACK",
-            "kimi-k2.5:cloud",
+            "glm-5:cloud",
         )
     )
     OLLAMA_MODEL_CODER: str = field(
         default_factory=lambda: _env_str(
             "OLLAMA_MODEL_CODER",
-            "qwen3-vl:8b",
+            "qwen3-coder-next:cloud",
         )
     )
     OLLAMA_MODEL_VISION: str = field(
@@ -230,10 +230,10 @@ class LLMConfig:
         default_factory=lambda: _env_str("PROVIDER_REPAIR", "auto")
     )
     PROVIDER_QUOTES: str = field(
-        default_factory=lambda: _env_str("PROVIDER_QUOTES", "auto")
+        default_factory=lambda: _env_str("PROVIDER_QUOTES", "anthropic")
     )
     PROVIDER_CASCADE_API: str = field(
-        default_factory=lambda: _env_str("PROVIDER_CASCADE_API", "auto")
+        default_factory=lambda: _env_str("PROVIDER_CASCADE_API", "openai")
     )
 
     # Limites
@@ -463,7 +463,7 @@ class LocalProcessingConfig:
 
     # Modelos Ollama por tarefa (cloud-first para economia)
     OLLAMA_EXTRACTION_MODEL: str = field(
-        default_factory=lambda: _env_str("OLLAMA_EXTRACTION_MODEL", "glm-4.7:cloud")
+        default_factory=lambda: _env_str("OLLAMA_EXTRACTION_MODEL", "qwen3-coder-next:cloud")
     )
     OLLAMA_REPAIR_MODEL: str = field(
         default_factory=lambda: _env_str("OLLAMA_REPAIR_MODEL", "glm-4.7:cloud")
@@ -474,6 +474,11 @@ class LocalProcessingConfig:
     OLLAMA_EMBEDDING_MODEL: str = field(
         default_factory=lambda: _env_str(
             "OLLAMA_EMBEDDING_MODEL", "nomic-embed-text-v2-moe:latest"
+        )
+    )
+    OLLAMA_RERANKER_MODEL: str = field(
+        default_factory=lambda: _env_str(
+            "OLLAMA_RERANKER_MODEL", "qllama/bge-reranker-v2-m3:q4_k_m"
         )
     )
 

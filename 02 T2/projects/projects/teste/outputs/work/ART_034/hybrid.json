@@ -1,0 +1,281 @@
+{
+  "artigo_id": "ART_034",
+  "arquivo": "Reference Synthetic Dataset for Drilling Inventory Optimization.pdf",
+  "analysis": [
+    {
+      "page_num": 1,
+      "strategy": "text",
+      "reason": "Primeira página (metadados)",
+      "text_until": null
+    },
+    {
+      "page_num": 2,
+      "strategy": "text",
+      "reason": "Somente texto",
+      "text_until": null
+    },
+    {
+      "page_num": 3,
+      "strategy": "text",
+      "reason": "Somente texto",
+      "text_until": null
+    },
+    {
+      "page_num": 4,
+      "strategy": "text",
+      "reason": "Somente texto",
+      "text_until": null
+    },
+    {
+      "page_num": 5,
+      "strategy": "image",
+      "reason": "Contém figuras/tabelas/gráficos",
+      "text_until": null
+    },
+    {
+      "page_num": 6,
+      "strategy": "text",
+      "reason": "Somente texto",
+      "text_until": null
+    },
+    {
+      "page_num": 7,
+      "strategy": "image",
+      "reason": "Contém figuras/tabelas/gráficos",
+      "text_until": null
+    },
+    {
+      "page_num": 8,
+      "strategy": "image",
+      "reason": "Contém figuras/tabelas/gráficos",
+      "text_until": null
+    },
+    {
+      "page_num": 9,
+      "strategy": "text",
+      "reason": "Somente texto",
+      "text_until": null
+    },
+    {
+      "page_num": 10,
+      "strategy": "text",
+      "reason": "Somente texto",
+      "text_until": null
+    },
+    {
+      "page_num": 11,
+      "strategy": "image",
+      "reason": "Contém figuras/tabelas/gráficos",
+      "text_until": null
+    },
+    {
+      "page_num": 12,
+      "strategy": "text",
+      "reason": "Somente texto",
+      "text_until": null
+    },
+    {
+      "page_num": 13,
+      "strategy": "image",
+      "reason": "Contém figuras/tabelas/gráficos",
+      "text_until": null
+    },
+    {
+      "page_num": 14,
+      "strategy": "text",
+      "reason": "Somente texto",
+      "text_until": null
+    },
+    {
+      "page_num": 15,
+      "strategy": "text",
+      "reason": "Somente texto",
+      "text_until": null
+    },
+    {
+      "page_num": 16,
+      "strategy": "text",
+      "reason": "Somente texto",
+      "text_until": null
+    },
+    {
+      "page_num": 17,
+      "strategy": "text",
+      "reason": "Somente texto",
+      "text_until": null
+    },
+    {
+      "page_num": 18,
+      "strategy": "image",
+      "reason": "Contém figuras/tabelas/gráficos",
+      "text_until": null
+    },
+    {
+      "page_num": 19,
+      "strategy": "image",
+      "reason": "Contém figuras/tabelas/gráficos",
+      "text_until": null
+    },
+    {
+      "page_num": 20,
+      "strategy": "image",
+      "reason": "Contém figuras/tabelas/gráficos",
+      "text_until": null
+    },
+    {
+      "page_num": 21,
+      "strategy": "image",
+      "reason": "Contém figuras/tabelas/gráficos",
+      "text_until": null
+    },
+    {
+      "page_num": 22,
+      "strategy": "image",
+      "reason": "Contém figuras/tabelas/gráficos",
+      "text_until": null
+    },
+    {
+      "page_num": 23,
+      "strategy": "text_partial",
+      "reason": "Texto parcial (até referências)",
+      "text_until": 2368
+    },
+    {
+      "page_num": 24,
+      "strategy": "skip",
+      "reason": "Seção de referências",
+      "text_until": null
+    }
+  ],
+  "stats": {
+    "total": 24,
+    "text_pages": 13,
+    "image_pages": 10,
+    "skipped_pages": 1
+  },
+  "pages_info": [
+    {
+      "page_num": 1,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 2,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 3,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 4,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 5,
+      "type": "image",
+      "path": "C:\\Users\\Leonardo\\Documents\\Computing\\Projeto_Mestrado\\files\\files\\articles\\00 Dados RSL\\02 T2\\projects\\projects\\teste\\outputs\\work\\ART_034\\pages\\page_005.png"
+    },
+    {
+      "page_num": 6,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 7,
+      "type": "image",
+      "path": "C:\\Users\\Leonardo\\Documents\\Computing\\Projeto_Mestrado\\files\\files\\articles\\00 Dados RSL\\02 T2\\projects\\projects\\teste\\outputs\\work\\ART_034\\pages\\page_007.png"
+    },
+    {
+      "page_num": 8,
+      "type": "image",
+      "path": "C:\\Users\\Leonardo\\Documents\\Computing\\Projeto_Mestrado\\files\\files\\articles\\00 Dados RSL\\02 T2\\projects\\projects\\teste\\outputs\\work\\ART_034\\pages\\page_008.png"
+    },
+    {
+      "page_num": 9,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 10,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 11,
+      "type": "image",
+      "path": "C:\\Users\\Leonardo\\Documents\\Computing\\Projeto_Mestrado\\files\\files\\articles\\00 Dados RSL\\02 T2\\projects\\projects\\teste\\outputs\\work\\ART_034\\pages\\page_011.png"
+    },
+    {
+      "page_num": 12,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 13,
+      "type": "image",
+      "path": "C:\\Users\\Leonardo\\Documents\\Computing\\Projeto_Mestrado\\files\\files\\articles\\00 Dados RSL\\02 T2\\projects\\projects\\teste\\outputs\\work\\ART_034\\pages\\page_013.png"
+    },
+    {
+      "page_num": 14,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 15,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 16,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 17,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 18,
+      "type": "image",
+      "path": "C:\\Users\\Leonardo\\Documents\\Computing\\Projeto_Mestrado\\files\\files\\articles\\00 Dados RSL\\02 T2\\projects\\projects\\teste\\outputs\\work\\ART_034\\pages\\page_018.png"
+    },
+    {
+      "page_num": 19,
+      "type": "image",
+      "path": "C:\\Users\\Leonardo\\Documents\\Computing\\Projeto_Mestrado\\files\\files\\articles\\00 Dados RSL\\02 T2\\projects\\projects\\teste\\outputs\\work\\ART_034\\pages\\page_019.png"
+    },
+    {
+      "page_num": 20,
+      "type": "image",
+      "path": "C:\\Users\\Leonardo\\Documents\\Computing\\Projeto_Mestrado\\files\\files\\articles\\00 Dados RSL\\02 T2\\projects\\projects\\teste\\outputs\\work\\ART_034\\pages\\page_020.png"
+    },
+    {
+      "page_num": 21,
+      "type": "image",
+      "path": "C:\\Users\\Leonardo\\Documents\\Computing\\Projeto_Mestrado\\files\\files\\articles\\00 Dados RSL\\02 T2\\projects\\projects\\teste\\outputs\\work\\ART_034\\pages\\page_021.png"
+    },
+    {
+      "page_num": 22,
+      "type": "image",
+      "path": "C:\\Users\\Leonardo\\Documents\\Computing\\Projeto_Mestrado\\files\\files\\articles\\00 Dados RSL\\02 T2\\projects\\projects\\teste\\outputs\\work\\ART_034\\pages\\page_022.png"
+    },
+    {
+      "page_num": 23,
+      "type": "text",
+      "path": null
+    }
+  ],
+  "info": {
+    "num_pages": 24,
+    "title": "",
+    "author": "",
+    "subject": "",
+    "creator": "Apache FOP Version 2.1",
+    "file_size_mb": 2.515472412109375
+  }
+}

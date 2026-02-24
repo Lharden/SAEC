@@ -1,0 +1,83 @@
+---
+ArtigoID: ART_013
+Ano: 2025
+TipoPublicação: Conference
+Referência_Curta: Rozario, 2025
+DOI: https://doi.org/10.2118/224336-MS
+SegmentoO&G: Upstream (E&P)
+SegmentoO&G_Confiança: Alta
+Ambiente: Onshore
+Complexidade: Média
+Complexidade_Justificativa: F1=0 (onshore - campo ativo em Oklahoma), F2=1 (múltiplos poços, frotas, tanques e operadores gerenciados simultaneamente), F3=1 (ambiente de alto risco com variáveis dinâmicas e riscos operacionais críticos como congelamento de pipelines)
+ProcessoSCM_Alvo: Logística/transporte | Planejamento de produção | Manutenção/MRO
+TipoRisco_SCRM: Risco operacional | Risco de transporte/logística
+ObjetoCrítico: Rotas de operadores de campo, entregas de tanques de consumo (metanol), produção de poços
+ProblemaNegócio_Contexto: 'Operações de campo e gestão logística na indústria de O&G são complexas, envolvendo variáveis dinâmicas de alto risco e limitações significativas de recursos.
+
+  Métodos tradicionais dependem de processos manuais e modelos estáticos que lutam para gerenciar eficientemente as grandes permutações de operações e alocação de recursos.
+
+  O transporte de líquidos de consumo como metanol é crítico para prevenir congelamento de pipelines.
+
+  Operadores frequentemente revisitam locais desnecessariamente e têm dificuldade em identificar problemas de produção proativamente a partir de dados SCADA complexos.'
+ClasseIA: Híbrido
+ClasseIA_Confiança: Alta
+TarefaAnalítica: Otimização | Previsão | Clustering | Detecção de anomalia
+FamíliaModelo: 'Metaheurísticas | Clustering | Outro: Prophet (séries temporais)'
+TipoDado: Séries temporais | Tabular/ERP
+Maturidade: Piloto
+Maturidade_Confiança: Alta
+Intervenção_Descrição: 'Dois modelos de otimização interrelacionados baseados em IA: (1) Modelo de operações de campo usando priorização Fibonacci para pontuação de tarefas, K-means clustering para análise espacial de poços, Prophet para previsão de produção e detecção de anomalias, e algoritmo TSP para sequenciamento de rotas; (2) Modelo de logística de tanques usando OptaPlanner com algoritmos metaheurísticos (Local Search, Simulated Annealing, Tabu Search) para otimização de rotas e programação de entregas. Ambos integram reinforcement learning para refinamento iterativo.
+
+  '
+Dados_Descrição: 'Dados em tempo real ingeridos via EZOps API incluindo taxas de tanques, detalhes de frota, métricas operacionais e leituras de sensores SCADA. Dados de produção horária de poços para detecção de anomalias. Estudo de caso conduzido em campo petrolífero ativo por um mês com dois operadores, rastreando ações completadas, prioridades e tempos no sistema de captura de dados de campo. Simulações modeladas para três meses para operações de campo e vários cenários logísticos.
+
+  '
+CategoriaMecanismo: Priorização/alocação ótima | Antecipação de risco | Detecção precoce/anomalias
+Mecanismo_Fonte: Misto
+Mecanismo_Declarado: 'O modelo sintetiza continuamente dados sobre todas as ações possíveis a serem completadas e recomenda ações proativas que seriam devidas em alguns dias para serem completadas no mesmo local, prevenindo revisitas. A otimização sintetiza dados de produção horária de poços e prediz comportamento outlier de poços que impediriam produção esperada. Operadores identificaram problemas de produção mais cedo e os mitigaram mais rápido. O ônus de ler gráficos SCADA complexos foi aliviado.
+
+  '
+Mecanismo_Inferido: 'INFERIDO: O clustering K-means reduz o espaço de busca agrupando poços espacialmente próximos, tornando o TSP computacionalmente tratável. INFERIDO: A priorização Fibonacci traduz múltiplos fatores (urgência, clima, SCADA, distância) em score único comparável, eliminando subjetividade na tomada de decisão. INFERIDO: O Prophet detecta declínios de produção antes que se tornem críticos, permitindo intervenção proativa. INFERIDO: As metaheurísticas exploram soluções viáveis sem enumerar todas as permutações, equilibrando qualidade da solução com tempo computacional.
+
+  '
+Mecanismo_Estruturado: Dados SCADA/EZOps em tempo real + históricos → Fibonacci scoring + K-means clustering + Prophet forecasting + metaheurísticas → Priorização de tarefas otimizada e sequenciamento de rotas → Redução de tempo de viagem, detecção precoce de anomalias, entregas eficientes
+ResultadoTipo: Quantitativo
+Resultados_Quant: 'Eficiência de rota: +31% (baseline: NR); Incidentes delinquentes: -61% (baseline: NR); Downtime de produção: -47% (baseline: NR); Custo por litro: -20% (baseline: NR); Utilização de carga: +35% (baseline: NR)'
+Resultados_Qual: Operadores identificaram problemas de produção mais cedo e os mitigaram mais rápido; Redução do ônus cognitivo de interpretar gráficos SCADA complexos; Processo de auditoria mais suave para líderes de campo; Rotas otimizadas contribuem para redução de emissões alinhadas com metas de sustentabilidade
+NívelEvidência: Estudo de caso real
+Limitações_Artigo: 'Desafios como integração de dados e requisitos computacionais permanecem. Ajuste de parâmetros e gerenciamento de grandes conjuntos de dados são desafios mencionados que foram superados através da consolidação de fontes de dados.
+
+  '
+Observação: 'O artigo apresenta dois modelos interrelacionados - um para operações de campo e outro para logística de tanques. O estudo de caso foi conduzido em campo petrolífero ativo em Oklahoma com operadores reais por um mês comparando desempenho com e sem o sistema de otimização.
+
+  '
+Quotes:
+- QuoteID: Q001
+  TipoQuote: Contexto
+  Trecho: Field operations and logistics optimization in the oil and gas industry are complex by nature. They involve high-risk dynamic variables and significant resource limitations.
+  Página: p.1
+- QuoteID: Q002
+  TipoQuote: Mecanismo
+  Trecho: The optimization, on the other hand, continuously synthesizes data on all possible actions to be completed on a field and recommends a proactive action that would be due in a few days to be completed in the same location, before moving on.
+  Página: p.4
+- QuoteID: Q003
+  TipoQuote: Mecanismo
+  Trecho: The optimization also continuously synthesizes hourly well production data and predicts the outlier behavior of a well that will prevent it from making its expected production for the day. The operators were able to identify production issues sooner and mitigate them faster.
+  Página: p.4
+- QuoteID: Q004
+  TipoQuote: Intervenção
+  Trecho: Key innovations include Fibonacci prioritization for task scoring, K-means clustering for spatial analysis, and creating a Prophet model to predict production trends and anomalies.
+  Página: p.1
+- QuoteID: Q005
+  TipoQuote: Outcome
+  Trecho: 'Efficiency: The operator optimization model increased the route efficiency (actions completed per hours billed) by 31%, allowing technicians to dedicate more time to task execution.'
+  Página: p.5
+- QuoteID: Q006
+  TipoQuote: Outcome
+  Trecho: 'Safety: Delinquent incidents are reduced by 61%, attributed to improved task prioritization and adherence to safety protocols. Production Uptime: Forecasting methods identify potential production issues earlier, decreasing downtime by 47%.'
+  Página: p.5
+- QuoteID: Q007
+  TipoQuote: Limitação
+  Trecho: Challenges such as data integration and computational requirements remain, though continuous improvements and advancements in scalability indicate the broad applicability of the model in a wide range of operating situations.
+  Página: p.5
+---

@@ -1,0 +1,87 @@
+---
+ArtigoID: ART_005
+Ano: 2023
+TipoPublicação: Journal
+Referência_Curta: Ventriglia et al., 2023
+DOI: https://doi.org/10.1061/JPSEA2.PSENG-1374
+SegmentoO&G: Midstream
+SegmentoO&G_Confiança: Alta
+Ambiente: Onshore
+Complexidade: Média
+Complexidade_Justificativa: F1=0 (onshore pipelines), F2=1 (multiple pipelines/systems monitored - 530 pipelines mentioned), F3=1 (risco crítico - segurança de comunidades vizinhas, impacto ambiental, perdas financeiras >US$40 milhões/ano)
+ProcessoSCM_Alvo: Monitoramento/visibilidade
+TipoRisco_SCRM: Risco de segurança (security)
+ObjetoCrítico: Oleodutos e gasodutos (pipelines) - detecção de furto de combustível via tapping ilegal
+ProblemaNegócio_Contexto: 'O furto de combustível em oleodutos é um problema enfrentado por diversos países e empresas de O&G devido ao impacto ambiental e riscos à segurança das comunidades próximas.
+
+  No Brasil, a Transpetro registrou mais de 200 casos anuais de tentativas ou furtos efetivos.
+
+  O monitoramento via sensores gera milhares de alertas que precisam ser priorizados para envio de patrulhas de verificação.
+
+  A decisão de priorização é tradicionalmente baseada no conhecimento do analista, sendo essencial identificar rapidamente quais alertas têm maior probabilidade de confirmar um tapping ilegal para otimizar recursos operacionais e mitigar riscos.'
+ClasseIA: ML supervisionado
+ClasseIA_Confiança: Alta
+TarefaAnalítica: Classificação
+FamíliaModelo: Ensemble tree-based
+TipoDado: Tabular/ERP
+Maturidade: Produção
+Maturidade_Confiança: Alta
+Intervenção_Descrição: 'Modelo preditivo de classificação usando Random Forest para prever a probabilidade de um alerta resultar em tapping ilegal. Cinco algoritmos foram testados: Logistic Regression, Random Forest, XGBoost, CatBoost e MLP. O Random Forest apresentou melhor desempenho. O modelo utiliza quatro variáveis explicativas: duração do alerta, histórico de tapping ilegal na área, número de eventos próximos e hora do dia. Otimização de cutoff via Youden Index com peso maior para reduzir falsos negativos.
+
+  '
+Dados_Descrição: 'Dados do sistema de monitoramento SIMF (Sistema de Monitoramento de Faixas) da Transpetro, de janeiro 2019 a maio 2021. Base inicial com ~215.000 registros de alertas. Após filtros (remoção de alertas de manutenção, consideração apenas de alertas verificados por patrulha, agrupamento de alertas próximos), resultaram 4.423 alertas negativos e 69 positivos. Aplicação de matched case-control study (proporção 3:1) resultou em base final de 276 alertas (69 positivos, 207 negativos). Validação externa com dados de junho-agosto 2021 (841 alertas).
+
+  '
+CategoriaMecanismo: Priorização/alocação ótima
+Mecanismo_Fonte: Misto
+Mecanismo_Declarado: '"Applying these techniques will help optimize the company''s handling of these suspected fuel theft events, avoiding sending unnecessary patrols to the site. Most importantly, the model aims to assist the decision-making and the alerts'' correct prioritization." (p.2)
+
+  '
+Mecanismo_Inferido: 'INFERIDO: O modelo transforma dados brutos de alertas em probabilidades de tapping ilegal, permitindo ranking de prioridade. INFERIDO: A identificação de fatores influentes (duração, histórico, período noturno) fornece critérios objetivos que substituem julgamento subjetivo do analista. INFERIDO: A redução de falsos negativos garante que eventos críticos não sejam negligenciados, enquanto a especificidade reduz envio desnecessário de patrulhas.
+
+  '
+Mecanismo_Estruturado: Alertas do SIMF + variáveis contextuais → Random Forest + otimização de cutoff → Probabilidade de tapping com priorização → Redução de patrulhas desnecessárias e detecção de eventos críticos
+ResultadoTipo: Quantitativo
+Resultados_Quant: 'Acurácia: 76.8% (baseline: NR); Especificidade: 68.3% (baseline: NR); Sensibilidade: 100% (baseline: NR); Validação externa - Acurácia: 61% (baseline: NR); Especificidade: 61% (baseline: NR); Sensibilidade: 75% (baseline: NR)'
+Resultados_Qual: 'Modelo em uso operacional pela Transpetro para priorização de alertas e melhoria da eficiência de resposta de patrulhas. Identificação dos fatores mais influentes: duração do alerta, histórico de eventos na área e período noturno.'
+NívelEvidência: Estudo de caso real
+Limitações_Artigo: '"The limitation of this study lies in the lack of integration between the databases used, which required us to perform them manually." (p.8) Autores também mencionam como trabalho futuro a aplicação de estratégias de balanceamento e teste de outras técnicas como SVM.
+
+  '
+Observação: 'Artigo descreve implementação real em empresa brasileira (Transpetro) com validação externa em dados prospectivos. Modelo está em uso operacional ("Transpetro uses the developed predictive model"). A escolha do cutoff ótimo priorizou minimizar falsos negativos dado o impacto crítico de não identificar um tapping ilegal real.
+
+  '
+Quotes:
+- QuoteID: Q001
+  TipoQuote: Contexto
+  Trecho: Fuel theft of oil pipelines is a concern faced by various countries and oil and gas companies due to its impact on the environment and the safety of neighboring communities.
+  Página: p.1
+- QuoteID: Q002
+  TipoQuote: Mecanismo
+  Trecho: Applying these techniques will help optimize the company's handling of these suspected fuel theft events, avoiding sending unnecessary patrols to the site. Most importantly, the model aims to assist the decision-making and the alerts' correct prioritization.
+  Página: p.2
+- QuoteID: Q003
+  TipoQuote: Outcome
+  Trecho: The Random Forest obtained the best results in classifying alerts associated (or not) with an illegal tapping, showing accuracy, specificity, and sensitivities of 76.8%, 68.3%, and 100%, respectively.
+  Página: p.1
+- QuoteID: Q004
+  TipoQuote: Mecanismo
+  Trecho: In this problem, specificity implies reducing the sending of patrols to the field in 68.3% of circumstances, and sensitivity means that the model is a good predictor for positive cases.
+  Página: p.1
+- QuoteID: Q005
+  TipoQuote: Outcome
+  Trecho: Transpetro uses the developed predictive model, contributing to the reduction of on-site patrols, helping analysts to prioritize alerts, and improving the efficiency of patrol responses.
+  Página: p.8
+- QuoteID: Q006
+  TipoQuote: Intervenção
+  Trecho: The factors that most highly influenced illegal tapping occurrences were the alert duration, previous events in the same area, and events during the night.
+  Página: p.1
+- QuoteID: Q007
+  TipoQuote: Limitação
+  Trecho: The limitation of this study lies in the lack of integration between the databases used, which required us to perform them manually.
+  Página: p.8
+- QuoteID: Q008
+  TipoQuote: Método
+  Trecho: A matched case-control study was performed to solve the imbalance problem. The matched case-control study allowed us to find a specific and predefined number of negative alerts like each other according to pre-established characteristics for each signal from the positive class.
+  Página: p.5
+---

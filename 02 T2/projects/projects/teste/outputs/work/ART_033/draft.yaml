@@ -1,0 +1,87 @@
+---
+ArtigoID: ART_033
+Ano: 2025
+TipoPublicação: Journal
+Referência_Curta: Zheng et al., 2025
+DOI: https://doi.org/10.3390/systems13100874
+SegmentoO&G: Cross-segment
+SegmentoO&G_Confiança: Alta
+Ambiente: NR
+Complexidade: Média
+Complexidade_Justificativa: F1=0 (ambiente NR), F2=1 (32 empresas analisadas cobrindo upstream, midstream, downstream e end enterprises), F3=1 (foco em tail risk/risco extremo na cadeia de suprimentos)
+ProcessoSCM_Alvo: Gestão de riscos da cadeia
+TipoRisco_SCRM: Múltiplos
+ObjetoCrítico: Risco de cauda (tail risk) e spillovers entre empresas da cadeia de suprimentos de petróleo
+ProblemaNegócio_Contexto: 'As empresas da cadeia de suprimentos de petróleo são vulneráveis a choques externos e podem afetar significativamente outras indústrias em cenários extremos.
+
+  A volatilidade dos preços do petróleo afeta custos de energia, inflação e gera choques sistêmicos através de canais comerciais, de investimento e financeiros.
+
+  Com a transição energética e neutralidade de carbono, o perfil de risco de carbono do petróleo tornou-se mais saliente, com preços e demanda exibindo sensibilidade elevada a políticas verdes, choques climáticos e conflitos geopolíticos.
+
+  Medir com precisão os spillovers de risco de cauda entre empresas da cadeia de petróleo é crucial para elucidar a transmissão de risco nos mercados de energia e salvaguardar a estabilidade industrial e a segurança do sistema financeiro.'
+ClasseIA: Híbrido
+ClasseIA_Confiança: Alta
+TarefaAnalítica: Previsão
+FamíliaModelo: Redes neurais feedforward; Regressão linear/logística
+TipoDado: Séries temporais
+Maturidade: Protótipo
+Maturidade_Confiança: Alta
+Intervenção_Descrição: 'O estudo propõe o modelo RQLNet (neural-network-inspired multi-layer machine learning model) que integra a estrutura hierárquica de redes neurais com mecanismo de seleção de features baseado em regularização de machine learning. O modelo possui 4 camadas: Layer 1 combina regressão quantílica com regularização Lasso path-following para estimativa inicial e seleção de variáveis; Layer 2 transforma os resultados em regressão quantílica não-linear; Layer 3 realiza kernel regression usando coeficientes da Layer 1; Layer 4 otimiza com regressão Lasso regularizada com pesos de kernel. O modelo estima CoVaR (Conditional Value-at-Risk) e efeitos de spillover de risco de cauda entre empresas.
+
+  '
+Dados_Descrição: 'Dados de 32 empresas chinesas da cadeia de suprimentos de petróleo listadas no mercado A-share da China, categorizadas em 4 grupos: exploração e produção (upstream), transporte e armazenamento (midstream), refino e vendas (downstream), e produtos petroquímicos (end enterprises). Período amostral de 3 de julho de 2015 a 31 de março de 2023. Retornos semanais logarítmicos calculados a partir de preços de ações. Variáveis microeconômicas incluem ativos totais, market-to-book ratio, leverage e maturity mismatch. Variáveis macroeconômicas incluem CIMV, OIL, GPR, WI, YS, LS, CR, CS e EPU. Fontes: RESSET, WIND, iFinD, PBC School of Finance, Shanghai International Energy Exchange, FRED.
+
+  '
+CategoriaMecanismo: Detecção precoce/anomalias
+Mecanismo_Fonte: Misto
+Mecanismo_Declarado: '"The RQLNet model is designed to handle high-dimensional financial time-series data efficiently and adopts a multi-layer architecture to mitigate the excessive penalization often encountered in conventional machine learning frameworks. In contrast to traditional neural networks that focus on accurate point forecasting, the present framework centers on quantile estimation, making it especially suitable for CoVaR analysis." (p.4)
+
+  '
+Mecanismo_Inferido: 'INFERIDO: A arquitetura multi-camada permite capturar padrões não-lineares em dados de alta dimensionalidade enquanto mantém interpretabilidade econômica através da seleção de variáveis via Lasso. INFERIDO: A estimativa de quantis permite identificar riscos de cauda que não seriam capturados por médias, revelando os efeitos de spillover em condições extremas. INFERIDO: A integração de kernel weights mitiga a penalização excessiva dos pesos de spillover, preservando a estrutura real das conexões de risco entre empresas. INFERIDO: A construção de rede de spillover permite visualizar e quantificar direções e intensidades de transmissão de risco ao longo da cadeia de suprimentos.
+
+  '
+Mecanismo_Estruturado: Retornos de ações + fatores macro/micro → RQLNet multi-camada com quantile regression e Lasso → CoVaR e spillover weights → Rede de spillover de risco de cauda e análise de sensibilidade
+ResultadoTipo: Misto
+Resultados_Quant: 'Mean Pinball Loss: 0.00103 (vs. ML: 0.00162, Lasso: 0.01416, GBM: 0.00305, QVAR: 0.07144); Christoffersen p-value: 0.81906 (passa no teste); Pearson correlation entre quantis 0.05-0.03: 0.94716 (p<0.001); Pearson correlation entre quantis 0.05-0.01: 0.9278 (p<0.001)'
+Resultados_Qual: 'Spillovers de risco de cauda propagam-se de upstream/midstream para downstream e end enterprises. Up e midstream são principais fontes, downstream e end são principais receptores. Sensibilidades a fatores macro variam significativamente entre tipos de empresa - downstream e end mostram maior sensibilidade a CIMV e EPU, upstream mais sensível a LS. Rede evolui em estágios: durante fricções comerciais spillovers aceleram; durante eventos de saúde pública coesão intra-comunidade aumenta; na recuperação links cross-community retomam; durante conflitos geopolíticos spillovers são dominados por nós centrais.'
+NívelEvidência: Experimento com dados reais
+Limitações_Artigo: '"This study faces limitations due to the reliance on cross-sectional data, which is commonly used in most econometric analyses of financial data, such as log-returns at specific time points. While some research has adopted interval econometrics to enhance the representativeness of the data over time, these approaches still exhibit limitations." (p.21)
+
+  '
+Observação: 'O modelo RQLNet é comparado com 4 benchmarks (QVAR, Lasso, ML, GBM). O estudo cobre período com múltiplos eventos: volatilidade nos mercados financeiros chineses (2016), fricções comerciais EUA-China (2018), COVID-19 (2019-2020), e conflito Rússia-Ucrânia (2022). A análise inclui tanto métricas de nível de empresa quanto métricas de nível de rede (densidade, clustering, path length, modularity, assortativity, degree centralization).
+
+  '
+Quotes:
+- QuoteID: Q001
+  TipoQuote: Mecanismo
+  Trecho: The RQLNet model is designed to handle high-dimensional financial time-series data efficiently and adopts a multi-layer architecture to mitigate the excessive penalization often encountered in conventional machine learning frameworks.
+  Página: p.4
+- QuoteID: Q002
+  TipoQuote: Outcome
+  Trecho: The proposed model improves the accuracy of tail risk measurement while addressing the issue of excessive penalization in spillover weights, offering enhanced interpretability and structural stability and making it particularly suitable for high-dimensional tail risk estimation.
+  Página: p.1
+- QuoteID: Q003
+  TipoQuote: Contexto
+  Trecho: Petroleum supply chain enterprises are vulnerable to external shocks and can significantly affect other industries under extreme scenarios. Therefore, accurately measuring tail risk spillovers among petroleum supply chain enterprises is crucial.
+  Página: p.2
+- QuoteID: Q004
+  TipoQuote: Intervenção
+  Trecho: Layer 4 further optimizes the model by using a path-following Lasso regularization regression with kernel weights. In this layer, the number of paths is set to 500, and the optimal path is selected using the AIC criterion.
+  Página: p.5
+- QuoteID: Q005
+  TipoQuote: Outcome
+  Trecho: Tail risk spillovers propagate from up- and midstream to downstream and ultimately to end enterprises. Structurally, the up- and midstream are the main sources, whereas the downstream and end enterprises are the primary recipients.
+  Página: p.1
+- QuoteID: Q006
+  TipoQuote: Outcome
+  Trecho: The tail risk sensitivities of Chinese petroleum supply chain enterprises exhibit significant differences across macroeconomic factors and across types of enterprises. Overall, the sensitivities to CIMV and LS are higher.
+  Página: p.1
+- QuoteID: Q007
+  TipoQuote: Limitação
+  Trecho: This study faces limitations due to the reliance on cross-sectional data, which is commonly used in most econometric analyses of financial data, such as log-returns at specific time points.
+  Página: p.21
+- QuoteID: Q008
+  TipoQuote: Método
+  Trecho: Building on these developments, the RQLNet proposed in this paper further raises overall measurement accuracy—especially achieving a closer fit to realized returns in non-tail periods—while effectively avoiding excessive penalization of spillover weights.
+  Página: p.8
+---

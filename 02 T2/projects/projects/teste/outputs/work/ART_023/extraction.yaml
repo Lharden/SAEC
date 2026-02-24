@@ -1,0 +1,79 @@
+---
+ArtigoID: ART_023
+Ano: 2021
+TipoPublicação: Conference
+Referência_Curta: Kannankutty & Menon, 2021
+DOI: https://doi.org/10.2118/207211-MS
+SegmentoO&G: Cross-segment
+SegmentoO&G_Confiança: Alta
+Ambiente: NR
+Complexidade: Média
+Complexidade_Justificativa: 'F1=0 (ambiente não especificado), F2=1 (múltiplos fornecedores implícitos em supply chain), F3=1 (riscos de fornecimento mencionados, ex: COVID-19)'
+ProcessoSCM_Alvo: Procurement/compras
+TipoRisco_SCRM: Risco de fornecimento
+ObjetoCrítico: Processos de procurement e supply chain em empresas de O&G
+ProblemaNegócio_Contexto: 'A indústria de óleo e gás enfrenta período de incerteza e volatilidade de demanda devido a fatores como COVID-19,
+
+  opções de energia alternativa e implicações geopolíticas. As empresas dependem de expertise de especialistas para
+
+  identificar fornecedores, usando principalmente dados internos de ERP, sem políticas para coletar Market Intelligence
+
+  e Big Data de fontes externas. Isso resulta em decisões de procurement menos informadas e vulnerabilidade a disrupções
+
+  na cadeia de suprimentos, como atrasos em componentes críticos durante a pandemia.'
+ClasseIA: Híbrido
+ClasseIA_Confiança: Média
+TarefaAnalítica: Recomendação
+FamíliaModelo: IA/ML+NLP+Big Data
+TipoDado: Multimodal
+Maturidade: Conceito
+Maturidade_Confiança: Alta
+Intervenção_Descrição: "Cognitive procurement (Procurement 4.0) utilizando AI, ML, NLP, Big Data e Market Intelligence para criar \nsistemas de auto-aprendizagem para procurement. Propõe três modelos de governança: Human-on-the-loop (sem IA), \nHuman-in-the-loop (IA sugere, humano decide), e Human-out-of-loop (IA decide autonomamente). Inclui aplicações \ncomo NLP para revisão de contratos, ML para classificação de gastos e aprovação de pagamentos, e Big Data para \nidentificação de novos fornecedores.\n"
+Dados_Descrição: "Dados primários coletados via questionário online com escala Likert de 5 pontos, enviado a profissionais de \nprocurement em diversas organizações de O&G. O questionário cobriu: impacto da transformação digital, desafios \npotenciais na transformação digital de procurement e supply chain, e tecnologias habilitadoras. Não foram \nespecificados volume de respondentes ou período de coleta no texto disponível.\n"
+CategoriaMecanismo: Integração de dados dispersos
+Mecanismo_Fonte: Misto
+Mecanismo_Declarado: "O artigo declara que a integração de Market Intelligence de fontes externas com dados internos de ERP permite \ndecisões de procurement mais informadas. Big Data com conectores para dados externos estruturados e não-estruturados, \ncombinados com predictive analytics, simplificará o processo de tomada de decisão em procurement.\n"
+Mecanismo_Inferido: 'INFERIDO: A IA analisa dados de forma imparcial, reduzindo erros humanos e vieses nas decisões de sourcing. INFERIDO: A automação de tarefas rotineiras libera especialistas para atividades estratégicas. INFERIDO: A antecipação de riscos de fornecimento via Big Data permite planos de mitigação antes de perdas de produção.
+
+  '
+Mecanismo_Estruturado: Dados internos (ERP) + externos (MI, Big Data) → AI/ML/NLP → Análise imparcial e insights → Decisões de procurement otimizadas
+ResultadoTipo: Qualitativo
+Resultados_Quant: NR
+Resultados_Qual: 92.6% dos participantes concordam que integrar MI de fontes externas melhora decisões de procurement; 88.9% concordam que procurement se tornará função estratégica e inovadora; 70.9% acreditam que AI pode assumir processos de procurement no longo prazo; maioria concorda que AI/ML/blockchain aumentarão transparência e simplificarão processos
+NívelEvidência: Survey/entrevistas
+Limitações_Artigo: "O artigo menciona que mesmo com apoio da gestão e orçamento, organizações terão dificuldade em transformar \ne implementar procurement 4.0. Também identifica barreiras como gaps de habilidades, infraestrutura inadequada, \nmudança de papéis de trabalho e estrutura de comunicação organizacional.\n"
+Observação: "Artigo conceitual/exploratório baseado em survey de opinião de profissionais. Não apresenta implementação \nreal de sistema cognitivo nem métricas quantitativas de performance. Foco em framework teórico e percepção \ndo mercado sobre adoção de tecnologias.\n"
+Quotes:
+- QuoteID: Q001
+  TipoQuote: Contexto
+  Trecho: most oil and gas companies do not have mandatory policies to collect Market Intelligence (MI) and Big Data from external sources to obtain insight of alternative suppliers, alternative supply chain, cost, value, quality of service delivery
+  Página: p.7
+- QuoteID: Q002
+  TipoQuote: Mecanismo
+  Trecho: The oil and gas companies can use cognitive computing to provide faster and more accurate procurement analytics. This will also lead to improved operational efficiency and tactical purchasing. Cognitive computing should also help to identify supplier risks and opportunities.
+  Página: p.7
+- QuoteID: Q003
+  TipoQuote: Intervenção
+  Trecho: HITL in procurement is a process in which internal and external procurement related data is fed into an AI system. The system, makes prediction on the most suitable supplier for acquiring goods, services, or work.
+  Página: p.9
+- QuoteID: Q004
+  TipoQuote: Mecanismo
+  Trecho: This would help improve the accuracy of decision making since AI systems analyze the data in an unbiased manner and the specialists can come to the final decision by reviewing the short-list of external providers the AI system has come up with.
+  Página: p.10
+- QuoteID: Q005
+  TipoQuote: Outcome
+  Trecho: 92.6% of participants either agreed or strongly agreed that Integrating Market Intelligence data from various external sources for procurement will give the organization better insight for procurement decisions.
+  Página: p.13
+- QuoteID: Q006
+  TipoQuote: Limitação
+  Trecho: Even though the benefits of procurement 4.0 are clear for oil and gas companies, these do not guarantee that procurement teams have an easy task implementing them. Even with management buy-in and enough allocated budget, the organization will find it challenging to transform and implement procurement 4.0.
+  Página: p.10
+- QuoteID: Q007
+  TipoQuote: Mecanismo
+  Trecho: Big Data with connectors for structured and unstructured external data, combined with predictive analytics, will simplify the decision-making process in procurement.
+  Página: p.7
+- QuoteID: Q008
+  TipoQuote: Mecanismo
+  Trecho: The integration of Market Intelligence with internal ERP data allows for more informed procurement decisions.
+  Página: p.7
+---

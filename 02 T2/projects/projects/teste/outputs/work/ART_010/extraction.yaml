@@ -1,0 +1,83 @@
+---
+ArtigoID: ART_010
+Ano: 2025
+TipoPublicação: Journal
+Referência_Curta: Sayardoost Tabrizi et al., 2025
+DOI: https://doi.org/10.22105/riej.2024.455576.1443
+SegmentoO&G: Downstream
+SegmentoO&G_Confiança: Alta
+Ambiente: Onshore
+Complexidade: Média
+Complexidade_Justificativa: F1=0 (onshore), F2=1 (28 unidades petroquímicas com cadeia de suprimentos complexa), F3=1 (múltiplos riscos operacionais e ambientais com outputs indesejáveis)
+ProcessoSCM_Alvo: Planejamento de produção
+TipoRisco_SCRM: Risco operacional
+ObjetoCrítico: Unidades petroquímicas (DMUs) na cadeia de suprimentos de dois estágios
+ProblemaNegócio_Contexto: 'A indústria petroquímica do Irã enfrenta desafios na avaliação justa da eficiência de unidades de decisão (DMUs) e na identificação de estratégias de melhoria para unidades ineficientes.
+
+  O problema central é que métodos tradicionais de DEA comparam todas as unidades contra as mais eficientes na fronteira, ignorando as capacidades e características específicas de cada unidade.
+
+  Isso resulta em metas de desenvolvimento irrealistas para unidades ineficientes.
+
+  A cadeia de suprimentos de dois estágios (extração e refino) requer avaliação sustentável considerando aspectos econômicos, sociais e ambientais, incluindo outputs indesejáveis como resíduos e emissões de CO2.'
+ClasseIA: Híbrido
+ClasseIA_Confiança: Alta
+TarefaAnalítica: Clustering
+FamíliaModelo: Redes neurais feedforward; Clustering
+TipoDado: Tabular/ERP
+Maturidade: Protótipo
+Maturidade_Confiança: Alta
+Intervenção_Descrição: 'O estudo propõe um método híbrido combinando Machine Learning para clustering com Network Data Envelopment Analysis (NDEA). Três algoritmos de clustering são comparados: K-means, Hierarchical Clustering e Deep Embedded Clustering (DEC). O DEC utiliza redes neurais profundas (autoencoders) para converter dados de alta dimensão em forma reduzida antes do clustering. Após o clustering, a eficiência é calculada usando NDEA de dois estágios com modelo de retornos constantes de escala (CRS), considerando outputs desejáveis e indesejáveis.
+
+  '
+Dados_Descrição: 'Dataset coletado do software SAP (Samane Andishmand Pegah) contendo dados de 28 unidades petroquímicas do Irã ao longo de 90 períodos de tempo. Os dados incluem inputs de sustentabilidade em cada estágio (custos de segurança da força de trabalho, custos salariais, custos de compensação ambiental), outputs intermediários (óleo extraído transferido para refino), outputs desejáveis (receita de derivados de petróleo em milhões de dólares) e outputs indesejáveis (resíduos de óleo e impacto de gases de efeito estufa em milhões de dólares).
+
+  '
+CategoriaMecanismo: Padronização/consistência
+Mecanismo_Fonte: Declarado
+Mecanismo_Declarado: 'O artigo declara que o clustering de DMUs homogêneas permite que unidades ineficientes tenham metas de desenvolvimento mais alcançáveis, comparando-se com a unidade mais eficiente de seu cluster ao invés de todas as 28 unidades. O mecanismo funciona através da redução da distância das unidades ineficientes até a fronteira de eficiência do cluster, criando benchmarks mais realistas para planejamento de desenvolvimento.
+
+  '
+Mecanismo_Inferido: 'INFERIDO: O Deep Embedded Clustering reduz a dimensionalidade dos dados antes do clustering, permitindo identificar padrões de similaridade mais precisos entre as DMUs. INFERIDO: A separação em clusters homogêneos permite que a comparação de eficiência seja feita entre unidades com volumes de input/output similares, tornando as metas de melhoria mais realistas. INFERIDO: A abordagem hierárquica de melhoria (cluster por cluster) motiva as unidades industriais a se engajarem em aprimoramento contínuo.
+
+  '
+Mecanismo_Estruturado: Dados de 28 DMUs (inputs/outputs de sustentabilidade) → DEC clustering + NDEA dois estágios → Agrupamento homogêneo + cálculo de eficiência por cluster → Metas de desenvolvimento alcançáveis para unidades ineficientes
+ResultadoTipo: Quantitativo
+Resultados_Quant: 'Redução média de 18% na distância das unidades ineficientes até a fronteira de eficiência do cluster (vs. baseline: método NDEA sem clustering); Silhouette score DEC: 0.644 (vs. K-means: 0.607, Hierarchical: 0.585); Davies-Bouldin score DEC: 0.368 (vs. K-means: 0.475, Hierarchical: 0.472); Calinski-Harabasz score DEC: 170 (vs. K-means: 142.1, Hierarchical: 126)'
+Resultados_Qual: O método DEC demonstrou melhor qualidade de clustering em todos os três indicadores de avaliação. A análise estatística (teste t pareado) confirmou diferença significativa entre eficiências antes e após clustering (p<0.05). O clustering permite planejamento de desenvolvimento mais realista para unidades industriais.
+NívelEvidência: Experimento com dados reais
+Limitações_Artigo: 'Os autores não discutem explicitamente limitações do estudo no texto analisado. Entretanto, mencionam como direções futuras: explorar DNDEA (Dynamic Network DEA), investigar outros métodos de clustering incluindo clustering baseado em DEA, e analisar o impacto de níveis passados de eficiência em eficiência futura.
+
+  '
+Observação: 'O estudo foca primariamente na avaliação de eficiência e planejamento de desenvolvimento, não em predição ou gestão de riscos da cadeia de suprimentos no sentido tradicional de SCRM. A contribuição principal é metodológica: demonstrar como ML pode melhorar a avaliação de eficiência em cadeias de suprimentos sustentáveis.
+
+  '
+Quotes:
+- QuoteID: Q001
+  TipoQuote: Mecanismo
+  Trecho: The main goal is to create strategies for improving the performance of inefficient units by comparing them to the most efficient units in each cluster.
+  Página: p.355
+- QuoteID: Q002
+  TipoQuote: Outcome
+  Trecho: The results showed that the use of clustering for assessing the relative efficiency of units compared to the non-clustering method with DEA could averagely reduce 18% of the distance of inefficient units from the cluster's efficiency frontier
+  Página: p.355
+- QuoteID: Q003
+  TipoQuote: Mecanismo
+  Trecho: By clustering DMUs, inefficient units within each cluster were brought closer to improve efficiency by aligning them with the most efficient unit in their respective cluster.
+  Página: p.379
+- QuoteID: Q004
+  TipoQuote: Contexto
+  Trecho: One of the key challenges in comparing relative efficiency using traditional NDEA lies in benchmarking the performance of all units against the most efficient units on the efficiency frontier. This approach is logically flawed, as it fails to account for the varying capacities and specific capabilities of petrochemical units in Iran.
+  Página: p.362
+- QuoteID: Q005
+  TipoQuote: Intervenção
+  Trecho: It is appropriate to use this method when the number of features and dimensions of the data is large and a suitable volume of data is available for the implementation of deep learning. In this method, using a deep neural network, DEC is trained to convert high-dimensional data into a reduced-dimensional form so that it can implement clustering more tangibly.
+  Página: p.371
+- QuoteID: Q006
+  TipoQuote: Outcome
+  Trecho: According to the findings of Table 3, the Deep Embedded Clustering (DEC) algorithm demonstrates superior performance across all three metrics, namely the Silhouette score, Davies-Bouldin Score, and Calinski-Harabasz Score.
+  Página: p.373
+- QuoteID: Q007
+  TipoQuote: Método
+  Trecho: The data of 28 two-level supply chains in petrochemical industries has been collected for 90 time periods. The best clustering quality in these 90 time periods belongs to the period in which the quality assessment indices have the best values among all periods.
+  Página: p.372
+---

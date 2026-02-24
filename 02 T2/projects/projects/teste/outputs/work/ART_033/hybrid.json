@@ -1,0 +1,276 @@
+{
+  "artigo_id": "ART_033",
+  "arquivo": "Quantifying Tail Risk Spillovers in Chinese Petroleum Supply Chain Enterprises A Neural-Network-Inspired Multi-Layer Machine Learning Framework.pdf",
+  "analysis": [
+    {
+      "page_num": 1,
+      "strategy": "text",
+      "reason": "Primeira página (metadados)",
+      "text_until": null
+    },
+    {
+      "page_num": 2,
+      "strategy": "text",
+      "reason": "Somente texto",
+      "text_until": null
+    },
+    {
+      "page_num": 3,
+      "strategy": "image",
+      "reason": "Contém figuras/tabelas/gráficos",
+      "text_until": null
+    },
+    {
+      "page_num": 4,
+      "strategy": "text",
+      "reason": "Somente texto",
+      "text_until": null
+    },
+    {
+      "page_num": 5,
+      "strategy": "text",
+      "reason": "Somente texto",
+      "text_until": null
+    },
+    {
+      "page_num": 6,
+      "strategy": "text",
+      "reason": "Somente texto",
+      "text_until": null
+    },
+    {
+      "page_num": 7,
+      "strategy": "text",
+      "reason": "Somente texto",
+      "text_until": null
+    },
+    {
+      "page_num": 8,
+      "strategy": "text",
+      "reason": "Somente texto",
+      "text_until": null
+    },
+    {
+      "page_num": 9,
+      "strategy": "image",
+      "reason": "Contém figuras/tabelas/gráficos",
+      "text_until": null
+    },
+    {
+      "page_num": 10,
+      "strategy": "image",
+      "reason": "Contém figuras/tabelas/gráficos",
+      "text_until": null
+    },
+    {
+      "page_num": 11,
+      "strategy": "text",
+      "reason": "Somente texto",
+      "text_until": null
+    },
+    {
+      "page_num": 12,
+      "strategy": "text",
+      "reason": "Somente texto",
+      "text_until": null
+    },
+    {
+      "page_num": 13,
+      "strategy": "text",
+      "reason": "Somente texto",
+      "text_until": null
+    },
+    {
+      "page_num": 14,
+      "strategy": "image",
+      "reason": "Contém figuras/tabelas/gráficos",
+      "text_until": null
+    },
+    {
+      "page_num": 15,
+      "strategy": "image",
+      "reason": "Contém figuras/tabelas/gráficos",
+      "text_until": null
+    },
+    {
+      "page_num": 16,
+      "strategy": "text",
+      "reason": "Somente texto",
+      "text_until": null
+    },
+    {
+      "page_num": 17,
+      "strategy": "image",
+      "reason": "Contém figuras/tabelas/gráficos",
+      "text_until": null
+    },
+    {
+      "page_num": 18,
+      "strategy": "image",
+      "reason": "Contém figuras/tabelas/gráficos",
+      "text_until": null
+    },
+    {
+      "page_num": 19,
+      "strategy": "text",
+      "reason": "Somente texto",
+      "text_until": null
+    },
+    {
+      "page_num": 20,
+      "strategy": "image",
+      "reason": "Contém figuras/tabelas/gráficos",
+      "text_until": null
+    },
+    {
+      "page_num": 21,
+      "strategy": "text",
+      "reason": "Somente texto",
+      "text_until": null
+    },
+    {
+      "page_num": 22,
+      "strategy": "text_partial",
+      "reason": "Texto parcial (até referências)",
+      "text_until": 799
+    },
+    {
+      "page_num": 23,
+      "strategy": "skip",
+      "reason": "Seção de referências",
+      "text_until": null
+    },
+    {
+      "page_num": 24,
+      "strategy": "skip",
+      "reason": "Seção de referências",
+      "text_until": null
+    }
+  ],
+  "stats": {
+    "total": 24,
+    "text_pages": 14,
+    "image_pages": 8,
+    "skipped_pages": 2
+  },
+  "pages_info": [
+    {
+      "page_num": 1,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 2,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 3,
+      "type": "image",
+      "path": "C:\\Users\\Leonardo\\Documents\\Computing\\Projeto_Mestrado\\files\\files\\articles\\00 Dados RSL\\02 T2\\projects\\projects\\teste\\outputs\\work\\ART_033\\pages\\page_003.png"
+    },
+    {
+      "page_num": 4,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 5,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 6,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 7,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 8,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 9,
+      "type": "image",
+      "path": "C:\\Users\\Leonardo\\Documents\\Computing\\Projeto_Mestrado\\files\\files\\articles\\00 Dados RSL\\02 T2\\projects\\projects\\teste\\outputs\\work\\ART_033\\pages\\page_009.png"
+    },
+    {
+      "page_num": 10,
+      "type": "image",
+      "path": "C:\\Users\\Leonardo\\Documents\\Computing\\Projeto_Mestrado\\files\\files\\articles\\00 Dados RSL\\02 T2\\projects\\projects\\teste\\outputs\\work\\ART_033\\pages\\page_010.png"
+    },
+    {
+      "page_num": 11,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 12,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 13,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 14,
+      "type": "image",
+      "path": "C:\\Users\\Leonardo\\Documents\\Computing\\Projeto_Mestrado\\files\\files\\articles\\00 Dados RSL\\02 T2\\projects\\projects\\teste\\outputs\\work\\ART_033\\pages\\page_014.png"
+    },
+    {
+      "page_num": 15,
+      "type": "image",
+      "path": "C:\\Users\\Leonardo\\Documents\\Computing\\Projeto_Mestrado\\files\\files\\articles\\00 Dados RSL\\02 T2\\projects\\projects\\teste\\outputs\\work\\ART_033\\pages\\page_015.png"
+    },
+    {
+      "page_num": 16,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 17,
+      "type": "image",
+      "path": "C:\\Users\\Leonardo\\Documents\\Computing\\Projeto_Mestrado\\files\\files\\articles\\00 Dados RSL\\02 T2\\projects\\projects\\teste\\outputs\\work\\ART_033\\pages\\page_017.png"
+    },
+    {
+      "page_num": 18,
+      "type": "image",
+      "path": "C:\\Users\\Leonardo\\Documents\\Computing\\Projeto_Mestrado\\files\\files\\articles\\00 Dados RSL\\02 T2\\projects\\projects\\teste\\outputs\\work\\ART_033\\pages\\page_018.png"
+    },
+    {
+      "page_num": 19,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 20,
+      "type": "image",
+      "path": "C:\\Users\\Leonardo\\Documents\\Computing\\Projeto_Mestrado\\files\\files\\articles\\00 Dados RSL\\02 T2\\projects\\projects\\teste\\outputs\\work\\ART_033\\pages\\page_020.png"
+    },
+    {
+      "page_num": 21,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 22,
+      "type": "text",
+      "path": null
+    }
+  ],
+  "info": {
+    "num_pages": 24,
+    "title": "Quantifying Tail Risk Spillovers in Chinese Petroleum Supply Chain Enterprises: A Neural-Network-Inspired Multi-Layer Machine Learning Framework",
+    "author": "Xin Zheng, Lei Wang, Tingqiang Chen and Tao Xu",
+    "subject": "This study constructs a neural-network-inspired multi-layer machine learning model (RQLNet ) to measure and analyze the effects of tail risk spillover and its associated sensitivities to macroeconomic factors among petroleum supply chain enterprises. On this basis, the study constructs a tail risk spillover network and analyzes its network-level structural features. The results show the following: (1) The proposed model improves the accuracy of tail risk measurement while addressing the issue of excessive penalization in spillover weights, offering enhanced interpretability and structural stability and making it particularly suitable for high-dimensional tail risk estimation. (2) Tail risk spillovers propagate from up- and midstream to downstream and ultimately to end enterprises. Structurally, the up- and midstream are the main sources, whereas the downstream and end enterprises are the primary recipients. (3) The tail risk sensitivities of Chinese petroleum supply chain enterprises exhibit significant differences across macroeconomic factors and across types of enterprises. Overall, the sensitivities to CIMV and LS are higher. (4) The network evolves in stages: during trade frictions, spillovers accelerate and core nodes strengthen; during public-health events, intra-community cohesion increases and cross-community spillovers decline; in the recovery phase, cross-community links resume and concentrate on core nodes; and during geopolitical conflicts, spillovers are core-dominated and cross-community transmission accelerates.",
+    "creator": "LaTeX with hyperref",
+    "file_size_mb": 4.573057174682617
+  }
+}

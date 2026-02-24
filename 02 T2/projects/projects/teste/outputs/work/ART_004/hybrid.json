@@ -1,0 +1,149 @@
+{
+  "artigo_id": "ART_004",
+  "arquivo": "An Efficiency-Uncertainty-Based Consensus Optimization Framework With Dual-Perspective Clustering Analysis for Blockchain Adoption in Supply Chains.pdf",
+  "analysis": [
+    {
+      "page_num": 1,
+      "strategy": "text",
+      "reason": "Primeira página (metadados)",
+      "text_until": null
+    },
+    {
+      "page_num": 2,
+      "strategy": "text",
+      "reason": "Somente texto",
+      "text_until": null
+    },
+    {
+      "page_num": 3,
+      "strategy": "text",
+      "reason": "Somente texto",
+      "text_until": null
+    },
+    {
+      "page_num": 4,
+      "strategy": "text",
+      "reason": "Somente texto",
+      "text_until": null
+    },
+    {
+      "page_num": 5,
+      "strategy": "text",
+      "reason": "Somente texto",
+      "text_until": null
+    },
+    {
+      "page_num": 6,
+      "strategy": "image",
+      "reason": "Contém figuras/tabelas/gráficos",
+      "text_until": null
+    },
+    {
+      "page_num": 7,
+      "strategy": "image",
+      "reason": "Contém figuras/tabelas/gráficos",
+      "text_until": null
+    },
+    {
+      "page_num": 8,
+      "strategy": "image",
+      "reason": "Contém figuras/tabelas/gráficos",
+      "text_until": null
+    },
+    {
+      "page_num": 9,
+      "strategy": "text",
+      "reason": "Somente texto",
+      "text_until": null
+    },
+    {
+      "page_num": 10,
+      "strategy": "text",
+      "reason": "Somente texto",
+      "text_until": null
+    },
+    {
+      "page_num": 11,
+      "strategy": "text",
+      "reason": "Somente texto",
+      "text_until": null
+    },
+    {
+      "page_num": 12,
+      "strategy": "skip",
+      "reason": "Seção de referências",
+      "text_until": null
+    }
+  ],
+  "stats": {
+    "total": 12,
+    "text_pages": 8,
+    "image_pages": 3,
+    "skipped_pages": 1
+  },
+  "pages_info": [
+    {
+      "page_num": 1,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 2,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 3,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 4,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 5,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 6,
+      "type": "image",
+      "path": "C:\\Users\\Leonardo\\Documents\\Computing\\Projeto_Mestrado\\files\\files\\articles\\00 Dados RSL\\02 T2\\projects\\projects\\teste\\outputs\\work\\ART_004\\pages\\page_006.png"
+    },
+    {
+      "page_num": 7,
+      "type": "image",
+      "path": "C:\\Users\\Leonardo\\Documents\\Computing\\Projeto_Mestrado\\files\\files\\articles\\00 Dados RSL\\02 T2\\projects\\projects\\teste\\outputs\\work\\ART_004\\pages\\page_007.png"
+    },
+    {
+      "page_num": 8,
+      "type": "image",
+      "path": "C:\\Users\\Leonardo\\Documents\\Computing\\Projeto_Mestrado\\files\\files\\articles\\00 Dados RSL\\02 T2\\projects\\projects\\teste\\outputs\\work\\ART_004\\pages\\page_008.png"
+    },
+    {
+      "page_num": 9,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 10,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 11,
+      "type": "text",
+      "path": null
+    }
+  ],
+  "info": {
+    "num_pages": 12,
+    "title": "An Efficiency-Uncertainty-Based Consensus Optimization Framework With Dual-Perspective Clustering Analysis for Blockchain Adoption in Supply Chains",
+    "author": "",
+    "subject": "IEEE Transactions on Engineering Management;2025;72; ;10.1109/TEM.2025.3626659",
+    "creator": "LaTeX with hyperref package",
+    "file_size_mb": 0.9707660675048828
+  }
+}

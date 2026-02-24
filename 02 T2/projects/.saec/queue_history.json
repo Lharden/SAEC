@@ -1,1 +1,105 @@
-[]
+[
+  {
+    "job_id": "be0e6457",
+    "status": "success",
+    "created_at": "2026-02-24T03:56:27.726674+00:00",
+    "started_at": "2026-02-24T03:56:27.727932+00:00",
+    "finished_at": "2026-02-24T03:56:32.238146+00:00",
+    "return_code": 0,
+    "command": [
+      "C:\\Python314\\python.exe",
+      "C:/Users/Leonardo/Documents/Computing/Projeto_Mestrado/files/files/articles/00 Dados RSL/system/main.py",
+      "--step",
+      "1",
+      "--force",
+      "--log-level",
+      "INFO"
+    ],
+    "request_mode": "step",
+    "request_step": 1,
+    "request_article_id": "",
+    "request_dry_run": false,
+    "request_force": true,
+    "request_log_level": "INFO",
+    "request_timeout_minutes": 10.0,
+    "request_workspace_root": "C:\\Users\\Leonardo\\Documents\\Computing\\Projeto_Mestrado\\files\\files\\articles\\00 Dados RSL\\02 T2\\projects",
+    "request_project_root": "C:\\Users\\Leonardo\\Documents\\Computing\\Projeto_Mestrado\\files\\files\\articles\\00 Dados RSL\\02 T2\\projects\\projects\\teste"
+  },
+  {
+    "job_id": "8adc6903",
+    "status": "success",
+    "created_at": "2026-02-24T03:57:14.980440+00:00",
+    "started_at": "2026-02-24T03:57:14.981570+00:00",
+    "finished_at": "2026-02-24T03:58:33.641258+00:00",
+    "return_code": 0,
+    "command": [
+      "C:\\Python314\\python.exe",
+      "C:/Users/Leonardo/Documents/Computing/Projeto_Mestrado/files/files/articles/00 Dados RSL/system/main.py",
+      "--step",
+      "2",
+      "--force",
+      "--log-level",
+      "INFO"
+    ],
+    "request_mode": "step",
+    "request_step": 2,
+    "request_article_id": "",
+    "request_dry_run": false,
+    "request_force": true,
+    "request_log_level": "INFO",
+    "request_timeout_minutes": 10.0,
+    "request_workspace_root": "C:\\Users\\Leonardo\\Documents\\Computing\\Projeto_Mestrado\\files\\files\\articles\\00 Dados RSL\\02 T2\\projects",
+    "request_project_root": "C:\\Users\\Leonardo\\Documents\\Computing\\Projeto_Mestrado\\files\\files\\articles\\00 Dados RSL\\02 T2\\projects\\projects\\teste"
+  },
+  {
+    "job_id": "0aea0289",
+    "status": "timeout",
+    "created_at": "2026-02-24T03:58:48.957717+00:00",
+    "started_at": "2026-02-24T03:58:48.958568+00:00",
+    "finished_at": "2026-02-24T04:08:49.065861+00:00",
+    "return_code": -2,
+    "command": [
+      "C:\\Python314\\python.exe",
+      "C:/Users/Leonardo/Documents/Computing/Projeto_Mestrado/files/files/articles/00 Dados RSL/system/main.py",
+      "--step",
+      "3",
+      "--force",
+      "--log-level",
+      "INFO"
+    ],
+    "request_mode": "step",
+    "request_step": 3,
+    "request_article_id": "",
+    "request_dry_run": false,
+    "request_force": true,
+    "request_log_level": "INFO",
+    "request_timeout_minutes": 10.0,
+    "request_workspace_root": "C:\\Users\\Leonardo\\Documents\\Computing\\Projeto_Mestrado\\files\\files\\articles\\00 Dados RSL\\02 T2\\projects",
+    "request_project_root": "C:\\Users\\Leonardo\\Documents\\Computing\\Projeto_Mestrado\\files\\files\\articles\\00 Dados RSL\\02 T2\\projects\\projects\\teste"
+  },
+  {
+    "job_id": "b8118a40",
+    "status": "timeout",
+    "created_at": "2026-02-24T04:21:39.859580+00:00",
+    "started_at": "2026-02-24T04:21:39.860617+00:00",
+    "finished_at": "2026-02-24T05:21:39.958608+00:00",
+    "return_code": -2,
+    "command": [
+      "C:\\Python314\\python.exe",
+      "C:/Users/Leonardo/Documents/Computing/Projeto_Mestrado/files/files/articles/00 Dados RSL/system/main.py",
+      "--all",
+      "--force",
+      "--log-level",
+      "INFO"
+    ],
+    "request_mode": "all",
+    "request_step": null,
+    "request_article_id": "",
+    "request_dry_run": false,
+    "request_force": true,
+    "request_log_level": "INFO",
+    "request_timeout_minutes": 60.0,
+    "request_workspace_root": "C:\\Users\\Leonardo\\Documents\\Computing\\Projeto_Mestrado\\files\\files\\articles\\00 Dados RSL\\02 T2\\projects",
+    "request_project_root": "C:\\Users\\Leonardo\\Documents\\Computing\\Projeto_Mestrado\\files\\files\\articles\\00 Dados RSL\\02 T2\\projects\\projects\\teste"
+  }
+]

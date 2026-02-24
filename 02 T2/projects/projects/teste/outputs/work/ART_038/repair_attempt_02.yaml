@@ -1,0 +1,71 @@
+---
+ArtigoID: ART_038
+Ano: 2021
+TipoPublicação: Journal
+Referência_Curta: Serova & Shklyaev, 2021
+DOI: NR
+SegmentoO&G: Midstream
+SegmentoO&G_Confiança: Alta
+Ambiente: Híbrido
+Complexidade: Alta
+Complexidade_Justificativa: 'F1=1 (inclui offshore/Arctic com navegação em gelo), F2=1 (múltiplos agentes: tankers, pipelines, terminals, refineries, fuel trucks), F3=1 (condições adversas de gelo, risco operacional crítico)'
+ProcessoSCM_Alvo: Logística/transporte
+TipoRisco_SCRM: Risco de transporte/logística
+ObjetoCrítico: Transporte marítimo de petróleo em condições árticas e operações de carga/descarga de produtos petrolíferos
+ProblemaNegócio_Contexto: 'Empresas petrolíferas russas verticalmente integradas enfrentam desafios complexos no transporte de petróleo e derivados.
+
+  O caso específico do campo Novoportovskoye envolve transporte marítimo através de um canal de 500 km em gelo com mais de 2 metros de espessura no Golfo de Ob e Mar de Kara.
+
+  Os decisores precisam determinar número de navios, necessidade de quebra-gelos, capacidade de terminais onshore, e coordenar múltiplos agentes (navios, terminais, dutos, refinarias, caminhões) em ambiente dinâmico e incerto.'
+ClasseIA: Híbrido
+ClasseIA_Confiança: Alta
+TarefaAnalítica: Simulação/what-if
+FamíliaModelo: Simulação;Modelagem multi-agente
+TipoDado: Multimodal
+Maturidade: Protótipo
+Maturidade_Confiança: Média
+Intervenção_Descrição: 'Sistema de inteligência artificial distribuída baseado em modelagem multi-agente (MAS) desenvolvido em AnyLogic. O modelo integra módulos GIS, cálculos de engenharia naval e simulação logística. Agentes representam navios-tanque, quebra-gelos, terminais, dutos, refinarias e caminhões de combustível, cada um com comportamento autônomo e parâmetros únicos (capacidade, velocidade). O sistema considera interações entre tankers e quebra-gelos, condições de gelo, temperatura, posição de outros navios e nível de enchimento do terminal.
+
+  '
+Dados_Descrição: 'Dados operacionais incluem: características de navios e infraestrutura (capacidade, velocidade), condições ambientais do Ártico (espessura do gelo, temperatura), parâmetros de terminais de petróleo (volume, taxas de carga/descarga). O modelo da cadeia de suprimentos inclui 4 tankers, 4 terminais de óleo, 4 dutos de óleo, 4 refinarias, 32 dutos de produtos, 32 terminais de produtos e 41 caminhões de combustível. Experimentos variaram volumes de tanques (4 m³ a 500 m³) e taxas de descarga (25 l/s a 150 l/s).
+
+  '
+CategoriaMecanismo: Otimização de trade-offs
+Mecanismo_Fonte: Misto
+Mecanismo_Declarado: '"The involvement of information technologies and procedures, as well as modern simulation systems, in the first place, MAS – systems of distributed AI, allows you to bring the solution of logistics problems to quantitative results, which are especially valuable for managers."
+
+  '
+Mecanismo_Inferido: 'INFERIDO: A modelagem multi-agente permite representar comportamento autônomo de cada participante do processo logístico, capturando suas decisões individuais e interações. INFERIDO: A simulação what-if possibilita testar cenários de capacidade, número de navios e necessidade de quebra-gelos antes de investimentos reais. INFERIDO: A integração de GIS com cálculos de engenharia naval permite considerar simultaneamente condições ambientais dinâmicas (gelo, temperatura) e lógica de operações de transporte. INFERIDO: A abordagem distribuída permite balancear trade-offs entre capacidade de terminal, frequência de chegada de caminhões-tanque e risco de déficit de combustível.
+
+  '
+Mecanismo_Estruturado: Dados operacionais e ambientais → Modelagem multi-agente com simulação → Avaliação de cenários e trade-offs → Dimensionamento de frota e infraestrutura logística
+ResultadoTipo: Qualitativo
+Resultados_Quant: NR
+Resultados_Qual: 'O modelo permitiu projetar o sistema de transporte do campo Novoportovskoye considerando congelamento do canal, dinâmica de navios e enchimento de terminais. Determinou-se volume do terminal onshore, número de canais de gelo, datas de construção, suporte de quebra-gelos. Experimentos demonstraram: aumento de tanques de 30 m³ para 500 m³ reduz frequência de chegada de caminhões; redução para 4 m³ causa déficit de combustível; aumento da taxa de descarga de 25 l/s para 150 l/s reduz significativamente probabilidade de déficit.'
+NívelEvidência: Simulação com dados reais
+Limitações_Artigo: 'Os autores indicam que a principal desvantagem da modelagem baseada em agentes comparada com dinâmica de sistemas é que "it is often difficult to develop a detailed agent model that takes into account all the cause and effect relationships that affect the agent''s decision."
+
+  '
+Observação: 'O artigo apresenta dois casos: (1) sistema de transporte marítimo de óleo do campo Novoportovskoye no Ártico russo, desenvolvido pelo Krylov State Scientific Centre; (2) modelo de cadeia de suprimentos de óleo nos EUA e modelo de posto de combustíveis. O foco principal está na demonstração da aplicabilidade de MAS como sistemas de IA distribuída para suporte à decisão em logística de transporte de O&G.
+
+  '
+Quotes:
+- QuoteID: Q001
+  TipoQuote: Mecanismo
+  Trecho: The involvement of information technologies and procedures, as well as modern simulation systems, in the first place, MAS – systems of distributed AI, allows you to bring the solution of logistics problems to quantitative results, which are especially valuable for managers.
+- QuoteID: Q002
+  TipoQuote: Contexto
+  Trecho: Because the behaviour of each of the participants in the processes of transportation, loading, and unloading operations with petroleum products is unique, agent modelling in AnyLogic was used.
+- QuoteID: Q003
+  TipoQuote: Mecanismo
+  Trecho: 'INFERIDO: A modelagem multi-agente permite representar comportamento autônomo de cada participante do processo logístico, capturando suas decisões individuais e interações.'
+- QuoteID: Q004
+  TipoQuote: Mecanismo
+  Trecho: 'INFERIDO: A simulação what-if possibilita testar cenários de capacidade, número de navios e necessidade de quebra-gelos antes de investimentos reais.'
+- QuoteID: Q005
+  TipoQuote: Mecanismo
+  Trecho: 'INFERIDO: A integração de GIS com cálculos de engenharia naval permite considerar simultaneamente condições ambientais dinâmicas (gelo, temperatura) e lógica de operações de transporte.'
+- QuoteID: Q006
+  TipoQuote: Mecanismo
+  Trecho: 'INFERIDO: A abordagem distribuída permite balancear trade-offs entre capacidade de terminal, frequência de chegada de caminhões-tanque e risco de déficit de combustível.'
+---

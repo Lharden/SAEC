@@ -1,0 +1,88 @@
+{
+  "artigo_id": "ART_030",
+  "arquivo": "Multi-Model Machine Learning Approaches for Fault and Anomaly Detection in Petroleum Product Distribution A Comparison.pdf",
+  "analysis": [
+    {
+      "page_num": 1,
+      "strategy": "text",
+      "reason": "Primeira página (metadados)",
+      "text_until": null
+    },
+    {
+      "page_num": 2,
+      "strategy": "text",
+      "reason": "Somente texto",
+      "text_until": null
+    },
+    {
+      "page_num": 3,
+      "strategy": "image",
+      "reason": "Contém figuras/tabelas/gráficos",
+      "text_until": null
+    },
+    {
+      "page_num": 4,
+      "strategy": "text",
+      "reason": "Somente texto",
+      "text_until": null
+    },
+    {
+      "page_num": 5,
+      "strategy": "text",
+      "reason": "Somente texto",
+      "text_until": null
+    },
+    {
+      "page_num": 6,
+      "strategy": "image",
+      "reason": "Contém figuras/tabelas/gráficos",
+      "text_until": null
+    }
+  ],
+  "stats": {
+    "total": 6,
+    "text_pages": 4,
+    "image_pages": 2,
+    "skipped_pages": 0
+  },
+  "pages_info": [
+    {
+      "page_num": 1,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 2,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 3,
+      "type": "image",
+      "path": "C:\\Users\\Leonardo\\Documents\\Computing\\Projeto_Mestrado\\files\\files\\articles\\00 Dados RSL\\02 T2\\projects\\projects\\teste\\outputs\\work\\ART_030\\pages\\page_003.png"
+    },
+    {
+      "page_num": 4,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 5,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 6,
+      "type": "image",
+      "path": "C:\\Users\\Leonardo\\Documents\\Computing\\Projeto_Mestrado\\files\\files\\articles\\00 Dados RSL\\02 T2\\projects\\projects\\teste\\outputs\\work\\ART_030\\pages\\page_006.png"
+    }
+  ],
+  "info": {
+    "num_pages": 6,
+    "title": "Multi-Model Machine Learning Approaches for Fault and Anomaly Detection in Petroleum Product Distribution: A Comparison",
+    "author": "",
+    "subject": "2025 20th Annual System of Systems Engineering Conference (SoSE);2025; ; ;10.1109/SoSE66311.2025.11083821",
+    "creator": "Appligent StampPDF Batch 7.0.3",
+    "file_size_mb": 0.8606443405151367
+  }
+}

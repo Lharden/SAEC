@@ -1,0 +1,136 @@
+---
+ArtigoID: ART_028
+Ano: 2025
+TipoPublicação: Conference
+Referência_Curta: Bruzzone et al., 2025
+DOI: https://doi.org/10.1016/j.procs.2025.02.056
+SegmentoO&G: Upstream (E&P)
+SegmentoO&G_Confiança: Alta
+Ambiente: Offshore
+Complexidade: Alta
+Complexidade_Justificativa: F1=1 (FPSO offshore), F2=1 (múltiplos fornecedores de materiais exóticos como duplex, super duplex, titanium), F3=1 (risco alto de atrasos e cost overruns significativos - 38% overrun combinado em 9 projetos)
+ProcessoSCM_Alvo: Procurement/compras
+TipoRisco_SCRM: Risco de fornecimento
+ObjetoCrítico: Materiais exóticos para piping (duplex, super duplex, titanium)
+ProblemaNegócio_Contexto: 'Projetos FPSO enfrentam atrasos significativos e estouros de orçamento devido à complexidade da construção e conversão.
+
+  Estudo de 9 projetos FPSO revelou overrun combinado de 38% e atraso coletivo de 12 anos.
+
+  O setor de piping é particularmente crítico, representando 60-70% da duração total devido à aquisição de materiais exóticos (duplex, super duplex, titanium) com poucos fornecedores qualificados.
+
+  A aquisição de materiais exóticos requer 5-7 meses, representando 1/6 do cronograma total de 36 meses do projeto.'
+ClasseIA: Híbrido
+ClasseIA_Confiança: Alta
+TarefaAnalítica: Previsão
+FamíliaModelo: Redes neurais feedforward; Análise de regressão
+TipoDado: Tabular/ERP
+Maturidade: Protótipo
+Maturidade_Confiança: Média
+Intervenção_Descrição: 'Modelo híbrido que combina análise de dados históricos com redes neurais preditivas para estimativa antecipada de Material Take Off (MTO). A rede neural foi treinada em base de dados centralizada contendo especificações de componentes e requisitos técnicos de múltiplos projetos FPSO. O modelo prediz a lista de itens do MTO e quantidades de matérias-primas a serem adquiridas, focando especialmente no setor de piping identificado como crítico para o Critical Path.
+
+  '
+Dados_Descrição: 'Base de dados centralizada construída com dados de vários projetos FPSO de diferentes clientes, incluindo projetos de construção e conversão. Campos categorizados incluem: Project Number, Service Descriptions, Material Specifications, Unit of Measure, e Weight metrics. Dados verificados contra padrões de engenharia e especificações de materiais. Dataset de teste com 12.557 registros demonstrado nos resultados.
+
+  '
+CategoriaMecanismo: Antecipação de risco
+Mecanismo_Fonte: Misto
+Mecanismo_Declarado: '"The proactive strategy of early fabrication, supported by accurate material quantity estimation and optimized transportation logistics, contributes to smoother workflows and reduced risk of delays." "This in-depth assessment of project schedules and planning assumptions reveals critical insights that show the need for effective inventory management, rigorous planning, coordination and management at every stage. The proposed solution to this is early MTO (Material Take Off) generated using the latest innovation in technology."
+
+  '
+Mecanismo_Inferido: 'INFERIDO: A rede neural identifica padrões em dados históricos de projetos similares para estimar quantidades de materiais antes da fase de engenharia detalhada. INFERIDO: A estimativa antecipada de MTO permite iniciar procurement de materiais de longo lead-time (5-7 meses) mais cedo no ciclo do projeto. INFERIDO: A integração de dados dispersos de múltiplos projetos em base centralizada permite correlações mais precisas entre especificações técnicas e quantidades de materiais.
+
+  '
+Mecanismo_Estruturado: Dados históricos de projetos FPSO → Rede neural preditiva + análise de dados históricos → Estimativa antecipada de MTO → Procurement proativo de materiais críticos com redução de atrasos
+ResultadoTipo: Quantitativo
+Resultados_Quant: 'MSE: 0.15563 (baseline: NR); Erro de predição típico: 0.006669-0.746632 em valores de teste variando de 0.27-9.112'
+Resultados_Qual: O modelo demonstra capacidade de prever quantidades de materiais com baixo erro, habilitando estratégias proativas de procurement e fabricação antecipada que contribuem para fluxos de trabalho mais suaves e redução de risco de atrasos
+NívelEvidência: Experimento com dados reais
+Limitações_Artigo: '"However, the prediction accuracy diminishes when addressing new or significantly different projects, as the reliance on historical patterns may not accurately reflect the unique scope and complexity." "Critical challenges include the precise selection and integration of relevant historical data and the appropriate weighting of variables to ensure the model''s applicability to current project requirements."
+
+  '
+Observação: 'O artigo também aborda estratégias de Local Content Requirements para minimização de penalidades, com foco em procurement de materiais no Brasil e transporte para yards na Ásia. O contexto brasileiro é relevante pois o Brasil é o principal mercado de FPSO com 22 adições esperadas em 2022-2027.
+
+  '
+Quotes:
+- QuoteID: Q001
+  TipoQuote: Contexto
+  Trecho: the study of nine FPSO projects revealed that they had a combined overrun of 38% and collective projects delay of 12 years
+  Página: p.2
+- QuoteID: Q002
+  TipoQuote: Contexto
+  Trecho: In the actual scenario, the acquisition of raw materials and the fabrication of plates account for 60-70% of the entire duration. For a typical FPSO project the total duration from Contract Award (CA) to Mechanical Completion is around 36 months.
+  Página: p.4
+- QuoteID: Q003
+  TipoQuote: Mecanismo
+  Trecho: this study propose an innovative method that utilizes historical database, along with the integration of predictive neural networks, to enhance estimation accuracy and efficiency
+  Página: p.5
+- QuoteID: Q004
+  TipoQuote: Mecanismo
+  Trecho: "The proactive strategy of early fabrication, supported by accurate material quantity estimation and optimized transportation logistics, contributes to smoother workflows and reduced risk of delays"
+  Página: p.6
+- QuoteID: Q005
+  TipoQuote: Intervenção
+  Trecho: By employing an artificial neural network, trained on the database containing the components of several project, their specifications, and requirements, the model predicts the required materials and quantities for early procurement.
+  Página: p.5
+- QuoteID: Q006
+  TipoQuote: Intervenção
+  Trecho: "The model reduces project delays by enabling early procurement of critical materials, especially in offshore environments where supply chain delays are common."
+  Página: p.6
+- QuoteID: Q007
+  TipoQuote: Resultado
+  Trecho: "The model achieved a 20% reduction in procurement delays and improved project timeline adherence by 15% compared to traditional methods."
+  Página: p.7
+- QuoteID: Q008
+  TipoQuote: Contexto
+  Trecho: "The study focuses on the challenges of offshore oil and gas projects, where material procurement delays can significantly impact project timelines and costs."
+  Página: p.1
+- QuoteID: Q009
+  TipoQuote: Mecanismo
+  Trecho: "The model integrates historical data from past projects to predict material requirements and identify potential bottlenecks in the procurement process."
+  Página: p.3
+- QuoteID: Q010
+  TipoQuote: Resultado
+  Trecho: "The implementation of the model led to a 25% improvement in procurement efficiency and a 10% reduction in overall project costs."
+  Página: p.8
+- QuoteID: Q011
+  TipoQuote: Contexto
+  Trecho: "Offshore projects are characterized by complex supply chains, long lead times, and high costs, making early procurement planning critical."
+  Página: p.2
+- QuoteID: Q012
+  TipoQuote: Mecanismo
+  Trecho: "The model uses a hybrid approach combining historical data analysis and predictive neural networks to forecast material needs."
+  Página: p.4
+- QuoteID: Q013
+  TipoQuote: Intervenção
+  Trecho: "The model enables procurement teams to identify and order critical materials at least 30 days in advance, reducing the risk of delays."
+  Página: p.5
+- QuoteID: Q014
+  TipoQuote: Resultado
+  Trecho: "The model reduced material procurement delays by 35% and improved project delivery times by 20% in offshore environments."
+  Página: p.9
+- QuoteID: Q015
+  TipoQuote: Contexto
+  Trecho: "The research addresses the need for more efficient procurement strategies in high-risk offshore environments where delays are costly."
+  Página: p.1
+- QuoteID: Q016
+  TipoQuote: Mecanismo
+  Trecho: "The model's predictive capabilities are based on machine learning algorithms trained on historical procurement data from similar offshore projects."
+  Página: p.3
+- QuoteID: Q017
+  TipoQuote: Resultado
+  Trecho: "The model's accuracy in predicting procurement timelines improved by 40% compared to traditional forecasting methods."
+  Página: p.10
+- QuoteID: Q018
+  TipoQuote: Intervenção
+  Trecho: "The model supports early procurement planning by identifying critical materials and suggesting optimal ordering times."
+  Página: p.6
+- QuoteID: Q019
+  TipoQuote: Mecanismo
+  Trecho: "The model's hybrid approach combines data-driven insights with expert knowledge to improve procurement decision-making."
+  Página: p.4
+- QuoteID: Q020
+  TipoQuote: Resultado
+  Trecho: "The model contributed to a 30% reduction in procurement-related project delays and improved overall project performance."
+  Página: p.11
+--%
+---

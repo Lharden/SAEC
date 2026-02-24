@@ -1,0 +1,69 @@
+---
+ArtigoID: ART_015
+Ano: 2021
+TipoPublicação: Journal
+Referência_Curta: Tarei et al., 2021
+DOI: https://doi.org/10.1108/JMTM-02-2020-0035
+SegmentoO&G: Cross-segment
+SegmentoO&G_Confiança: Alta
+Ambiente: NR
+Complexidade: Média
+Complexidade_Justificativa: F1=0 (ambiente NR, não especificado), F2=1 (SC complexa com múltiplos stakeholders - upstream, midstream, downstream), F3=1 (gestão de riscos críticos na cadeia petroleira indiana com 34% risk score)
+ProcessoSCM_Alvo: Gestão de riscos da cadeia
+TipoRisco_SCRM: Múltiplos
+ObjetoCrítico: Estratégias de mitigação de risco e enablers correspondentes na cadeia de petróleo indiana
+ProblemaNegócio_Contexto: 'A cadeia de suprimentos de petróleo indiana (IPSC) enfrenta múltiplos riscos incluindo transporte, qualidade de produtos, fornecimento de petróleo bruto, pedidos de clientes, regulamentação política/legal e crises econômicas.
+
+  O estudo identificou um risk score geral de 34% para a IPSC.
+
+  Os gestores de SC precisam selecionar estratégias de gestão de risco (RMS) adequadas e implementar os enablers correspondentes (RMEs), mas a literatura existente não fornece uma relação estabelecida entre RMEs e RMSs nem um sistema de suporte à decisão para auxiliar neste processo.'
+ClasseIA: Híbrido
+ClasseIA_Confiança: Alta
+TarefaAnalítica: Recomendação
+FamíliaModelo: MCDM/Decisão;Fuzzy Inference System
+TipoDado: Tabular/ERP
+Maturidade: Protótipo
+Maturidade_Confiança: Alta
+Intervenção_Descrição: 'Sistema de suporte à decisão (DSS) integrando Correspondence Analysis (CA) para mapear relações entre estratégias de mitigação de risco (RMSs) e enablers (RMEs), combinado com Fuzzy Inference System (FIS) baseado em regras Mamdani para recomendar a estratégia apropriada. O DSS considera três variáveis de entrada (risk score, período de implementação, disponibilidade de recursos) e recomenda uma das seis estratégias (Ignore, Control, Accept, Mitigate, Transfer, Avoid) junto com ranking dos RMEs correspondentes baseado na distância do centro do cluster.
+
+  '
+Dados_Descrição: 'Dados coletados através de revisão sistemática de literatura (62 RMEs de 28 artigos) e entrevistas com painel de 12 especialistas de diversas indústrias para validação inicial, seguido de painel específico de 6 especialistas da indústria de petróleo indiana com média de 15 anos de experiência em sourcing, planejamento, refino e marketing. Os especialistas mapearam 28 RMEs relevantes para IPSC às 6 RMSs através de scoring binário (1 ou 0).
+
+  '
+CategoriaMecanismo: Priorização/alocação ótima
+Mecanismo_Fonte: Misto
+Mecanismo_Declarado: '"The embedded intelligence helps SCM to move from supporting decisions to assigning them and, ultimately, to predict which decisions need to be made." O DSS "will facilitate the SC stakeholders and practitioners to make faster decision-making (i.e. assessment of available RMSs) with more accuracy in an uncertain and risky environment."
+
+  '
+Mecanismo_Inferido: 'INFERIDO: A Correspondence Analysis revela fatores latentes (preparedness to face risk, resource capability, sophistication of implementation) que estruturam a relação entre estratégias e enablers, permitindo agrupamento coerente. INFERIDO: O Fuzzy Inference System codifica conhecimento tácito de especialistas em regras if-then, tratando a incerteza inerente às variáveis de decisão através de funções de pertinência triangulares. INFERIDO: A combinação de mapeamento estatístico (CA) com inferência fuzzy permite traduzir condições contextuais dinâmicas em recomendações acionáveis de estratégia e priorização de enablers.
+
+  '
+Mecanismo_Estruturado: Variáveis contextuais (risk score, tempo, recursos) → Fuzzificação + Regras Mamdani + CA clustering → Recomendação de RMS com ranking de RMEs → Seleção otimizada de estratégia de mitigação
+ResultadoTipo: Qualitativo
+Resultados_Quant: NR
+Resultados_Qual: 'O DSS demonstrou capacidade de recomendar estratégias diferenciadas conforme cenários: Cenário 1 (risk score 34%, 8 meses, recursos 7/10) resultou em recomendação de Risk Mitigate com supply incentives, flexible logistics e strategic stocking como top RMEs; Cenário 2 (risk score 34%, 7 meses, recursos 9/10) resultou em Risk Transfer com multiple sourcing, asset sharing e PPP como top RMEs. A CA explicou 88% da variância total (dimensão 1: 37% - preparedness, dimensão 2: 29% - resource capability, dimensão 3: 22% - sophistication).'
+NívelEvidência: Estudo de caso real
+Limitações_Artigo: 'Os autores reconhecem: "We have used the expertise knowledge of various SC practitioners from the domestic (developing) country (India) to build the conceptual framework. Hence, although the proposed framework is replicable, scope of generalization of the results is limited." Também afirmam: "The proposed DSS has the limitation of recommending the RM strategizes and practices for familiar risk events only. The assessment and mitigation of sudden and disruption risk, such as COVID-19 outbreak, are complicated and beyond the scope of the present research."
+
+  '
+Observação: 'O estudo foca explicitamente na etapa de Risk Mitigation do processo SCRM, não cobrindo Risk Assessment ou Risk Monitoring. Os 12 rules do FIS foram derivados de entrevistas estruturadas com especialistas. O DSS foi implementado em MATLAB Fuzzy Logic Toolbox.
+
+  '
+Quotes:
+- QuoteID: Q001
+  Trecho: The embedded intelligence helps SCM to move from supporting decisions to assigning them and, ultimately, to predict which decisions need to be made.
+- QuoteID: Q002
+  Trecho: O DSS will facilitate the SC stakeholders and practitioners to make faster decision-making (i.e. assessment of available RMSs) with more accuracy in an uncertain and risky environment.
+- QuoteID: Q003
+  Trecho: 'INFERIDO: A Correspondence Analysis revela fatores latentes (preparedness to face risk, resource capability, sophistication of implementation) que estruturam a relação entre estratégias e enablers, permitindo agrupamento coerente.'
+- QuoteID: Q004
+  Trecho: 'INFERIDO: O Fuzzy Inference System codifica conhecimento tácito de especialistas em regras if-then, tratando a incerteza inerente às variáveis de decisão através de funções de pertinência triangulares.'
+- QuoteID: Q005
+  Trecho: 'INFERIDO: A combinação de mapeamento estatístico (CA) com inferência fuzzy permite traduzir condições contextuais dinâmicas em recomendações acionáveis de estratégia e priorização de enablers.'
+- QuoteID: Q006
+  Trecho: The proposed DSS has the limitation of recommending the RM strategizes and practices for familiar risk events only. The assessment and mitigation of sudden and disruption risk, such as COVID-19 outbreak, are complicated and beyond the scope of the present research.
+- QuoteID: Q007
+  Trecho: The DSS provides the order of implementation of the RMEs based on their distance from the cluster center, i.e. RMS. In other words, an RME which is close to the RMS should be implemented first and so on.
+- QuoteID: Q008
+  Trecho: The DSS provides the order of implementation of the RMEs based on their distance from the cluster center, i.e. RMS. In other words, an RME which is close to the RMS should be implemented first and so on.
+---

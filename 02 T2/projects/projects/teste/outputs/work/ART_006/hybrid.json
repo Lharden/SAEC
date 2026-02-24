@@ -1,0 +1,88 @@
+{
+  "artigo_id": "ART_006",
+  "arquivo": "Assessing_Sustainability_Efforts_and_Greenwashing_in_Global_Oil_and_Gas_Supply_Chain-_Natural_Language_Processing_Approach.pdf",
+  "analysis": [
+    {
+      "page_num": 1,
+      "strategy": "text",
+      "reason": "Primeira página (metadados)",
+      "text_until": null
+    },
+    {
+      "page_num": 2,
+      "strategy": "text",
+      "reason": "Somente texto",
+      "text_until": null
+    },
+    {
+      "page_num": 3,
+      "strategy": "text",
+      "reason": "Somente texto",
+      "text_until": null
+    },
+    {
+      "page_num": 4,
+      "strategy": "text",
+      "reason": "Somente texto",
+      "text_until": null
+    },
+    {
+      "page_num": 5,
+      "strategy": "image",
+      "reason": "Contém figuras/tabelas/gráficos",
+      "text_until": null
+    },
+    {
+      "page_num": 6,
+      "strategy": "text",
+      "reason": "Somente texto",
+      "text_until": null
+    }
+  ],
+  "stats": {
+    "total": 6,
+    "text_pages": 5,
+    "image_pages": 1,
+    "skipped_pages": 0
+  },
+  "pages_info": [
+    {
+      "page_num": 1,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 2,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 3,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 4,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 5,
+      "type": "image",
+      "path": "C:\\Users\\Leonardo\\Documents\\Computing\\Projeto_Mestrado\\files\\files\\articles\\00 Dados RSL\\02 T2\\projects\\projects\\teste\\outputs\\work\\ART_006\\pages\\page_005.png"
+    },
+    {
+      "page_num": 6,
+      "type": "text",
+      "path": null
+    }
+  ],
+  "info": {
+    "num_pages": 6,
+    "title": "Assessing Sustainability Efforts and Greenwashing in Global Oil and Gas Supply Chain- Natural Language Processing Approach",
+    "author": "",
+    "subject": "2025 6th International Conference on Recent Advances in Information Technology (RAIT);2025; ; ;10.1109/RAIT65068.2025.11089303",
+    "creator": "Certified by IEEE PDFExpress at February 13, 2025 08:03:49",
+    "file_size_mb": 0.6034479141235352
+  }
+}

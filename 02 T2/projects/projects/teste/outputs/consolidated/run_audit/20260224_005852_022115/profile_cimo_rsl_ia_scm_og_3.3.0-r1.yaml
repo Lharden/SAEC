@@ -1,0 +1,984 @@
+schema_version: '1.0'
+profile:
+  meta:
+    profile_id: cimo_rsl_ia_scm_og
+    version: 3.3.0-r1
+    name: RSL IA + SCM/SCRM em Oil & Gas (CIMO v3.3)
+    domain: Oil & Gas Supply Chain Management / Risk Management
+    framework: CIMO
+    language: pt-BR
+    description: 'Perfil de extração CIMO v3.3 para Revisão Sistemática de Literatura
+      sobre Inteligência Artificial aplicada a Supply Chain Management (SCM) e Supply
+      Chain Risk Management (SCRM) no setor de Oil & Gas. Fonte: Guia_Extracao_v3_3.'
+  topics:
+    min_topics: 1
+    max_topics: 50
+    weighting_mode: optional
+    default_weight: 1.0
+  fields:
+  - id: ArtigoID
+    label: Artigo ID
+    section: metadata
+    type: string
+    required: true
+    multiple: false
+    min_length: 0
+    max_length: 0
+    allowed_values: []
+    aliases: []
+    description: 'ID do artigo fornecido pelo solicitante. Formato: ART_0XX. NÃO inventar
+      — usar exatamente o ID recebido.'
+    confidence_field: None
+    extraction_hints:
+    - ART_001
+    - ART_002
+    regex_patterns:
+    - ^ART_\d{3}$
+  - id: Ano
+    label: Ano de Publicação
+    section: metadata
+    type: int
+    required: true
+    multiple: false
+    min_length: 0
+    max_length: 0
+    allowed_values: []
+    aliases: []
+    description: Ano de publicação do artigo (4 dígitos).
+    confidence_field: None
+    extraction_hints: []
+    regex_patterns: []
+  - id: TipoPublicação
+    label: Tipo de Publicação
+    section: metadata
+    type: enum
+    required: true
+    multiple: false
+    min_length: 0
+    max_length: 0
+    allowed_values:
+    - Journal
+    - Conference
+    - Relatório técnico
+    - Tese/Dissertação
+    - Outro
+    - NR
+    aliases:
+    - TipoPublicacao
+    description: Tipo do veículo de publicação.
+    confidence_field: None
+    extraction_hints: []
+    regex_patterns: []
+  - id: Referência_Curta
+    label: Referência Curta
+    section: metadata
+    type: string
+    required: true
+    multiple: false
+    min_length: 0
+    max_length: 0
+    allowed_values: []
+    aliases:
+    - Referencia_Curta
+    description: 'Formato: ''Autor et al., Ano'' (ex: ''Silva et al., 2022'').'
+    confidence_field: None
+    extraction_hints: []
+    regex_patterns: []
+  - id: DOI
+    label: DOI
+    section: metadata
+    type: string
+    required: false
+    multiple: false
+    min_length: 0
+    max_length: 0
+    allowed_values: []
+    aliases: []
+    description: Digital Object Identifier (https://doi.org/...).
+    confidence_field: None
+    extraction_hints: []
+    regex_patterns: []
+  - id: SegmentoO&G
+    label: Segmento O&G
+    section: context
+    type: enum
+    required: true
+    multiple: false
+    min_length: 0
+    max_length: 0
+    allowed_values:
+    - Upstream (E&P)
+    - Midstream
+    - Downstream
+    - Cross-segment
+    - NR
+    aliases:
+    - SegmentoSetorial
+    - SegmentoOG
+    description: Segmento da indústria de O&G onde a intervenção de IA é aplicada.
+      Upstream=exploração/perfuração/produção; Midstream=transporte/escoamento/armazenamento;
+      Downstream=refino/processamento/distribuição; Cross-segment=múltiplos segmentos
+      integrados.
+    confidence_field: SegmentoO&G_Confiança
+    extraction_hints:
+    - upstream
+    - midstream
+    - downstream
+    - exploration
+    - refining
+    - drilling
+    - subsea
+    - pipeline
+    - refinery
+    regex_patterns: []
+  - id: SegmentoO&G_Confiança
+    label: Confiança Segmento
+    section: context
+    type: enum
+    required: true
+    multiple: false
+    min_length: 0
+    max_length: 0
+    allowed_values:
+    - Alta
+    - Média
+    - Baixa
+    aliases:
+    - SegmentoSetorial_Confiança
+    description: Nível de confiança na classificação do segmento.
+    confidence_field: None
+    extraction_hints: []
+    regex_patterns: []
+  - id: Ambiente
+    label: Ambiente
+    section: context
+    type: enum
+    required: true
+    multiple: false
+    min_length: 0
+    max_length: 0
+    allowed_values:
+    - Offshore
+    - Onshore
+    - Híbrido
+    - NR
+    aliases: []
+    description: 'REGRA DE OURO: Classificar onde a INTERVENÇÃO DE IA é aplicada,
+      NÃO onde o ativo final operará. Pergunte: (1) Onde os dados da IA são coletados/processados?
+      (2) Onde a decisão apoiada pela IA é executada? ARMADILHA: Não confundir o PRODUTO
+      final (ex: navio) com o PROCESSO onde a IA atua (ex: otimização de fabricação).'
+    confidence_field: None
+    extraction_hints:
+    - offshore
+    - onshore
+    - field
+    - platform
+    - subsea
+    - onshore facility
+    - refinery
+    - shipyard
+    regex_patterns: []
+  - id: Complexidade
+    label: Complexidade
+    section: context
+    type: enum
+    required: true
+    multiple: false
+    min_length: 0
+    max_length: 0
+    allowed_values:
+    - Alta
+    - Média
+    - Baixa
+    - NR
+    aliases: []
+    description: 'Sistema de pontuação OBRIGATÓRIO: F1=Ambiente offshore?(+1), F2=≥5
+      fornecedores mencionados?(+1), F3=Risco descrito como alto/crítico?(+1). Resultado:
+      3pts=Alta, 2pts=Média, 0-1pts=Baixa. Se fatores não avaliáveis → NR.'
+    confidence_field: None
+    extraction_hints: []
+    regex_patterns: []
+  - id: Complexidade_Justificativa
+    label: Justificativa Complexidade
+    section: context
+    type: string
+    required: true
+    multiple: false
+    min_length: 10
+    max_length: 0
+    allowed_values: []
+    aliases: []
+    description: 'DEVE conter pontuação explícita F1/F2/F3 com justificativa. Exemplo:
+      ''F1=0 (onshore), F2=1 (>7000 fornecedores), F3=1 (risco crítico mencionado)''.
+      NUNCA omitir os fatores.'
+    confidence_field: None
+    extraction_hints:
+    - F1=
+    - F2=
+    - F3=
+    regex_patterns: []
+  - id: ProcessoSCM_Alvo
+    label: Processo SCM Alvo
+    section: context
+    type: enum
+    required: true
+    multiple: false
+    min_length: 0
+    max_length: 0
+    allowed_values:
+    - Planejamento de demanda
+    - Gestão de estoques
+    - Seleção/qualificação de fornecedores
+    - Gestão de contratos
+    - Procurement/compras
+    - Logística/transporte
+    - Planejamento de produção
+    - Manutenção/MRO
+    - Gestão de riscos da cadeia
+    - Monitoramento/visibilidade
+    - Integração/coordenação
+    - Outro
+    - NR
+    aliases: []
+    description: Processo de SCM que a IA visa apoiar/otimizar.
+    confidence_field: None
+    extraction_hints:
+    - supply chain
+    - supplier
+    - procurement
+    - logistics
+    - inventory
+    - maintenance
+    - demand
+    - production planning
+    regex_patterns: []
+  - id: TipoRisco_SCRM
+    label: Tipo Risco SCRM
+    section: context
+    type: enum
+    required: true
+    multiple: false
+    min_length: 0
+    max_length: 0
+    allowed_values:
+    - Risco de fornecimento
+    - Risco de demanda
+    - Risco operacional
+    - Risco de transporte/logística
+    - Risco de estoque
+    - Risco financeiro
+    - Risco de ativos
+    - Risco ambiental/regulatório
+    - Risco de segurança (security)
+    - Risco de projeto
+    - Risco geopolítico/externo
+    - Múltiplos
+    - NR
+    aliases: []
+    description: Tipo do risco de supply chain endereçado pela IA.
+    confidence_field: None
+    extraction_hints:
+    - risk
+    - disruption
+    - failure
+    - threat
+    - vulnerability
+    - supply risk
+    - demand risk
+    regex_patterns: []
+  - id: ObjetoCrítico
+    label: Objeto Crítico
+    section: context
+    type: string
+    required: false
+    multiple: false
+    min_length: 0
+    max_length: 0
+    allowed_values: []
+    aliases: []
+    description: Ativo, recurso ou elemento em risco identificado no artigo. OBRIGATÓRIO
+      se TipoRisco_SCRM ≠ NR (validado pela Regra R01).
+    confidence_field: None
+    extraction_hints:
+    - pipeline
+    - equipment
+    - supplier
+    - asset
+    - vessel
+    - platform
+    - compressor
+    regex_patterns: []
+  - id: ProblemaNegócio_Contexto
+    label: Problema/Contexto de Negócio
+    section: narrative
+    type: text
+    required: true
+    multiple: false
+    min_length: 0
+    max_length: 0
+    allowed_values: []
+    aliases: []
+    description: Problema de negócio + contexto operacional (3-6 linhas). Descrever
+      O QUE motivou o estudo, em que contexto organizacional/industrial, e quais restrições/desafios
+      existiam antes da intervenção de IA.
+    confidence_field: None
+    extraction_hints:
+    - problema
+    - desafio
+    - contexto
+    - restrição
+    - insuficiente
+    - gap
+    - challenge
+    - current practice
+    regex_patterns: []
+  - id: Intervenção_Descrição
+    label: Descrição da Intervenção
+    section: narrative
+    type: text
+    required: true
+    multiple: false
+    min_length: 0
+    max_length: 0
+    allowed_values: []
+    aliases: []
+    description: 'Solução de IA implementada (2-5 linhas). Descrever: técnica usada,
+      fluxo de processamento, variáveis de entrada/saída, e como a IA foi integrada
+      ao processo. Se ClasseIA=Híbrido, listar TODAS as técnicas combinadas.'
+    confidence_field: None
+    extraction_hints:
+    - modelo
+    - algoritmo
+    - técnica
+    - framework
+    - pipeline
+    - approach
+    - method
+    - system
+    regex_patterns: []
+  - id: Dados_Descrição
+    label: Descrição dos Dados
+    section: narrative
+    type: text
+    required: true
+    multiple: false
+    min_length: 0
+    max_length: 0
+    allowed_values: []
+    aliases: []
+    description: 'Fontes, volume, período e qualidade dos dados (2-6 linhas). Incluir:
+      origem dos dados, número de registros/atributos, período coberto, pré-processamento
+      aplicado. NÃO confundir com Resultados_Quant.'
+    confidence_field: None
+    extraction_hints:
+    - dataset
+    - dados
+    - registros
+    - atributos
+    - período
+    - fonte
+    - records
+    - features
+    - samples
+    regex_patterns: []
+  - id: ClasseIA
+    label: Classe de IA
+    section: intervention
+    type: enum
+    required: true
+    multiple: false
+    min_length: 0
+    max_length: 0
+    allowed_values:
+    - ML supervisionado
+    - ML não supervisionado
+    - Deep Learning
+    - NLP
+    - Visão computacional
+    - Otimização/heurísticas
+    - Probabilístico/Bayesiano
+    - Sistemas especialistas/regras
+    - Digital Twin com IA
+    - Híbrido
+    - Outro
+    - NR
+    aliases: []
+    description: Classe principal da técnica de IA. ML supervisionado=dados rotulados
+      (XGBoost, RF, SVM). ML não supervisionado=clusters/anomalias sem rótulo (K-means,
+      DBSCAN). Deep Learning=redes profundas (CNN, RNN, LSTM, Transformers, GAT).
+      NLP=BERT, LLM, text mining. Se combina 2+ classes → 'Híbrido' (OBRIGATÓRIO detalhar
+      em FamíliaModelo e Intervenção_Descrição).
+    confidence_field: ClasseIA_Confiança
+    extraction_hints:
+    - machine learning
+    - deep learning
+    - neural
+    - optimization
+    - NLP
+    - supervised
+    - unsupervised
+    regex_patterns: []
+  - id: ClasseIA_Confiança
+    label: Confiança Classe IA
+    section: intervention
+    type: enum
+    required: true
+    multiple: false
+    min_length: 0
+    max_length: 0
+    allowed_values:
+    - Alta
+    - Média
+    - Baixa
+    aliases: []
+    description: Nível de confiança na classificação da classe de IA.
+    confidence_field: None
+    extraction_hints: []
+    regex_patterns: []
+  - id: TarefaAnalítica
+    label: Tarefa Analítica
+    section: intervention
+    type: enum
+    required: true
+    multiple: false
+    min_length: 0
+    max_length: 0
+    allowed_values:
+    - Previsão
+    - Classificação
+    - Regressão
+    - Detecção de anomalia
+    - Clustering/segmentação
+    - Extração de informação (NLP)
+    - Recomendação
+    - Otimização
+    - Simulação/what-if
+    - Automação (RPA+IA)
+    - Outro
+    - NR
+    aliases: []
+    description: Tarefa analítica que a IA executa. Previsão=forecasting de valores
+      futuros. Classificação=atribuição a categorias discretas. Clustering/segmentação=agrupamento
+      SEM rótulos.
+    confidence_field: None
+    extraction_hints:
+    - predict
+    - classify
+    - cluster
+    - detect
+    - optimize
+    - recommend
+    - forecast
+    - segment
+    regex_patterns: []
+  - id: FamíliaModelo
+    label: Família de Modelo
+    section: intervention
+    type: enum
+    required: true
+    multiple: true
+    min_length: 0
+    max_length: 0
+    allowed_values:
+    - Ensemble tree-based
+    - SVM/Kernel
+    - Regressão linear/logística
+    - Redes neurais feedforward
+    - Redes recorrentes
+    - Redes convolucionais
+    - Transformers/Attention
+    - Clustering
+    - Redes Bayesianas
+    - Metaheurísticas
+    - Programação matemática
+    - MCDM/Decisão
+    - CBR/Especialista
+    - Simulação
+    - Outro
+    - NR
+    aliases: []
+    description: 'Algoritmo(s) específico(s). Se múltiplos, separar por ponto-e-vírgula.
+      REGRAS DE CLASSIFICAÇÃO CRÍTICAS: (1) Ensemble=Random Forest, XGBoost, GBM,
+      AdaBoost (múltiplas árvores agregadas). (2) Árvore de decisão ÚNICA (CHAID,
+      CART, C4.5, ID3) → use ''Outro: Árvore de decisão''. (3) KNN/K-Nearest Neighbors
+      (supervisionado) → use ''Outro: Instance-based/KNN'' (NÃO é Clustering). (4)
+      Clustering=K-means, DBSCAN, hierárquico (NÃO supervisionado, SEM labels). (5)
+      Redes neurais feedforward=MLP, ANN, Perceptron.'
+    confidence_field: None
+    extraction_hints:
+    - random forest
+    - XGBoost
+    - LSTM
+    - CNN
+    - BERT
+    - AHP
+    - SVM
+    - GA
+    - PSO
+    - LightGBM
+    - CatBoost
+    - GRU
+    - MLP
+    - KNN
+    regex_patterns: []
+  - id: TipoDado
+    label: Tipo de Dado
+    section: intervention
+    type: enum
+    required: true
+    multiple: false
+    min_length: 0
+    max_length: 0
+    allowed_values:
+    - Tabular/ERP
+    - Séries temporais
+    - Texto
+    - Imagem/Vídeo
+    - Multimodal
+    - NR
+    aliases: []
+    description: Tipo principal dos dados usados pela IA.
+    confidence_field: None
+    extraction_hints:
+    - tabular
+    - time series
+    - text
+    - image
+    - multimodal
+    - structured
+    - ERP
+    - sensor
+    regex_patterns: []
+  - id: Maturidade
+    label: Maturidade
+    section: intervention
+    type: enum
+    required: true
+    multiple: false
+    min_length: 0
+    max_length: 0
+    allowed_values:
+    - Conceito
+    - Protótipo
+    - Piloto
+    - Produção
+    - NR
+    aliases: []
+    description: 'Nível de maturidade da implementação. Conceito=proposta teórica
+      sem implementação. Protótipo=implementação experimental em laboratório. Piloto=teste
+      em ambiente real com escopo limitado. Produção=sistema em operação contínua.
+      REGRA: Se NívelEvidência=''Simulação com dados sintéticos'', Maturidade NÃO
+      pode ser Produção nem Piloto.'
+    confidence_field: Maturidade_Confiança
+    extraction_hints:
+    - concept
+    - prototype
+    - pilot
+    - production
+    - case study
+    - implementation
+    - deployment
+    regex_patterns: []
+  - id: Maturidade_Confiança
+    label: Confiança Maturidade
+    section: intervention
+    type: enum
+    required: true
+    multiple: false
+    min_length: 0
+    max_length: 0
+    allowed_values:
+    - Alta
+    - Média
+    - Baixa
+    aliases: []
+    description: Confiança na classificação de maturidade.
+    confidence_field: None
+    extraction_hints: []
+    regex_patterns: []
+  - id: CategoriaMecanismo
+    label: Categoria Mecanismo
+    section: mechanism
+    type: enum
+    required: true
+    multiple: false
+    min_length: 0
+    max_length: 0
+    allowed_values:
+    - Antecipação de risco
+    - Detecção precoce/anomalias
+    - Redução de incerteza
+    - Priorização/alocação ótima
+    - Integração de dados dispersos
+    - Padronização/consistência
+    - Otimização de trade-offs
+    - Automação informacional (NLP)
+    - Outro
+    - NR
+    aliases: []
+    description: 'CAMPO MAIS CRÍTICO: Como/por que a IA gera valor. Se o artigo não
+      explica o porquê, use padrões de inferência: Prevê antes de ocorrer→Antecipação;
+      Detecta anomalia→Detecção precoce; Melhora acurácia de forecast→Redução de incerteza;
+      Processa múltiplas fontes→Integração de dados dispersos; Padroniza avaliação→Padronização/consistência;
+      Otimiza múltiplos objetivos→Otimização de trade-offs.'
+    confidence_field: None
+    extraction_hints:
+    - antecip
+    - detect
+    - reduz
+    - prioriz
+    - integr
+    - padroniz
+    - otimiz
+    - automat
+    - mechanism
+    - why
+    - how
+    - value
+    regex_patterns: []
+  - id: Mecanismo_Fonte
+    label: Fonte do Mecanismo
+    section: mechanism
+    type: enum
+    required: true
+    multiple: false
+    min_length: 0
+    max_length: 0
+    allowed_values:
+    - Declarado
+    - Inferido
+    - Misto
+    aliases: []
+    description: Se o mecanismo é declarado pelo autor, inferido pelo extrator, ou
+      misto.
+    confidence_field: None
+    extraction_hints: []
+    regex_patterns: []
+  - id: Mecanismo_Declarado
+    label: Mecanismo Declarado
+    section: mechanism
+    type: text
+    required: false
+    multiple: false
+    min_length: 0
+    max_length: 0
+    allowed_values: []
+    aliases: []
+    description: Transcrição de como o artigo EXPLICA o mecanismo. Usar NR se o artigo
+      não declara explicitamente.
+    confidence_field: None
+    extraction_hints:
+    - mechanism
+    - how
+    - why
+    - value
+    - explains
+    - contributes
+    - enables
+    - because
+    regex_patterns: []
+  - id: Mecanismo_Inferido
+    label: Mecanismo Inferido
+    section: mechanism
+    type: text
+    required: false
+    multiple: false
+    min_length: 0
+    max_length: 0
+    allowed_values: []
+    aliases: []
+    description: 'Inferência construída pelo extrator. REGRA ABSOLUTA: CADA sentença
+      DEVE iniciar com o prefixo ''INFERIDO:''. Formato correto: ''INFERIDO: O clustering
+      reduz espaço de busca. INFERIDO: A padronização melhora consistência.'' Formato
+      ERRADO: ''INFERIDO: O clustering reduz. A padronização...'' (falta prefixo na
+      2ª sentença).'
+    confidence_field: None
+    extraction_hints:
+    - 'INFERIDO:'
+    regex_patterns: []
+  - id: Mecanismo_Estruturado
+    label: Mecanismo Estruturado
+    section: mechanism
+    type: string
+    required: true
+    multiple: false
+    min_length: 10
+    max_length: 0
+    allowed_values: []
+    aliases: []
+    description: 'String ÚNICA no formato: ''Entrada → Transformação → Mediação →
+      Resultado''. Exemplo: ''Dados históricos → CBR + clustering → Recomendação →
+      Seleção de fornecedor''. OBRIGATÓRIO: usar setas → (não hifens). NÃO usar múltiplas
+      linhas ou bloco YAML multilinha.'
+    confidence_field: None
+    extraction_hints:
+    - →
+    regex_patterns: []
+  - id: ResultadoTipo
+    label: Tipo de Resultado
+    section: outcome
+    type: enum
+    required: true
+    multiple: false
+    min_length: 0
+    max_length: 0
+    allowed_values:
+    - Quantitativo
+    - Qualitativo
+    - Misto
+    - NR
+    aliases: []
+    description: Natureza dos resultados reportados no artigo.
+    confidence_field: None
+    extraction_hints:
+    - accuracy
+    - precision
+    - F1
+    - improvement
+    - qualitative
+    - quantitative
+    - performance
+    regex_patterns: []
+  - id: Resultados_Quant
+    label: Resultados Quantitativos
+    section: outcome
+    type: string
+    required: false
+    multiple: false
+    min_length: 0
+    max_length: 0
+    allowed_values: []
+    aliases: []
+    description: 'Formato OBRIGATÓRIO: ''métrica: valor (vs. baseline: X)'' ou ''(baseline:
+      NR)'' se não há baseline. Exemplo: ''Acurácia: 92.5% (vs. baseline: 78.3%);
+      F1-score: 0.89 (baseline: NR)''. ARMADILHA: Tamanho de dataset (''1430 registros,
+      36 atributos'') vai em Dados_Descrição, NÃO aqui.'
+    confidence_field: None
+    extraction_hints:
+    - accuracy
+    - error
+    - precision
+    - recall
+    - F1
+    - RMSE
+    - MAE
+    - improvement
+    - reduction
+    regex_patterns: []
+  - id: Resultados_Qual
+    label: Resultados Qualitativos
+    section: outcome
+    type: text
+    required: false
+    multiple: false
+    min_length: 0
+    max_length: 0
+    allowed_values: []
+    aliases: []
+    description: Resultados descritivos/qualitativos reportados.
+    confidence_field: None
+    extraction_hints: []
+    regex_patterns: []
+  - id: NívelEvidência
+    label: Nível de Evidência
+    section: outcome
+    type: enum
+    required: true
+    multiple: false
+    min_length: 0
+    max_length: 0
+    allowed_values:
+    - Estudo de caso real
+    - Experimento com dados reais
+    - Simulação com dados reais
+    - Simulação com dados sintéticos
+    - Survey/entrevistas
+    - Proposta teórica/framework
+    - Revisão conceitual
+    - NR
+    aliases:
+    - NivelEvidencia
+    description: Robustez metodológica do estudo.
+    confidence_field: None
+    extraction_hints:
+    - case study
+    - experiment
+    - simulation
+    - survey
+    - theoretical
+    - real data
+    - synthetic
+    regex_patterns: []
+  - id: Limitações_Artigo
+    label: Limitações do Artigo
+    section: outcome
+    type: text
+    required: true
+    multiple: false
+    min_length: 0
+    max_length: 0
+    allowed_values: []
+    aliases: []
+    description: 'APENAS limitações RECONHECIDAS/DECLARADAS pelos autores do artigo.
+      Se nenhuma limitação é declarada, usar NR — mas CONFIRMAR ausência buscando:
+      limit*, restrict*, challeng*, only, future work, threats to validity.'
+    confidence_field: None
+    extraction_hints:
+    - limitation
+    - restriction
+    - challenge
+    - future work
+    - threats to validity
+    - weakness
+    regex_patterns: []
+  - id: Observação
+    label: Observação
+    section: optional
+    type: text
+    required: false
+    multiple: false
+    min_length: 0
+    max_length: 0
+    allowed_values: []
+    aliases: []
+    description: Notas do extrator para casos ambíguos ou decisões de classificação
+      não óbvias.
+    confidence_field: None
+    extraction_hints: []
+    regex_patterns: []
+  rules:
+  - id: R01
+    severity: error
+    when: ne(get('TipoRisco_SCRM'), 'NR')
+    assert: not_empty(get('ObjetoCrítico'))
+    message: TipoRisco_SCRM ≠ NR → ObjetoCrítico DEVE estar preenchido
+  - id: R02
+    severity: error
+    when: eq(get('ResultadoTipo'), 'Quantitativo')
+    assert: contains(get('Resultados_Quant'), 'baseline')
+    message: 'ResultadoTipo = Quantitativo → Resultados_Quant deve conter ''baseline''
+      no formato ''métrica: valor (vs. baseline: X)'''
+  - id: R03
+    severity: error
+    when: eq(get('Maturidade'), 'Produção')
+    assert: in_set(get('NívelEvidência'), ['Estudo de caso real', 'Experimento com
+      dados reais'])
+    message: Maturidade = Produção → NívelEvidência deve ser 'Estudo de caso real'
+      ou 'Experimento com dados reais'
+  - id: R04
+    severity: warning
+    when: eq(get('ClasseIA'), 'Híbrido')
+    assert: not_empty(get('FamíliaModelo'))
+    message: ClasseIA = Híbrido → FamíliaModelo DEVE especificar as técnicas combinadas.
+      Também detalhar em Intervenção_Descrição
+  - id: R05
+    severity: error
+    when: not_empty(get('Mecanismo_Inferido'))
+    assert: every_sentence_startswith(get('Mecanismo_Inferido'), 'INFERIDO:')
+    message: Mecanismo_Inferido → CADA sentença deve iniciar com 'INFERIDO:'. Verifique
+      TODAS as sentenças
+  - id: R06
+    severity: error
+    when: not_empty(get('Mecanismo_Estruturado'))
+    assert: contains(get('Mecanismo_Estruturado'), '→') and single_line(get('Mecanismo_Estruturado'))
+    message: Mecanismo_Estruturado deve ser STRING ÚNICA com formato 'Entrada → Transformação
+      → Mediação → Resultado'
+  - id: R07
+    severity: error
+    when: 'True'
+    assert: regex(get('ArtigoID'), '^ART_[0-9]{3}$')
+    message: 'ArtigoID deve corresponder ao formato ART_0XX (ex: ART_001)'
+  - id: R08
+    severity: error
+    when: eq(get('NívelEvidência'), 'Simulação com dados sintéticos')
+    assert: not_empty(get('Maturidade')) and ne(get('Maturidade'), 'Produção') and
+      ne(get('Maturidade'), 'Piloto')
+    message: Simulação com dados sintéticos → Maturidade NÃO pode ser Produção nem
+      Piloto
+  - id: R09
+    severity: error
+    when: 'True'
+    assert: regex(get('Complexidade_Justificativa'), 'F[123]=')
+    message: Complexidade_Justificativa DEVE conter pontuação F1/F2/F3 explícita
+  - id: R10
+    severity: warning
+    when: 'True'
+    assert: not_empty(get('Ambiente'))
+    message: Ambiente deve refletir onde a IA ATUA, NÃO onde o ativo final opera.
+      Rever se necessário
+  - id: R11
+    severity: warning
+    when: eq(get('Limitações_Artigo'), 'NR')
+    assert: 'True'
+    message: 'Limitações_Artigo = NR → Confirmar ausência de termos: limit*, restrict*,
+      challeng*, only, future work, threats to validity'
+  - id: R12
+    severity: error
+    when: 'True'
+    assert: not_empty(get('ArtigoID'))
+    message: Campos obrigatórios devem usar nomes EXATOS do template (sem variações)
+  quotes_policy:
+    enabled: true
+    min_quotes: 3
+    max_quotes: 8
+    required_types:
+    - Mecanismo
+    allowed_types:
+    - Contexto
+    - Intervenção
+    - Mecanismo
+    - Outcome
+    - Limitação
+    - Método
+    - Outro
+    quote_schema:
+      id_pattern: ^Q\d{3}$
+      required_fields:
+      - QuoteID
+      - TipoQuote
+      - Trecho
+      - Página
+      trecho_min_length: 10
+  output:
+    format: yaml
+    enforce_field_names: true
+    include_sections: true
+  prompt_contract:
+    return_only_output: true
+    include_self_review: true
+    instructions:
+    - Você é o extrator de dados de uma RSL sobre IA + SCM/SCRM em Oil & Gas, seguindo
+      o framework CIMO (Context-Intervention-Mechanism-Outcome).
+    - Retorne SOMENTE YAML válido conforme o template do perfil ativo. Não invente
+      valores; quando não houver evidência explícita, use NR.
+    - 'PRIORIDADE ABSOLUTA: Mecanismo (M) é o campo MAIS CRÍTICO. Identifique HOW/WHY
+      a IA gera valor. Se o artigo não explica, INFIRA usando padrões: prevê→Antecipação;
+      detecta anomalia→Detecção precoce; melhora forecast→Redução de incerteza; processa
+      múltiplas fontes→Integração; padroniza→Padronização; otimiza→Otimização de trade-offs.'
+    - 'CADA sentença em Mecanismo_Inferido DEVE iniciar com ''INFERIDO:''. Formato
+      errado: ''INFERIDO: A reduz. B melhora.'' Formato correto: ''INFERIDO: A reduz.
+      INFERIDO: B melhora.'''
+    - 'Mecanismo_Estruturado: STRING ÚNICA no formato ''Entrada → Transformação →
+      Mediação → Resultado''. NÃO usar múltiplas linhas.'
+    - 'Resultados_Quant: formato ''métrica: valor (vs. baseline: X)'' ou ''(baseline:
+      NR)''. NUNCA incluir tamanho de dataset aqui — isso vai em Dados_Descrição.'
+    - Complexidade_Justificativa DEVE conter pontuação F1/F2/F3 explícita com justificativa
+      para cada fator.
+    - 'Ambiente: REGRA DE OURO — classificar onde a IA ATUA, não onde o ativo final
+      opera. Fabricação em estaleiro para FPSO = Onshore.'
+    - 'Limitações_Artigo: APENAS reconhecidas pelos autores. Se NR, confirmar buscando:
+      limit*, restrict*, challeng*, threats to validity.'
+    - 'FamíliaModelo — REGRAS: Ensemble=RF/XGBoost/GBM/AdaBoost; Árvore única (CHAID/CART)→''Outro:
+      Árvore de decisão''; KNN→''Outro: Instance-based/KNN'' (NÃO é Clustering); Clustering=K-means/DBSCAN
+      (não supervisionado, sem labels); Feedforward=MLP/ANN/Perceptron.'
+    - Se ClasseIA = 'Híbrido', OBRIGATÓRIO listar técnicas em FamíliaModelo (separando
+      por ;) E detalhar em Intervenção_Descrição.
+    - 'Quotes: 3-8 quotes LITERAIS (cópia exata do texto), ≤3 linhas cada, com Página.
+      Priorizar pelo menos 1 quote de Mecanismo. Formato: QuoteID (Q001), TipoQuote,
+      Trecho, Página (p.X).'
+    - 'PROTOCOLO DE AUTO-REVISÃO (executar antes de finalizar): FASE 1 (maior risco):
+      Ambiente reflete IA? Complexidade tem F1/F2/F3? Mecanismo_Estruturado string
+      única? INFERIDO: em cada sentença? FASE 2: Híbrido detalhado? Maturidade consistente
+      com evidência? FASE 3: Campos obrigatórios? 3-8 quotes? FASE 4: 12 regras verificadas?'
+  tests:
+    required: []

@@ -1,0 +1,23 @@
+{
+  "is_valid": true,
+  "errors": [],
+  "warnings": [
+    "[R10] Verifique: Ambiente reflete onde a IA ATUA, n\u00e3o onde o ativo opera",
+    "[QUOTES] Recomendado: incluir pelo menos 1 quote de tipo 'Mecanismo'"
+  ],
+  "rules_passed": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12
+  ],
+  "rules_failed": []
+}

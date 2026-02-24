@@ -117,9 +117,9 @@ class RerankResult:
 # ============================================================
 
 DEFAULT_MODELS = {
-    "cloud": "glm-4.7:cloud",  # Cloud proxy - extração/repair (sem VRAM)
-    "cloud_fallback": "kimi-k2.5:cloud",  # Cloud fallback (sem VRAM)
-    "text": "qwen3-vl:8b",  # 6.1 GB - cabe em GPU 10GB
+    "cloud": "qwen3-coder-next:cloud",  # Cloud proxy - extração YAML (sem VRAM)
+    "cloud_fallback": "glm-5:cloud",  # Cloud fallback diverso (sem VRAM)
+    "text": "qwen3-coder-next:cloud",  # Cloud proxy - text tasks (sem VRAM)
     "vision": "qwen3-vl:8b",  # 6.1 GB - visão local (cabe em GPU 10GB)
     "vision_fast": "qwen3-vl:8b",  # 6.1 GB - mesmo modelo (GPU limitada)
     "ocr": "glm-ocr:latest",  # 2.2 GB - OCR especializado

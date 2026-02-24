@@ -1,0 +1,81 @@
+---
+ArtigoID: ART_018
+Ano: 2021
+TipoPublicação: Conference
+Referência_Curta: Jiang, 2021
+DOI: https://doi.org/10.1088/1755-1315/769/4/042119
+SegmentoO&G: Downstream
+SegmentoO&G_Confiança: Alta
+Ambiente: Híbrido
+Complexidade: Média
+Complexidade_Justificativa: 'F1=0 (não especifica offshore), F2=1 (múltiplos nós de transporte: pipeline=12, railway=20, waterway=15, road=80), F3=1 (competição de mercado intensa, otimização crítica de custos)'
+ProcessoSCM_Alvo: Logística/transporte
+TipoRisco_SCRM: Risco de transporte/logística
+ObjetoCrítico: Rotas e scheduling de transporte de produtos refinados de petróleo
+ProblemaNegócio_Contexto: 'O mercado de produtos refinados de petróleo enfrenta competição crescente com múltiplos players (Sinopec, PetroChina, CNOOC, Sinochem, empresas estrangeiras e refinarias locais).
+
+  A situação de oferta excedendo a demanda e guerras de preços impactam severamente a capacidade das empresas de gerar eficiência.
+
+  É necessário usar métodos científicos de scheduling para melhorar o nível de distribuição logística, otimizar direções de transporte, reduzir despesas de transporte e melhorar a capacidade de garantia de fornecimento.'
+ClasseIA: Otimização/heurísticas
+ClasseIA_Confiança: Alta
+TarefaAnalítica: Otimização
+FamíliaModelo: Programação matemática
+TipoDado: Tabular/ERP
+Maturidade: Conceito
+Maturidade_Confiança: Alta
+Intervenção_Descrição: 'Método de scheduling de transporte logístico de petróleo refinado baseado em modelo de programação dinâmica. Utiliza adaptive dynamic programming para amostragem estatística e extração de características de regras de associação. Emprega fusão de informação big data para otimizar planejamento dinâmico e modo de transporte. Combina reconhecimento de padrões e otimização de rotas para design ótimo do modelo de scheduling.
+
+  '
+Dados_Descrição: 'Dados de simulação com parâmetros configurados: 12 nós de transporte por pipeline, 20 nós de transporte ferroviário, 15 nós de transporte aquaviário, 80 nós de transporte rodoviário. Centro de despacho com coordenadas (0,0,0) e delay de scheduling de 1.25ms. Não são utilizados dados reais de operação.
+
+  '
+CategoriaMecanismo: Otimização de trade-offs
+Mecanismo_Fonte: Misto
+Mecanismo_Declarado: 'O método otimiza o scheduling de transporte através de planejamento dinâmico espacial que integra múltiplos modos de transporte. A fusão de informação big data permite controle adaptativo do modo de transporte, e o reconhecimento de padrões com otimização de rotas realiza o design ótimo do modelo de scheduling.
+
+  '
+Mecanismo_Inferido: 'INFERIDO: A programação dinâmica permite avaliar múltiplas combinações de rotas e modos de transporte simultaneamente, identificando a configuração ótima. INFERIDO: A integração de múltiplos modos (pipeline, ferrovia, hidrovias, rodovias) em um modelo único possibilita trade-offs entre custo, tempo e capacidade. INFERIDO: A abordagem adaptativa permite ajustes em tempo real às condições de transporte, melhorando a eficiência operacional.
+
+  '
+Mecanismo_Estruturado: Parâmetros de transporte multimodal → Programação dinâmica adaptativa + fusão de dados → Otimização de rotas e balanceamento de carga → Scheduling ótimo com redução de custos
+ResultadoTipo: Qualitativo
+Resultados_Quant: NR
+Resultados_Qual: O método demonstra boa adaptabilidade ao scheduling de transporte de logística de petróleo refinado; a eficiência de transporte é melhorada; rotas são otimizadas; nível de garantia empresarial é melhorado; custos logísticos são reduzidos; output waveform de scheduling balanceado é relativamente estável sob diferentes iterações
+NívelEvidência: Simulação com dados sintéticos
+Limitações_Artigo: 'NR
+
+  '
+Observação: 'Artigo apresenta formulação matemática conceitual com validação apenas via simulação. Não há comparação com baseline específico nem métricas quantitativas de desempenho. Os resultados são demonstrados através de figuras de distribuição de volume e waveforms de saída balanceada.
+
+  '
+Quotes:
+- QuoteID: Q001
+  TipoQuote: Contexto
+  Trecho: In this market environment, it is particularly important to use scientific scheduling methods to improve the level of logistics distribution and transportation of refined oil products, to realize high-quality logistics transportation, to optimize transportation direction, to reduce transportation and miscellaneous expenses
+  Página: p.2
+- QuoteID: Q002
+  TipoQuote: Intervenção
+  Trecho: Big data information fusion method is used to optimize the dynamic planning and transportation mode of refined oil logistics and transportation scheduling, and the spatial dynamic programming model of refined oil logistics and transportation scheduling is established
+  Página: p.1
+- QuoteID: Q003
+  TipoQuote: Intervenção
+  Trecho: Combined with pattern recognition and path optimization method, the optimal design of refined oil logistics and transportation scheduling model is realized
+  Página: p.1
+- QuoteID: Q004
+  TipoQuote: Mecanismo
+  Trecho: the adaptive adjustment of refined oil logistics and transportation scheduling was realized according to the feature extraction results
+  Página: p.3
+- QuoteID: Q005
+  TipoQuote: Mecanismo
+  Trecho: the method of pattern recognition and path optimization is used to assume that the refined oil transportation dispatching center is Q, and the optimal dispatching route planning is carried out with the average value of the measure information between nodes
+  Página: p.3
+- QuoteID: Q006
+  TipoQuote: Outcome
+  Trecho: this method can effectively realize the scheduling and dynamic planning of refined oil logistics transportation, improve the throughput efficiency and achieve good output balance
+  Página: p.5
+- QuoteID: Q007
+  TipoQuote: Outcome
+  Trecho: the logistics and transportation scheduling method of refined oil has good adaptability, the transportation direction is optimized, and the ability of guarantee and supply is effectively improved
+  Página: p.5
+---

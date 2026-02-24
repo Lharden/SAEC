@@ -1,0 +1,99 @@
+{
+  "artigo_id": "ART_036",
+  "arquivo": "Streamlining Procurement Through Digital Transformation Enhancing Efficiency and Compliance.pdf",
+  "analysis": [
+    {
+      "page_num": 1,
+      "strategy": "text",
+      "reason": "Primeira página (metadados)",
+      "text_until": null
+    },
+    {
+      "page_num": 2,
+      "strategy": "text",
+      "reason": "Somente texto",
+      "text_until": null
+    },
+    {
+      "page_num": 3,
+      "strategy": "text",
+      "reason": "Somente texto",
+      "text_until": null
+    },
+    {
+      "page_num": 4,
+      "strategy": "text",
+      "reason": "Somente texto",
+      "text_until": null
+    },
+    {
+      "page_num": 5,
+      "strategy": "text",
+      "reason": "Somente texto",
+      "text_until": null
+    },
+    {
+      "page_num": 6,
+      "strategy": "text",
+      "reason": "Somente texto",
+      "text_until": null
+    },
+    {
+      "page_num": 7,
+      "strategy": "text",
+      "reason": "Somente texto",
+      "text_until": null
+    }
+  ],
+  "stats": {
+    "total": 7,
+    "text_pages": 7,
+    "image_pages": 0,
+    "skipped_pages": 0
+  },
+  "pages_info": [
+    {
+      "page_num": 1,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 2,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 3,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 4,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 5,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 6,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 7,
+      "type": "text",
+      "path": null
+    }
+  ],
+  "info": {
+    "num_pages": 7,
+    "title": "",
+    "author": "",
+    "subject": "",
+    "creator": "Apache FOP Version 2.1",
+    "file_size_mb": 0.6299057006835938
+  }
+}

@@ -1,0 +1,74 @@
+---
+ArtigoID: ART_007
+Ano: 2023
+TipoPublicação: Conference
+Referência_Curta: Sharma et al., 2023
+DOI: https://doi.org/10.2118/215114-MS
+SegmentoO&G: Cross-segment
+SegmentoO&G_Confiança: Média
+Ambiente: NR
+Complexidade: NR
+Complexidade_Justificativa: F1=NR (ambiente não especificado), F2=NR (número de fornecedores não mencionado), F3=NR (risco descrito como significativo, mas sem classificação explícita de alto/crítico)
+ProcessoSCM_Alvo: Integração/coordenação
+TipoRisco_SCRM: Múltiplos
+ObjetoCrítico: supply chain operations; payables process; supplier network
+ProblemaNegócio_Contexto: 'A indústria de óleo e gás opera em ambiente volátil, com riscos significativos na gestão da cadeia de suprimentos, agravados por flutuações de preços e impactos da COVID-19.
+
+  O SCM é historicamente tratado de forma tática e reativa, resultando em gargalos operacionais, custos elevados e vulnerabilidade a disrupções.
+
+  Há baixa integração entre funções de suporte e limitada visibilidade em tempo real, dificultando planejamento adaptativo e mitigação de riscos.
+
+  O contexto demanda uma transição para um modelo estratégico, digital e resiliente.'
+Intervenção_Descrição: 'O artigo propõe um framework conceitual de SCM baseado em tecnologias Industry 4.0, incluindo IA, ML, automação e analytics. A intervenção integra spend analytics, data modeling, automação do processo de contas a pagar, dashboards de manage-by-exception e should-cost modeling em um ecossistema digital (“Digital Brain”). A IA/ML é sugerida para transformar dados transacionais e comerciais em insights acionáveis, automatizar validações (ex: invoices) e suportar decisão estratégica em sourcing e category management.
+
+  '
+Dados_Descrição: 'O artigo não apresenta dataset empírico específico. Refere-se genericamente a dados de invoices, line-item cost detail, dados de gastos (spend data), documentação comercial, dados de fornecedores e market intelligence. Destaca a necessidade de dados confiáveis, acessíveis e integrados em plataforma unificada, mas não informa volume, período ou atributos específicos.
+
+  '
+ClasseIA: NR
+ClasseIA_Confiança: Baixa
+TarefaAnalítica: NR
+FamíliaModelo: NR
+TipoDado: Tabular/ERP
+Maturidade: Conceito
+Maturidade_Confiança: Alta
+CategoriaMecanismo: Integração de dados dispersos
+Mecanismo_Fonte: Misto
+Mecanismo_Declarado: '"Data acts as the fuel for the digital brain, driving informed decision-making, while automation and analytics tools play vital roles in streamlining processes and providing insights."
+
+  '
+Mecanismo_Inferido: 'INFERIDO: A integração de dados de gastos, fornecedores e invoices em plataforma unificada reduz silos informacionais e melhora a visibilidade ponta-a-ponta. INFERIDO: A automação com base em IA permite tratar exceções e validar transações automaticamente, liberando recursos humanos para atividades estratégicas. INFERIDO: O modelo manage-by-exception prioriza intervenções apenas em anomalias, aumentando eficiência e mitigando riscos operacionais.
+
+  '
+Mecanismo_Estruturado: Dados transacionais e comerciais dispersos → Digitalização + automação + analytics (Digital Brain) → Visibilidade em tempo real e gestão por exceção → Mitigação de riscos e eficiência operacional
+ResultadoTipo: Qualitativo
+Resultados_Qual: 'O artigo argumenta que a adoção do ecossistema digital integrado pode gerar maior eficiência operacional, redução de custos, mitigação de riscos, maior transparência, melhor posicionamento estratégico e impactos positivos em métricas financeiras e ESG. Não apresenta métricas quantitativas.
+
+  '
+NívelEvidência: Proposta teórica/framework
+Limitações_Artigo: NR
+Observação: 'O artigo é conceitual e estratégico, não apresenta implementação empírica nem detalhamento técnico de modelos de IA específicos, embora mencione AI/ML como parte do ecossistema Industry 4.0.
+
+  '
+Quotes:
+- QuoteID: Q001
+  TipoQuote: Contexto
+  Trecho: The oil and gas industry operates in a complex and challenging environment with significant supply chain management risks.
+  Página: p.1
+- QuoteID: Q002
+  TipoQuote: Intervenção
+  Trecho: The authors suggest leveraging tools such as spend analytics and data modeling to make informed decisions and automate dispatch processes, leading to positive fiscal and ESG impacts.
+  Página: p.1
+- QuoteID: Q003
+  TipoQuote: Intervenção
+  Trecho: It is concerned with the use of technologies like Artificial Intelligence (AI), Machine Learning (ML), and robotics to expedite and streamline supply chain operations.
+  Página: p.3
+- QuoteID: Q004
+  TipoQuote: Mecanismo
+  Trecho: By automating routine tasks and inviting human intervention only when anomalies arise or predefined parameters are breached, this model effectively optimizes the utilization of resources.
+  Página: p.3
+- QuoteID: Q005
+  TipoQuote: Mecanismo
+  Trecho: Data acts as the fuel for the digital brain, driving informed decision-making, while automation and analytics tools play vital roles in streamlining processes and providing insights.
+  Página: p.8-9
+---

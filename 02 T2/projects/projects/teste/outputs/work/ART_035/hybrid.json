@@ -1,0 +1,227 @@
+{
+  "artigo_id": "ART_035",
+  "arquivo": "Self-Healing Databases for Emergency Response Logistics in Remote and Infrastructure-Poor Settings.pdf",
+  "analysis": [
+    {
+      "page_num": 1,
+      "strategy": "text",
+      "reason": "Primeira página (metadados)",
+      "text_until": null
+    },
+    {
+      "page_num": 2,
+      "strategy": "text",
+      "reason": "Somente texto",
+      "text_until": null
+    },
+    {
+      "page_num": 3,
+      "strategy": "text",
+      "reason": "Somente texto",
+      "text_until": null
+    },
+    {
+      "page_num": 4,
+      "strategy": "text",
+      "reason": "Somente texto",
+      "text_until": null
+    },
+    {
+      "page_num": 5,
+      "strategy": "image",
+      "reason": "Contém figuras/tabelas/gráficos",
+      "text_until": null
+    },
+    {
+      "page_num": 6,
+      "strategy": "text",
+      "reason": "Somente texto",
+      "text_until": null
+    },
+    {
+      "page_num": 7,
+      "strategy": "text",
+      "reason": "Somente texto",
+      "text_until": null
+    },
+    {
+      "page_num": 8,
+      "strategy": "text",
+      "reason": "Somente texto",
+      "text_until": null
+    },
+    {
+      "page_num": 9,
+      "strategy": "text",
+      "reason": "Somente texto",
+      "text_until": null
+    },
+    {
+      "page_num": 10,
+      "strategy": "text",
+      "reason": "Somente texto",
+      "text_until": null
+    },
+    {
+      "page_num": 11,
+      "strategy": "text",
+      "reason": "Somente texto",
+      "text_until": null
+    },
+    {
+      "page_num": 12,
+      "strategy": "text",
+      "reason": "Somente texto",
+      "text_until": null
+    },
+    {
+      "page_num": 13,
+      "strategy": "text",
+      "reason": "Somente texto",
+      "text_until": null
+    },
+    {
+      "page_num": 14,
+      "strategy": "text",
+      "reason": "Somente texto",
+      "text_until": null
+    },
+    {
+      "page_num": 15,
+      "strategy": "text",
+      "reason": "Somente texto",
+      "text_until": null
+    },
+    {
+      "page_num": 16,
+      "strategy": "text",
+      "reason": "Somente texto",
+      "text_until": null
+    },
+    {
+      "page_num": 17,
+      "strategy": "text_partial",
+      "reason": "Texto parcial (até referências)",
+      "text_until": 803
+    },
+    {
+      "page_num": 18,
+      "strategy": "skip",
+      "reason": "Seção de referências",
+      "text_until": null
+    },
+    {
+      "page_num": 19,
+      "strategy": "skip",
+      "reason": "Seção de referências",
+      "text_until": null
+    },
+    {
+      "page_num": 20,
+      "strategy": "skip",
+      "reason": "Seção de referências",
+      "text_until": null
+    }
+  ],
+  "stats": {
+    "total": 20,
+    "text_pages": 16,
+    "image_pages": 1,
+    "skipped_pages": 3
+  },
+  "pages_info": [
+    {
+      "page_num": 1,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 2,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 3,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 4,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 5,
+      "type": "image",
+      "path": "C:\\Users\\Leonardo\\Documents\\Computing\\Projeto_Mestrado\\files\\files\\articles\\00 Dados RSL\\02 T2\\projects\\projects\\teste\\outputs\\work\\ART_035\\pages\\page_005.png"
+    },
+    {
+      "page_num": 6,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 7,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 8,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 9,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 10,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 11,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 12,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 13,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 14,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 15,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 16,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 17,
+      "type": "text",
+      "path": null
+    }
+  ],
+  "info": {
+    "num_pages": 20,
+    "title": "Self-Healing Databases for Emergency Response Logistics in Remote and Infrastructure-Poor Settings",
+    "author": "James McGarvey, Martha R. Grabowski, Buddy Custard and Steven Gabelein",
+    "subject": "Background: Accurate, real-time data about response technologies, capabilities, and availabilities are key to effective emergency response logistics; this is particularly important in remote settings, such as in the Arctic, where limited infrastructure, logistics, and technologies occasion the need for careful planning and immediate response in a fragile, pristine, and rapidly changing ecosystem. Despite persistent calls for improved data quality, processing, and analysis capabilities to support Arctic emergency response logistics, these issues have not been addressed and advanced analytical methods available in other safety-critical and oil and gas settings, such as machine learning, artificial intelligence (AI), or emergent, self-aware, and self-healing databases, have not been widely adopted. Methods: This work explores this research gap by presenting a machine learning algorithm and self-healing database approach, describing its application in Arctic logistics and emergency response. Results: The self-healing algorithm could be applied to other safety-critical databases that could benefit from technology that automatically detects, diagnoses, and repairs data anomalies and inconsistencies, with or without human intervention. Conclusions: The results show significant improvements in data cleaning and analysis, and for emergency response logistics data, planning, and analysis, along with future research and research needs in remote and infrastructure-poor settings.",
+    "creator": "LaTeX with hyperref",
+    "file_size_mb": 1.9475479125976562
+  }
+}

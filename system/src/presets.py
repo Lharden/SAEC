@@ -33,7 +33,7 @@ PRESETS: dict[str, Preset] = {
         step=None,
         dry_run=False,
         force=False,
-        timeout_minutes=60.0,
+        timeout_minutes=480.0,
         description="Run full pipeline with standard safety flags.",
     ),
     "local_only": Preset(

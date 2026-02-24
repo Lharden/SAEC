@@ -1,0 +1,81 @@
+---
+ArtigoID: ART_030
+Ano: 2025
+TipoPublicação: Conference
+Referência_Curta: Mece et al., 2025
+DOI: 10.1109/SOSE66311.2025.11083821
+SegmentoO&G: Midstream
+SegmentoO&G_Confiança: Alta
+Ambiente: Onshore
+Complexidade: Média
+Complexidade_Justificativa: F1=0 (onshore, transporte terrestre de combustível), F2=1 (rede de distribuição com múltiplos caminhões e rotas), F3=1 (riscos de fraude, perdas de combustível, contaminação)
+ProcessoSCM_Alvo: Logística/transporte
+TipoRisco_SCRM: Múltiplos
+ObjetoCrítico: Sistema de válvulas de divisão de combustível em caminhões-tanque e padrões de transporte na rede de distribuição de petróleo
+ProblemaNegócio_Contexto: 'O setor de distribuição de petróleo enfrenta problemas críticos relacionados a falhas em sistemas de válvulas que separam diferentes tipos de combustível em caminhões-tanque, causando mistura de combustíveis, contaminação e perdas financeiras.
+
+  Além disso, anomalias operacionais nas redes de distribuição incluem perdas inesperadas de combustível, atividades fraudulentas e desvios de rotas não autorizados, indicando possíveis ineficiências ou violações de segurança.
+
+  Os métodos tradicionais não conseguem identificar padrões complexos e evolutivos, resultando em diagnósticos atrasados, períodos prolongados de inatividade e riscos operacionais aumentados.'
+ClasseIA: Híbrido
+ClasseIA_Confiança: Alta
+TarefaAnalítica: Detecção de anomalia
+FamíliaModelo: 'Ensemble tree-based; SVM/Kernel; Regressão linear/logística; Clustering; Redes neurais feedforward; Outro: Instance-based/KNN'
+TipoDado: Tabular/ERP
+Maturidade: Protótipo
+Maturidade_Confiança: Alta
+Intervenção_Descrição: 'Framework híbrido de machine learning que combina modelos supervisionados (Logistic Regression, SVM, Random Forest, XGBoost) para detecção de falhas conhecidas em equipamentos com modelos não supervisionados (K-Means, Isolation Forest, Autoencoders, KNN, LOF) para detecção de anomalias em padrões de transporte. O pipeline inclui feature engineering com identificação de perda de combustível, padrões de trânsito incomuns e variações de temperatura-pressão, seguido de data cleaning e normalização. A abordagem híbrida K-Means & Isolation Forest obteve melhor desempenho geral.
+
+  '
+Dados_Descrição: 'Dois datasets foram utilizados: logs de transporte de combustível com registros operacionais detalhados de cada caminhão afetado, cobrindo dias de operação normal e eventos de mistura; e dataset de anomalias de distribuição de petróleo com 214.003 instâncias, sendo 32.840 correspondentes a anomalias prováveis. Os dados cobrem principalmente o período de 2021 a 2024, registrando anomalias observadas durante distribuição de combustíveis fósseis na Itália. Inclui sinais coletados de vários sensores que monitoram atividade de tráfego.
+
+  '
+CategoriaMecanismo: Detecção precoce/anomalias
+Mecanismo_Fonte: Misto
+Mecanismo_Declarado: 'O artigo explica que K-Means agrupa padrões de transporte normais, permitindo distinção clara entre operações padrão e anomalias, enquanto Isolation Forest excela na detecção de desvios raros e inesperados ao isolar anomalias rapidamente. A combinação é particularmente adequada para identificar irregularidades complexas de distribuição porque os modelos supervisionados detectam falhas conhecidas de equipamentos enquanto os não supervisionados detectam anomalias inesperadas na distribuição.
+
+  '
+Mecanismo_Inferido: 'INFERIDO: A combinação de clustering com isolamento de anomalias permite detecção tanto de padrões globais quanto de desvios locais raros. INFERIDO: Feature engineering com características específicas de domínio (perda de combustível, padrões de trânsito, variações de temperatura-pressão) melhora a capacidade discriminativa dos modelos. INFERIDO: A padronização de valores numéricos garante consistência e reduz viés nos modelos sensíveis a escala.
+
+  '
+Mecanismo_Estruturado: Dados de sensores e logs de transporte → K-Means clustering + Isolation Forest → Segmentação de padrões normais + isolamento de desvios → Detecção de anomalias e falhas em distribuição de petróleo
+ResultadoTipo: Quantitativo
+Resultados_Quant: 'Acurácia K-Means & IF: 0.95 (baseline: NR); Recall K-Means & IF: 0.89 (baseline: NR); ROC AUC K-Means & IF: 0.93 (baseline: NR); F1-Score K-Means & IF: 0.84 (baseline: NR); Acurácia XGBoost: 0.69 (baseline: NR); Recall XGBoost: 0.80 (baseline: NR); ROC AUC XGBoost: 0.90 (baseline: NR)'
+Resultados_Qual: A abordagem híbrida K-Means & Isolation Forest emergiu como o modelo de melhor desempenho, sendo o mais confiável para detecção de anomalias em distribuição de petróleo. Modelos supervisionados detectam efetivamente falhas conhecidas enquanto técnicas não supervisionadas detectam anomalias inesperadas, melhorando capacidades de monitoramento e segurança operacional.
+NívelEvidência: Experimento com dados reais
+Limitações_Artigo: 'Os autores apontam que o tamanho relativamente pequeno do dataset restringiu a capacidade dos modelos de generalizar, especialmente em cenários complexos. Anomalias no transporte de combustível são altamente dependentes de contexto, e sistemas automatizados frequentemente carecem dessa compreensão contextual. Falta de datasets publicamente disponíveis dificulta comparação de algoritmos. Modelos como Logistic Regression e SVM têm baixas taxas de recall, tornando-os menos adequados para aplicações onde perder uma falha pode ter consequências severas.
+
+  '
+Observação: 'O estudo foi conduzido com dados de distribuição de petróleo na Itália. A Figura 2 mostra anomalias detectadas geograficamente divididas em zonas norte (vermelho) e centro/sul (verde).
+
+  '
+Quotes:
+- QuoteID: Q001
+  TipoQuote: Contexto
+  Trecho: Deficiencies in fuel transportation systems lead to fuel mixing, pollution and financial losses. Environmental pollution can occur by leakages, spills and improper handling of the product during transportation leading to contamination of soil and water.
+  Página: p.1
+- QuoteID: Q002
+  TipoQuote: Mecanismo
+  Trecho: KMeans groups normal transportation patterns, allowing for clear distinction between standard operations and anomalies. It segments data into well-defined clusters, making deviations easily identifiable. Isolation Forest, on the other hand, excels at detecting rare and unexpected deviations by isolating anomalies quickly.
+  Página: p.5
+- QuoteID: Q003
+  TipoQuote: Outcome
+  Trecho: KMeans & Isolation Forest emerged as the best-performing model, achieving the highest accuracy (0.95), recall (0.89), and ROC AUC score (0.93), making it the most reliable for anomaly detection in petroleum distribution.
+  Página: p.5
+- QuoteID: Q004
+  TipoQuote: Intervenção
+  Trecho: This work presents a machine learning approach that combines supervised fault detection models, like Logistic Regression, SVM, Random Forest, and XGBoost, with unsupervised anomaly detection methods, such as k-means, Isolation Forest, and Autoencoders.
+  Página: p.1
+- QuoteID: Q005
+  TipoQuote: Mecanismo
+  Trecho: The findings indicate that supervised machine learning models effectively detect known equipment faults and unsupervised machine learning techniques detect unexpected anomalies in distribution. Combining both approaches enhances monitoring capabilities and operational safety.
+  Página: p.6
+- QuoteID: Q006
+  TipoQuote: Limitação
+  Trecho: The relatively small dataset size constrained the models' ability to generalize, especially in complex scenarios. Additionally, anomalies in fuel transportation are highly context-dependent; factors such as delivery importance and cargo urgency play a crucial role in determining what qualifies as an anomaly.
+  Página: p.5
+- QuoteID: Q007
+  TipoQuote: Método
+  Trecho: 'Two separate datasets are used: fuel transportation logs and detailed operational records for each affected truck, covering data for normal operating days and mixing event days.'
+  Página: p.2
+---

@@ -1,0 +1,189 @@
+{
+  "artigo_id": "ART_012",
+  "arquivo": "Data-Driven Models for Forecasting Failure Modes in Oil and Gas Pipes.pdf",
+  "analysis": [
+    {
+      "page_num": 1,
+      "strategy": "text",
+      "reason": "Primeira página (metadados)",
+      "text_until": null
+    },
+    {
+      "page_num": 2,
+      "strategy": "text",
+      "reason": "Somente texto",
+      "text_until": null
+    },
+    {
+      "page_num": 3,
+      "strategy": "text",
+      "reason": "Somente texto",
+      "text_until": null
+    },
+    {
+      "page_num": 4,
+      "strategy": "image",
+      "reason": "Contém figuras/tabelas/gráficos",
+      "text_until": null
+    },
+    {
+      "page_num": 5,
+      "strategy": "image",
+      "reason": "Contém figuras/tabelas/gráficos",
+      "text_until": null
+    },
+    {
+      "page_num": 6,
+      "strategy": "image",
+      "reason": "Contém figuras/tabelas/gráficos",
+      "text_until": null
+    },
+    {
+      "page_num": 7,
+      "strategy": "text",
+      "reason": "Somente texto",
+      "text_until": null
+    },
+    {
+      "page_num": 8,
+      "strategy": "text",
+      "reason": "Somente texto",
+      "text_until": null
+    },
+    {
+      "page_num": 9,
+      "strategy": "image",
+      "reason": "Contém figuras/tabelas/gráficos",
+      "text_until": null
+    },
+    {
+      "page_num": 10,
+      "strategy": "text",
+      "reason": "Somente texto",
+      "text_until": null
+    },
+    {
+      "page_num": 11,
+      "strategy": "text",
+      "reason": "Somente texto",
+      "text_until": null
+    },
+    {
+      "page_num": 12,
+      "strategy": "text",
+      "reason": "Somente texto",
+      "text_until": null
+    },
+    {
+      "page_num": 13,
+      "strategy": "text",
+      "reason": "Somente texto",
+      "text_until": null
+    },
+    {
+      "page_num": 14,
+      "strategy": "skip",
+      "reason": "Seção de referências",
+      "text_until": null
+    },
+    {
+      "page_num": 15,
+      "strategy": "skip",
+      "reason": "Seção de referências",
+      "text_until": null
+    },
+    {
+      "page_num": 16,
+      "strategy": "skip",
+      "reason": "Seção de referências",
+      "text_until": null
+    },
+    {
+      "page_num": 17,
+      "strategy": "skip",
+      "reason": "Seção de referências",
+      "text_until": null
+    }
+  ],
+  "stats": {
+    "total": 17,
+    "text_pages": 9,
+    "image_pages": 4,
+    "skipped_pages": 4
+  },
+  "pages_info": [
+    {
+      "page_num": 1,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 2,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 3,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 4,
+      "type": "image",
+      "path": "C:\\Users\\Leonardo\\Documents\\Computing\\Projeto_Mestrado\\files\\files\\articles\\00 Dados RSL\\02 T2\\projects\\projects\\teste\\outputs\\work\\ART_012\\pages\\page_004.png"
+    },
+    {
+      "page_num": 5,
+      "type": "image",
+      "path": "C:\\Users\\Leonardo\\Documents\\Computing\\Projeto_Mestrado\\files\\files\\articles\\00 Dados RSL\\02 T2\\projects\\projects\\teste\\outputs\\work\\ART_012\\pages\\page_005.png"
+    },
+    {
+      "page_num": 6,
+      "type": "image",
+      "path": "C:\\Users\\Leonardo\\Documents\\Computing\\Projeto_Mestrado\\files\\files\\articles\\00 Dados RSL\\02 T2\\projects\\projects\\teste\\outputs\\work\\ART_012\\pages\\page_006.png"
+    },
+    {
+      "page_num": 7,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 8,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 9,
+      "type": "image",
+      "path": "C:\\Users\\Leonardo\\Documents\\Computing\\Projeto_Mestrado\\files\\files\\articles\\00 Dados RSL\\02 T2\\projects\\projects\\teste\\outputs\\work\\ART_012\\pages\\page_009.png"
+    },
+    {
+      "page_num": 10,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 11,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 12,
+      "type": "text",
+      "path": null
+    },
+    {
+      "page_num": 13,
+      "type": "text",
+      "path": null
+    }
+  ],
+  "info": {
+    "num_pages": 17,
+    "title": "Data-Driven Models for Forecasting Failure Modes in Oil and Gas Pipes",
+    "author": "Nehal Elshaboury, Abobakr Al-Sakkaf, Ghasan Alfalah and Eslam Mohammed Abdelkader",
+    "subject": "Oil and gas pipelines are lifelines for a country’s economic survival. As a result, they must be closely monitored to maximize their performance and avoid product losses in the transportation of petroleum products. However, they can collapse, resulting in dangerous repercussions, financial losses, and environmental consequences. Therefore, assessing the pipe condition and quality would be of great significance. Pipeline safety is ensured using a variety of inspection techniques, despite being time-consuming and expensive. To address these inefficiencies, this study develops a model that anticipates sources of failure in oil pipelines based on specific factors related to pipe diameter and age, service (transported product), facility type, and land use. The model is developed using a multilayer perceptron (MLP) neural network, radial basis function (RBF) neural network, and multinomial logistic (MNL) regression based on historical data from pipeline incidents. With an average validity of 84% for the MLP, 85% for the RBF, and 81% for the MNL, the models can forecast pipeline failures owing to corrosion and third-party activities. The developed model can help pipeline operators and decision makers detect different failure sources in pipelines and prioritize the required maintenance and replacement actions.",
+    "creator": "LaTeX with hyperref",
+    "file_size_mb": 1.8207473754882812
+  }
+}
