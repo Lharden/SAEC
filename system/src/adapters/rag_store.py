@@ -15,7 +15,7 @@ import logging
 import re
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Literal
+from typing import Any, Literal, cast
 
 try:
     from ..exceptions import SAECError
@@ -29,8 +29,10 @@ logger = logging.getLogger(__name__)
 # Exceções
 # ============================================================
 
+
 class RAGError(SAECError):
     """Erro relacionado ao RAG store."""
+
     pass
 
 
@@ -38,9 +40,11 @@ class RAGError(SAECError):
 # Data Classes
 # ============================================================
 
+
 @dataclass
 class Chunk:
     """Chunk de texto de um artigo."""
+
     id: str
     text: str
     artigo_id: str
@@ -48,12 +52,13 @@ class Chunk:
     section: str | None = None
     char_start: int = 0
     char_end: int = 0
-    metadata: dict = field(default_factory=dict)
+    metadata: dict[str, Any] = field(default_factory=dict)
 
 
 @dataclass
 class SearchResult:
     """Resultado de busca no RAG."""
+
     chunk: Chunk
     score: float
     distance: float
@@ -62,6 +67,7 @@ class SearchResult:
 @dataclass
 class RAGConfig:
     """Configuração do RAG store."""
+
     persist_dir: Path = field(default_factory=lambda: Path("./rag_index"))
     embedding_model: str = "nomic-embed-text-v2-moe:latest"
     chunk_size: int = 1000
@@ -72,6 +78,7 @@ class RAGConfig:
 # ============================================================
 # Chunking
 # ============================================================
+
 
 def chunk_text(
     text: str,
@@ -141,13 +148,13 @@ def chunk_by_sections(
         Lista de (chunk_text, section_name)
     """
     # Padrão para headers markdown
-    header_pattern = re.compile(r'^(#{1,6})\s+(.+)$', re.MULTILINE)
+    header_pattern = re.compile(r"^(#{1,6})\s+(.+)$", re.MULTILINE)
 
     sections: list[tuple[str, str | None]] = []
     current_section = None
     current_text: list[str] = []
 
-    lines = text.split('\n')
+    lines = text.split("\n")
     pos = 0
 
     for line in lines:
@@ -156,7 +163,7 @@ def chunk_by_sections(
         if header_match:
             # Salvar seção anterior
             if current_text:
-                section_text = '\n'.join(current_text).strip()
+                section_text = "\n".join(current_text).strip()
                 if section_text:
                     sections.append((section_text, current_section))
 
@@ -169,7 +176,7 @@ def chunk_by_sections(
 
     # Última seção
     if current_text:
-        section_text = '\n'.join(current_text).strip()
+        section_text = "\n".join(current_text).strip()
         if section_text:
             sections.append((section_text, current_section))
 
@@ -190,6 +197,7 @@ def chunk_by_sections(
 # ============================================================
 # RAG Store
 # ============================================================
+
 
 class RAGStore:
     """
@@ -276,6 +284,46 @@ class RAGStore:
         except Exception as e:
             raise RAGError(f"Erro ao gerar embeddings batch: {e}")
 
+    @staticmethod
+    def _coerce_str(value: Any, default: str = "") -> str:
+        if isinstance(value, str):
+            return value
+        return default
+
+    @staticmethod
+    def _coerce_int(value: Any, default: int = 0) -> int:
+        if isinstance(value, bool):
+            return default
+        if isinstance(value, int):
+            return value
+        if isinstance(value, float):
+            return int(value)
+        if isinstance(value, str):
+            try:
+                return int(value)
+            except ValueError:
+                return default
+        return default
+
+    @staticmethod
+    def _coerce_float(value: Any, default: float = 0.0) -> float:
+        if isinstance(value, bool):
+            return default
+        if isinstance(value, (int, float)):
+            return float(value)
+        if isinstance(value, str):
+            try:
+                return float(value)
+            except ValueError:
+                return default
+        return default
+
+    @staticmethod
+    def _coerce_metadata(value: Any) -> dict[str, Any]:
+        if isinstance(value, dict):
+            return dict(value)
+        return {}
+
     def add_article(
         self,
         artigo_id: str,
@@ -306,9 +354,12 @@ class RAGStore:
         if use_sections:
             raw_chunks = chunk_by_sections(text, self.config.chunk_size)
         else:
-            raw_chunks = [(chunk_content, None) for chunk_content, _, _ in chunk_text(
-                text, self.config.chunk_size, self.config.chunk_overlap
-            )]
+            raw_chunks = [
+                (chunk_content, None)
+                for chunk_content, _, _ in chunk_text(
+                    text, self.config.chunk_size, self.config.chunk_overlap
+                )
+            ]
 
         if not raw_chunks:
             logger.warning(f"Nenhum chunk gerado para {artigo_id}")
@@ -342,7 +393,7 @@ class RAGStore:
         self._collection.add(
             ids=ids,
             documents=documents,
-            embeddings=embeddings,
+            embeddings=cast(Any, embeddings),
             metadatas=metadatas,
         )
 
@@ -407,7 +458,7 @@ class RAGStore:
             query_embedding = self._get_embedding(query)
 
             # Preparar filtro
-            where_filter = None
+            where_filter: dict[str, Any] | None = None
             if artigo_id:
                 where_filter = {"artigo_id": artigo_id}
 
@@ -415,30 +466,63 @@ class RAGStore:
             results = self._collection.query(
                 query_embeddings=[query_embedding],
                 n_results=top_k * 2 if rerank else top_k,  # Buscar mais se for rerankar
-                where=where_filter,
+                where=cast(Any, where_filter),
                 include=["documents", "metadatas", "distances"],
             )
 
             # Converter para SearchResult
-            search_results = []
-            for i, doc_id in enumerate(results["ids"][0]):
+            search_results: list[SearchResult] = []
+            ids_rows = results.get("ids") or []
+            documents_rows = results.get("documents") or []
+            metadatas_rows = results.get("metadatas") or []
+            distances_rows = results.get("distances") or []
+
+            if not ids_rows:
+                return []
+
+            first_ids = ids_rows[0] if isinstance(ids_rows, list) and ids_rows else []
+            first_docs = (
+                documents_rows[0] if isinstance(documents_rows, list) and documents_rows else []
+            )
+            first_meta = (
+                metadatas_rows[0] if isinstance(metadatas_rows, list) and metadatas_rows else []
+            )
+            first_dist = (
+                distances_rows[0] if isinstance(distances_rows, list) and distances_rows else []
+            )
+
+            for i, raw_doc_id in enumerate(first_ids):
+                metadata_item = (
+                    first_meta[i] if isinstance(first_meta, list) and i < len(first_meta) else {}
+                )
+                metadata_dict = self._coerce_metadata(metadata_item)
+
+                doc_text = ""
+                if isinstance(first_docs, list) and i < len(first_docs):
+                    doc_text = self._coerce_str(first_docs[i], "")
+
                 chunk = Chunk(
-                    id=doc_id,
-                    text=results["documents"][0][i],
-                    artigo_id=results["metadatas"][0][i].get("artigo_id", ""),
-                    page_number=results["metadatas"][0][i].get("page_number", 0),
-                    section=results["metadatas"][0][i].get("section"),
-                    metadata=results["metadatas"][0][i],
+                    id=self._coerce_str(raw_doc_id, f"chunk_{i}"),
+                    text=doc_text,
+                    artigo_id=self._coerce_str(metadata_dict.get("artigo_id"), ""),
+                    page_number=self._coerce_int(metadata_dict.get("page_number"), 0),
+                    section=self._coerce_str(metadata_dict.get("section"), "") or None,
+                    metadata=metadata_dict,
                 )
 
-                distance = results["distances"][0][i]
+                raw_distance = (
+                    first_dist[i] if isinstance(first_dist, list) and i < len(first_dist) else 1.0
+                )
+                distance = self._coerce_float(raw_distance, 1.0)
                 score = 1.0 - distance  # Converter distância para score
 
-                search_results.append(SearchResult(
-                    chunk=chunk,
-                    score=score,
-                    distance=distance,
-                ))
+                search_results.append(
+                    SearchResult(
+                        chunk=chunk,
+                        score=score,
+                        distance=distance,
+                    )
+                )
 
             # Reranking opcional
             if rerank and len(search_results) > top_k:
@@ -540,9 +624,12 @@ class RAGStore:
             )
 
             artigo_ids = set()
-            for meta in results["metadatas"]:
-                if "artigo_id" in meta:
-                    artigo_ids.add(meta["artigo_id"])
+            metadatas = results.get("metadatas") or []
+            for meta in metadatas:
+                metadata_dict = self._coerce_metadata(meta)
+                artigo_id = self._coerce_str(metadata_dict.get("artigo_id"), "")
+                if artigo_id:
+                    artigo_ids.add(artigo_id)
 
             return sorted(artigo_ids)
 
@@ -658,6 +745,7 @@ In conclusion, our method is effective.
     print("\nTestando RAG store...")
     try:
         import tempfile
+
         with tempfile.TemporaryDirectory() as tmpdir:
             config = RAGConfig(persist_dir=Path(tmpdir))
             store = RAGStore(config)
