@@ -108,7 +108,17 @@ class ProjectManager:
 
     def open_setup_dialog(self) -> None:
         app = self._app
-        env_values = self.read_env_values()
+        # Read from project .env if a project is active, else system .env
+        if app.project_root:
+            project_config = ProjectConfig(app.project_root)
+            env_values = project_config.load() if project_config.exists() else {}
+            # Merge with system values for keys not in project config
+            system_values = self.read_env_values()
+            merged = dict(system_values)
+            merged.update(env_values)
+            env_values = merged
+        else:
+            env_values = self.read_env_values()
         config = prompt_first_run_setup(
             app,
             default_ollama_url=env_values.get("OLLAMA_BASE_URL", "http://localhost:11434/v1"),

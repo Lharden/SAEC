@@ -48,6 +48,7 @@ class ProgressUpdate:
     step_current: int | None = None
     step_total: int | None = None
     elapsed_seconds: float | None = None
+    last_activity: str | None = None
 
 
 _ARTICLE_PATTERNS = [
@@ -59,45 +60,113 @@ _STEP_PATTERNS = [
     re.compile(r"\[\s*Step\s+(\d+)\s*/\s*(\d+)\s*\]", re.IGNORECASE),
     re.compile(r"ETAPA\s+(\d+)\b", re.IGNORECASE),
 ]
+# Patterns for real pipeline log output
+_ART_ACTIVITY = re.compile(
+    r"(ART_\d+)\s*\|\s*(\w+)\s*\|\s*(\w+)\s*\|\s*(OK|ERRO|USAGE)",
+    re.IGNORECASE,
+)
+_TOTAL_ARTICLES = re.compile(r"Total de artigos:\s*(\d+)", re.IGNORECASE)
+_DONE_ARTICLES = re.compile(r"Processados:\s*(\d+)", re.IGNORECASE)
+_PENDING_ARTICLES = re.compile(r"Pendentes:\s*(\d+)", re.IGNORECASE)
+
+
+class ProgressTracker:
+    """Stateful tracker that accumulates progress across log lines."""
+
+    def __init__(self) -> None:
+        self._total: int | None = None
+        self._pending: int | None = None
+        self._done_initial: int = 0
+        self._completed_arts: set[str] = set()
+        self._last_activity: str = ""
+
+    def parse(self, line: str, *, elapsed_seconds: float) -> ProgressUpdate | None:
+        """Parse a log line and return a ProgressUpdate if progress changed."""
+        article_current: int | None = None
+        article_total: int | None = None
+        step_current: int | None = None
+        step_total: int | None = None
+        last_activity: str | None = None
+
+        # --- Parse total/pending/done from Step 1 output ---
+        m = _TOTAL_ARTICLES.search(line)
+        if m:
+            self._total = int(m.group(1))
+
+        m = _DONE_ARTICLES.search(line)
+        if m:
+            self._done_initial = int(m.group(1))
+
+        m = _PENDING_ARTICLES.search(line)
+        if m:
+            self._pending = int(m.group(1))
+
+        # --- Parse article activity (ART_XXX | provider | action | OK/ERRO) ---
+        m = _ART_ACTIVITY.search(line)
+        if m:
+            art_id = m.group(1)
+            provider = m.group(2)
+            action = m.group(3)
+            status = m.group(4).upper()
+            if status == "USAGE":
+                # USAGE lines are informational, don't count as completion
+                last_activity = f"{art_id} — {action} ({provider})"
+            elif action.lower() in ("extract_hybrid", "extract", "extract_local"):
+                last_activity = f"{art_id} — {'✅' if status == 'OK' else '❌'} {action} ({provider})"
+                self._completed_arts.add(art_id)
+            elif action.lower() == "repair_yaml":
+                last_activity = f"{art_id} — 🔧 repair ({provider})"
+            else:
+                last_activity = f"{art_id} — {action} ({provider})"
+
+        # --- Parse ETAPA (step) markers ---
+        for pattern in _STEP_PATTERNS:
+            sm = pattern.search(line)
+            if sm:
+                step_current = int(sm.group(1))
+                step_total = int(sm.group(2)) if sm.lastindex and sm.lastindex >= 2 else 5
+                last_activity = f"Etapa {step_current}"
+                break
+
+        # --- Existing [Article X/Y] patterns ---
+        for pattern in _ARTICLE_PATTERNS:
+            am = pattern.search(line)
+            if am:
+                article_current = int(am.group(1))
+                article_total = int(am.group(2))
+                break
+
+        # --- Compute article progress from accumulated state ---
+        if article_current is None and self._total is not None:
+            article_total = self._pending if self._pending else (self._total - self._done_initial)
+            article_current = len(self._completed_arts)
+
+        # Detect Falha na extracao as activity
+        if "Falha na extracao" in line:
+            last_activity = "❌ Falha na extração"
+
+        if last_activity:
+            self._last_activity = last_activity
+
+        has_progress = any(v is not None for v in (article_current, article_total, step_current, step_total, last_activity))
+        if not has_progress:
+            return None
+
+        return ProgressUpdate(
+            article_current=article_current,
+            article_total=article_total if article_total and article_total > 0 else None,
+            step_current=step_current,
+            step_total=step_total,
+            elapsed_seconds=elapsed_seconds,
+            last_activity=self._last_activity or None,
+        )
 
 
 def parse_progress_from_line(line: str, *, elapsed_seconds: float) -> ProgressUpdate | None:
-    """Parse stdout lines and return progress update when a known marker is found."""
-    article_current: int | None = None
-    article_total: int | None = None
-    step_current: int | None = None
-    step_total: int | None = None
+    """Legacy stateless parser — kept for backward compatibility."""
+    tracker = ProgressTracker()
+    return tracker.parse(line, elapsed_seconds=elapsed_seconds)
 
-    for pattern in _ARTICLE_PATTERNS:
-        match = pattern.search(line)
-        if match:
-            article_current = int(match.group(1))
-            article_total = int(match.group(2))
-            break
-
-    if article_current is None and "step" not in line.lower():
-        match = _GENERIC_ARTICLE_PATTERN.search(line)
-        if match:
-            article_current = int(match.group(1))
-            article_total = int(match.group(2))
-
-    for pattern in _STEP_PATTERNS:
-        match = pattern.search(line)
-        if match:
-            step_current = int(match.group(1))
-            step_total = int(match.group(2)) if match.lastindex and match.lastindex >= 2 else 5
-            break
-
-    if all(value is None for value in (article_current, article_total, step_current, step_total)):
-        return None
-
-    return ProgressUpdate(
-        article_current=article_current,
-        article_total=article_total,
-        step_current=step_current,
-        step_total=step_total,
-        elapsed_seconds=elapsed_seconds,
-    )
 
 
 def resolve_cli_runner(
@@ -257,6 +326,7 @@ class PipelineJobRunner:
                 reader = threading.Thread(target=_reader, name="saec-job-reader", daemon=True)
                 reader.start()
 
+                tracker = ProgressTracker()
                 timed_out = False
                 reader_done = False
                 while True:
@@ -283,7 +353,7 @@ class PipelineJobRunner:
                     elif isinstance(payload, str):
                         on_output(payload)
                         if on_progress is not None:
-                            update = parse_progress_from_line(payload, elapsed_seconds=elapsed)
+                            update = tracker.parse(payload, elapsed_seconds=elapsed)
                             if update is not None:
                                 on_progress(update)
 
@@ -297,7 +367,7 @@ class PipelineJobRunner:
                         elapsed = time.monotonic() - start_time
                         on_output(payload)
                         if on_progress is not None:
-                            update = parse_progress_from_line(payload, elapsed_seconds=elapsed)
+                            update = tracker.parse(payload, elapsed_seconds=elapsed)
                             if update is not None:
                                 on_progress(update)
 

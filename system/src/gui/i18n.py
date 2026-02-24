@@ -216,6 +216,15 @@ _add("setup.language_help", "Idioma da interface. Requer reinício da GUI.", "In
 _add("setup.language_pt", "Português (BR)", "Português (BR)")
 _add("setup.language_en", "English (UK)", "English (UK)")
 _add("setup.restart_note", "Alteração de idioma requer reinício da GUI.", "Language change requires GUI restart.")
+_add("setup.welcome_title", "Configuração do SAEC", "SAEC Setup")
+_add("setup.welcome_subtitle", "Configure credenciais, provedores e modelos abaixo.", "Configure credentials, providers, and models below.")
+_add("setup.dialog_title", "SAEC — Configuração", "SAEC — Settings")
+_add("setup.provider_routing", "Roteamento de Provedor", "Provider Routing")
+_add("setup.refresh_models", "Atualizar Modelos", "Refresh Models")
+_add("setup.gui_language", "Idioma da GUI", "GUI Language")
+_add("setup.language_restart_hint", "Requer reinício", "Requires restart")
+_add("setup.model_reranker", "Reranker", "Reranker")
+_add("setup.strategy", "Estratégia", "Strategy")
 
 # Model group names
 _add("setup.group_extraction", "Extração", "Extraction")

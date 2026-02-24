@@ -92,14 +92,12 @@ def build_main_layout(root: tk.Tk, *, on_run, on_cancel) -> MainLayout:
     body = tk.PanedWindow(
         container,
         orient=tk.HORIZONTAL,
-        sashrelief=tk.RAISED,
-        sashwidth=8,
-        showhandle=True,
-        handlesize=8,
-        handlepad=3,
-        bd=1,
-        relief=tk.SUNKEN,
-        background="#C0C0C0",
+        sashrelief=tk.FLAT,
+        sashwidth=3,
+        showhandle=False,
+        bd=0,
+        relief=tk.FLAT,
+        background="#E5E7EB",
     )
     body.pack(fill="both", expand=True, padx=6, pady=(0, 6))
 

@@ -1,4 +1,4 @@
-"""Status dashboard panel."""
+"""Status dashboard panel with modern progress bar."""
 
 from __future__ import annotations
 
@@ -14,7 +14,19 @@ def _fmt_elapsed(seconds: float | None) -> str:
     if seconds is None:
         return "00:00"
     total = max(int(seconds), 0)
-    return f"{total // 60:02d}:{total % 60:02d}"
+    h, m, s = total // 3600, (total % 3600) // 60, total % 60
+    if h > 0:
+        return f"{h}:{m:02d}:{s:02d}"
+    return f"{m:02d}:{s:02d}"
+
+
+def _fmt_eta(elapsed: float, current: int, total: int) -> str:
+    """Estimate remaining time from elapsed, current, total."""
+    if current <= 0 or total <= 0 or elapsed <= 0:
+        return "--:--"
+    rate = elapsed / current
+    remaining = rate * (total - current)
+    return _fmt_elapsed(remaining)
 
 
 class StatusPanel(ttk.Frame):
@@ -32,109 +44,108 @@ class StatusPanel(ttk.Frame):
         self.queue_success_var = tk.StringVar(value="0")
         self.queue_failed_var = tk.StringVar(value="0")
         self.queue_cancelled_var = tk.StringVar(value="0")
-        self.progress_var = tk.StringVar(value="Idle")
+        self.progress_var = tk.StringVar(value=t("status.idle"))
         self.article_counter_var = tk.StringVar(value="0/0")
         self.elapsed_var = tk.StringVar(value="00:00")
 
-        rows = [
+        # --- Project info section ---
+        info_frame = ttk.LabelFrame(self, text=t("status.project"))
+        info_frame.pack(fill="x", padx=4, pady=(4, 2))
+
+        info_rows = [
             (t("status.workspace"), self.workspace_var),
-            (t("status.project"), self.project_var),
             (t("status.articles"), self.articles_source_var),
             (t("status.input_pdfs"), self.articles_var),
             (t("status.yaml_outputs"), self.yamls_var),
             (t("status.consolidated"), self.excel_var),
-            (t("status.queue_pending"), self.queue_pending_var),
-            (t("status.queue_running"), self.queue_running_var),
-            (t("status.runs_success"), self.queue_success_var),
-            (t("status.runs_failed"), self.queue_failed_var),
-            (t("status.runs_cancelled"), self.queue_cancelled_var),
         ]
 
-        for i, (label, variable) in enumerate(rows):
-            ttk.Label(self, text=label).grid(
-                row=i, column=0, sticky="w", padx=6, pady=2
+        for i, (label, variable) in enumerate(info_rows):
+            ttk.Label(info_frame, text=label, font=("Segoe UI", 8)).grid(
+                row=i, column=0, sticky="w", padx=6, pady=1
             )
-            ttk.Label(self, textvariable=variable).grid(
-                row=i, column=1, sticky="w", padx=6, pady=2
+            ttk.Label(info_frame, textvariable=variable, font=("Segoe UI", 8)).grid(
+                row=i, column=1, sticky="w", padx=6, pady=1
             )
+        info_frame.grid_columnconfigure(1, weight=1)
 
-        progress_row = len(rows)
-        ttk.Separator(self, orient="horizontal").grid(
-            row=progress_row,
-            column=0,
-            columnspan=2,
-            sticky="ew",
-            padx=6,
-            pady=(6, 4),
-        )
+        # --- Queue stats ---
+        queue_frame = ttk.LabelFrame(self, text=t("queue.tab"))
+        queue_frame.pack(fill="x", padx=4, pady=2)
 
-        ttk.Label(self, text=t("status.progress")).grid(
-            row=progress_row + 1,
-            column=0,
-            sticky="w",
-            padx=6,
-            pady=(2, 1),
-        )
-        ttk.Label(self, textvariable=self.progress_var).grid(
-            row=progress_row + 1,
-            column=1,
-            sticky="w",
-            padx=6,
-            pady=(2, 1),
-        )
+        queue_rows = [
+            (t("status.queue_pending"), self.queue_pending_var),
+            (t("status.runs_success"), self.queue_success_var),
+            (t("status.runs_failed"), self.queue_failed_var),
+        ]
+        for i, (label, variable) in enumerate(queue_rows):
+            ttk.Label(queue_frame, text=label, font=("Segoe UI", 8)).grid(
+                row=i, column=0, sticky="w", padx=6, pady=1
+            )
+            ttk.Label(queue_frame, textvariable=variable, font=("Segoe UI", 8)).grid(
+                row=i, column=1, sticky="w", padx=6, pady=1
+            )
+        queue_frame.grid_columnconfigure(1, weight=1)
 
-        self._progress_canvas = tk.Canvas(
-            self,
-            width=220,
-            height=18,
-            bg="#FFFFFF",
-            highlightthickness=1,
-            highlightbackground="#808080",
-            relief="sunken",
-            borderwidth=1,
-        )
-        self._progress_canvas.grid(
-            row=progress_row + 2,
-            column=0,
-            columnspan=2,
-            sticky="w",
-            padx=6,
-            pady=(2, 2),
-        )
-        self._segments = 20
+        # --- Progress section (the main feature) ---
+        progress_frame = ttk.LabelFrame(self, text=t("status.progress"))
+        progress_frame.pack(fill="x", padx=4, pady=(2, 4))
 
-        ttk.Label(self, text=t("status.article")).grid(
-            row=progress_row + 3,
-            column=0,
-            sticky="w",
-            padx=6,
-            pady=(2, 2),
+        # Progress bar
+        self._progress_value = tk.DoubleVar(value=0.0)
+        self._progressbar = ttk.Progressbar(
+            progress_frame,
+            orient="horizontal",
+            mode="determinate",
+            variable=self._progress_value,
+            maximum=100,
         )
-        ttk.Label(self, textvariable=self.article_counter_var).grid(
-            row=progress_row + 3,
-            column=1,
-            sticky="w",
-            padx=6,
-            pady=(2, 2),
+        self._progressbar.pack(fill="x", padx=8, pady=(6, 2))
+
+        # Percentage + time row
+        time_row = ttk.Frame(progress_frame)
+        time_row.pack(fill="x", padx=8, pady=(0, 2))
+
+        self._pct_var = tk.StringVar(value="0%")
+        ttk.Label(time_row, textvariable=self._pct_var, font=("Segoe UI", 9, "bold")).pack(
+            side="left"
         )
 
-        ttk.Label(self, text=t("status.elapsed")).grid(
-            row=progress_row + 4,
-            column=0,
-            sticky="w",
-            padx=6,
-            pady=(2, 4),
-        )
-        ttk.Label(self, textvariable=self.elapsed_var).grid(
-            row=progress_row + 4,
-            column=1,
-            sticky="w",
-            padx=6,
-            pady=(2, 4),
+        self._eta_var = tk.StringVar(value="")
+        ttk.Label(time_row, textvariable=self._eta_var, font=("Segoe UI", 8), foreground="#666").pack(
+            side="right"
         )
 
-        self.grid_columnconfigure(1, weight=1)
-        self._draw_segments(0.0)
+        self._elapsed_label_var = tk.StringVar(value="")
+        ttk.Label(time_row, textvariable=self._elapsed_label_var, font=("Segoe UI", 8), foreground="#666").pack(
+            side="right", padx=(0, 12)
+        )
+
+        # "Article X/Y" row
+        article_row = ttk.Frame(progress_frame)
+        article_row.pack(fill="x", padx=8, pady=(0, 2))
+
+        ttk.Label(article_row, textvariable=self.progress_var, font=("Segoe UI", 8)).pack(
+            side="left"
+        )
+        ttk.Label(article_row, textvariable=self.article_counter_var, font=("Segoe UI", 8)).pack(
+            side="right"
+        )
+
+        # Last activity line
+        self._activity_var = tk.StringVar(value="")
+        activity_label = ttk.Label(
+            progress_frame,
+            textvariable=self._activity_var,
+            font=("Segoe UI", 8),
+            foreground="#444",
+            wraplength=260,
+        )
+        activity_label.pack(fill="x", padx=8, pady=(0, 6))
+
+        self._last_elapsed: float = 0.0
+        self._last_current: int = 0
+        self._last_total: int = 0
 
     def set_workspace(self, workspace_root: Path | None) -> None:
         self.workspace_var.set(str(workspace_root) if workspace_root else "-")
@@ -183,24 +194,46 @@ class StatusPanel(ttk.Frame):
         self.progress_var.set(t("status.idle"))
         self.article_counter_var.set("0/0")
         self.elapsed_var.set("00:00")
-        self._draw_segments(0.0)
+        self._progress_value.set(0.0)
+        self._pct_var.set("0%")
+        self._eta_var.set("")
+        self._elapsed_label_var.set("")
+        self._activity_var.set("")
+        self._last_elapsed = 0.0
+        self._last_current = 0
+        self._last_total = 0
 
     def set_elapsed(self, elapsed_seconds: float) -> None:
         self.elapsed_var.set(_fmt_elapsed(elapsed_seconds))
+        self._last_elapsed = elapsed_seconds
+        self._elapsed_label_var.set(f"⏱ {_fmt_elapsed(elapsed_seconds)}")
+        # Update ETA if we have article counts
+        if self._last_total > 0 and self._last_current > 0:
+            eta = _fmt_eta(elapsed_seconds, self._last_current, self._last_total)
+            self._eta_var.set(f"≈ {eta} restante")
 
     def update_progress(self, update: ProgressUpdate) -> None:
         if update.elapsed_seconds is not None:
-            self.elapsed_var.set(_fmt_elapsed(update.elapsed_seconds))
+            self.set_elapsed(update.elapsed_seconds)
 
         if update.article_current is not None and update.article_total is not None:
-            self.article_counter_var.set(f"{update.article_current}/{update.article_total}")
+            current = update.article_current
+            total = update.article_total
+            self._last_current = current
+            self._last_total = total
+
+            self.article_counter_var.set(f"{current}/{total}")
             self.progress_var.set(
-                t("status.article_n_of_m", current=update.article_current, total=update.article_total)
+                t("status.article_n_of_m", current=current, total=total)
             )
-            ratio = 0.0
-            if update.article_total > 0:
-                ratio = update.article_current / update.article_total
-            self._draw_segments(ratio)
+
+            pct = (current / total * 100) if total > 0 else 0
+            self._progress_value.set(pct)
+            self._pct_var.set(f"{pct:.0f}%")
+
+            if update.elapsed_seconds and current > 0:
+                eta = _fmt_eta(update.elapsed_seconds, current, total)
+                self._eta_var.set(f"≈ {eta} restante")
 
         if update.step_current is not None:
             if update.step_total:
@@ -210,22 +243,5 @@ class StatusPanel(ttk.Frame):
             else:
                 self.progress_var.set(t("status.step_n", current=update.step_current))
 
-    def _draw_segments(self, ratio: float) -> None:
-        self._progress_canvas.delete("all")
-        ratio = max(0.0, min(1.0, ratio))
-        filled = int(round(self._segments * ratio))
-
-        x = 2
-        width = 9
-        gap = 1
-        for index in range(self._segments):
-            color = "#003399" if index < filled else "#E0E0E0"
-            self._progress_canvas.create_rectangle(
-                x,
-                2,
-                x + width,
-                15,
-                fill=color,
-                outline="#808080",
-            )
-            x += width + gap
+        if update.last_activity:
+            self._activity_var.set(update.last_activity)
