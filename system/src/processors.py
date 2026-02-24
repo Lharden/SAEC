@@ -107,17 +107,13 @@ class ArticleProcessor:
         if not texts:
             return ""
         parts: list[str] = []
-        for key in sorted(
-            texts.keys(), key=lambda x: int(x) if str(x).isdigit() else x
-        ):
+        for key in sorted(texts.keys(), key=lambda x: int(x) if str(x).isdigit() else x):
             parts.append(f"--- Pagina {key} ---")
             parts.append(texts[key])
             parts.append("")
         return "\n".join(parts).strip()
 
-    def _build_hybrid_result(
-        self, hybrid_meta: dict[str, Any], work_dir: Path
-    ) -> dict[str, Any]:
+    def _build_hybrid_result(self, hybrid_meta: dict[str, Any], work_dir: Path) -> dict[str, Any]:
         pages_info = hybrid_meta.get("pages_info", []) or []
         texts = self._load_texts(work_dir)
 
@@ -134,9 +130,7 @@ class ArticleProcessor:
                     image_path = Path(raw_path)
                 else:
                     image_path = work_dir / "pages" / f"page_{page_num:03d}.png"
-                pages.append(
-                    {"page_num": page_num, "type": "image", "path": image_path}
-                )
+                pages.append({"page_num": page_num, "type": "image", "path": image_path})
 
         pages = sorted(pages, key=lambda x: x["page_num"])
         return {
@@ -145,9 +139,7 @@ class ArticleProcessor:
             "stats": hybrid_meta.get("stats", {}),
         }
 
-    def _build_images_only_hybrid(
-        self, hybrid_result: dict[str, Any]
-    ) -> dict[str, Any]:
+    def _build_images_only_hybrid(self, hybrid_result: dict[str, Any]) -> dict[str, Any]:
         pages = [p for p in hybrid_result.get("pages", []) if p.get("type") == "image"]
         return {
             "pages": pages,
@@ -228,7 +220,8 @@ class ArticleProcessor:
             return rag_text
         except Exception as e:  # Broad: RAG subsystem (embeddings, vector DB) raises diverse errors
             self.logger.warning(
-                "RAG falhou, usando conteudo completo: %s", e,
+                "RAG falhou, usando conteudo completo: %s",
+                e,
                 extra={"artigo_id": artigo_id, "provider": "-", "action": "rag"},
             )
             return None
@@ -246,43 +239,47 @@ class ArticleProcessor:
         """
         hybrid_result = self._build_hybrid_result(hybrid_meta, work_dir)
         content_openai_full = pdf_vision.get_hybrid_content_for_openai(hybrid_result)
-        content_anthropic_full = pdf_vision.get_hybrid_content_for_anthropic(
-            hybrid_result
-        )
+        content_anthropic_full = pdf_vision.get_hybrid_content_for_anthropic(hybrid_result)
 
         min_chars = getattr(self.client.llm_config, "PROMPT_MIN_TEXT_CHARS", 0)
         content_openai_llm = self._filter_text_blocks(content_openai_full, min_chars)
-        content_anthropic_llm = self._filter_text_blocks(
-            content_anthropic_full, min_chars
-        )
+        content_anthropic_llm = self._filter_text_blocks(content_anthropic_full, min_chars)
 
         rag_context = self._get_rag_context(artigo_id=work_dir.name, work_dir=work_dir)
         if rag_context:
             images_only = self._build_images_only_hybrid(hybrid_result)
             content_openai_llm = pdf_vision.get_hybrid_content_for_openai(images_only)
-            content_anthropic_llm = pdf_vision.get_hybrid_content_for_anthropic(
-                images_only
-            )
+            content_anthropic_llm = pdf_vision.get_hybrid_content_for_anthropic(images_only)
 
             rag_block = {
                 "type": "text",
                 "text": f"--- RAG CONTEXT (trechos mais relevantes) ---\n{rag_context}",
             }
 
-            if provider == "anthropic":
+            provider_kind = (
+                self.client.get_provider_kind(provider)
+                if hasattr(self.client, "get_provider_kind")
+                else provider
+            )
+            if provider_kind == "anthropic":
                 return [rag_block] + content_anthropic_llm, content_openai_full
             return [rag_block] + content_openai_llm, content_openai_full
 
-        if provider == "anthropic":
+        provider_kind = (
+            self.client.get_provider_kind(provider)
+            if hasattr(self.client, "get_provider_kind")
+            else provider
+        )
+        if provider_kind == "anthropic":
             return content_anthropic_llm, content_openai_full
         return content_openai_llm, content_openai_full
 
     def _choose_fallback(self, primary: Provider) -> Provider:
-        if primary == "anthropic":
-            return "openai" if self.client.openai else "ollama"
-        if primary == "openai":
-            return "anthropic" if self.client.anthropic else "ollama"
-        return "openai" if self.client.openai else "anthropic"
+        available = self._available_providers()
+        for provider_id, enabled in available.items():
+            if enabled and provider_id != primary:
+                return cast(Provider, provider_id)
+        return primary
 
     @staticmethod
     def _normalize_provider_choice(value: str | None) -> str:
@@ -294,6 +291,8 @@ class ArticleProcessor:
         return self._normalize_provider_choice(str(raw))
 
     def _available_providers(self) -> dict[str, bool]:
+        if hasattr(self.client, "list_available_providers"):
+            return self.client.list_available_providers()
         return {
             "anthropic": bool(getattr(self.client, "anthropic", None)),
             "openai": bool(getattr(self.client, "openai", None)),
@@ -317,31 +316,35 @@ class ArticleProcessor:
 
         if candidate == "auto":
             candidate = resolved_default
-        if candidate not in available:
+        if candidate not in available and candidate != "auto":
             candidate = resolved_default
 
         if available.get(candidate, False):
             return cast(Provider, candidate)
 
-        fallbacks = {
-            "ollama": ["openai", "anthropic"],
-            "openai": ["anthropic", "ollama"],
-            "anthropic": ["openai", "ollama"],
-        }
-        for provider in fallbacks.get(candidate, ["ollama", "openai", "anthropic"]):
+        fallback_order = [resolved_default]
+        primary_provider = self._normalize_provider_choice(
+            getattr(self.client.llm_config, "PRIMARY_PROVIDER", "")
+        )
+        if primary_provider and primary_provider not in fallback_order:
+            fallback_order.append(primary_provider)
+        for provider_id, enabled in available.items():
+            if enabled and provider_id not in fallback_order:
+                fallback_order.append(provider_id)
+
+        for provider in fallback_order:
             if available.get(provider, False):
                 self.logger.warning(
                     "Provider '%s' indisponivel para %s; usando '%s'",
-                    candidate, action, provider,
+                    candidate,
+                    action,
+                    provider,
                     extra={"action": action, "provider": provider},
                 )
                 return cast(Provider, provider)
 
         raise ExtractError(
-            (
-                f"Nenhum provider disponível para {action}. "
-                "Configure Ollama ou API keys válidas."
-            )
+            (f"Nenhum provider disponível para {action}. Configure Ollama ou API keys válidas.")
         )
 
     def _provider_from_cascade_source(self, source: Any, default: Provider) -> Provider:
@@ -483,9 +486,7 @@ class ArticleProcessor:
                 prompt_template = self._load_prompt() + "\n\nTEXTO:\n{TEXT}\n"
                 full_text = self._build_full_text(work_dir)
                 if not full_text:
-                    raw = self.extract_with_llm(
-                        content, artigo_id=artigo_id, provider=provider
-                    )
+                    raw = self.extract_with_llm(content, artigo_id=artigo_id, provider=provider)
                 else:
                     cascade_result = extract_cascade(
                         artigo_id=artigo_id,
@@ -502,10 +503,10 @@ class ArticleProcessor:
                         cascade_result.source, provider
                     )
             else:
-                raw = self.extract_with_llm(
-                    content, artigo_id=artigo_id, provider=provider
-                )
-        except Exception as e:  # Broad: cascade/LLM extraction raises diverse API and pipeline errors
+                raw = self.extract_with_llm(content, artigo_id=artigo_id, provider=provider)
+        except (
+            Exception
+        ) as e:  # Broad: cascade/LLM extraction raises diverse API and pipeline errors
             raise ExtractError(str(e)) from e
 
         repair_route = self._configured_provider("PROVIDER_REPAIR")

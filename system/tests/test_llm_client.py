@@ -57,11 +57,11 @@ def test_iter_ollama_repair_models_deduplicates() -> None:
 
 def test_check_provider_raises_when_provider_unavailable() -> None:
     client = _client()
-    with pytest.raises(ValueError, match="Anthropic API não configurada"):
+    with pytest.raises(ValueError, match="anthropic"):
         client._check_provider("anthropic")
-    with pytest.raises(ValueError, match="OpenAI API não configurada"):
+    with pytest.raises(ValueError, match="openai-compatible"):
         client._check_provider("openai")
-    with pytest.raises(ValueError, match="Ollama não configurado"):
+    with pytest.raises(ValueError, match="openai-compatible"):
         client._check_provider("ollama")
 
 
@@ -97,7 +97,11 @@ def test_repair_ollama_falls_back_to_openai(monkeypatch) -> None:
     client = _client()
     client.ollama = object()
     client.openai = object()
-    monkeypatch.setattr(client, "_call_with_retry", lambda *args, **kwargs: (_ for _ in ()).throw(RuntimeError("fail")))
+    monkeypatch.setattr(
+        client,
+        "_call_with_retry",
+        lambda *args, **kwargs: (_ for _ in ()).throw(RuntimeError("fail")),
+    )
     monkeypatch.setattr(client, "_repair_openai", lambda *args, **kwargs: "fixed-yaml")
 
     out = client._repair_ollama("prompt", "system", 4000)
@@ -113,4 +117,3 @@ def test_repair_ollama_raises_when_no_provider_available() -> None:
 
     with pytest.raises(mod.LLMError, match="Nenhum provider disponível"):
         client._repair_ollama("prompt", "system", 4000)
-

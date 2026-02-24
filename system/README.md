@@ -116,11 +116,12 @@ As configurações ficam no arquivo `.env` (veja `.env.template` para referênci
 |----------|-----------|--------|
 | `PRIMARY_PROVIDER` | Provedor principal | `ollama` |
 | `PROVIDER_EXTRACT` | Roteamento de extração | `auto` |
-| `PROVIDER_REPAIR` | Roteamento de reparo YAML | `openai` |
-| `PROVIDER_QUOTES` | Roteamento de verificação | `anthropic` |
+| `PROVIDER_REPAIR` | Roteamento de reparo YAML | `auto` |
+| `PROVIDER_QUOTES` | Roteamento de verificação | `auto` |
 | `OLLAMA_MODEL_CLOUD` | Modelo principal | `qwen3-coder-next:cloud` |
 | `OPENAI_API_KEY` | Chave API OpenAI | — |
 | `ANTHROPIC_API_KEY` | Chave API Anthropic | — |
+| `LLM_PROVIDERS_FILE` | Arquivo YAML de provedores dinâmicos | `config/providers.yaml` |
 
 ## Pipeline de Extração
 

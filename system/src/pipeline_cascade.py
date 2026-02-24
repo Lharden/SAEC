@@ -35,40 +35,40 @@ logger = logging.getLogger(__name__)
 
 
 def _resolve_api_provider(preferred_provider: str) -> str:
-    has_openai = not _is_placeholder_api_key(getattr(llm_config, "OPENAI_API_KEY", ""))
-    has_anthropic = not _is_placeholder_api_key(
-        getattr(llm_config, "ANTHROPIC_API_KEY", "")
-    )
-    preferred = (preferred_provider or "").strip().lower()
-    if preferred == "openai" and has_openai:
-        return "openai"
-    if preferred == "anthropic" and has_anthropic:
+    if not hasattr(llm_config, "get_provider_registry"):
+        has_openai = not _is_placeholder_api_key(getattr(llm_config, "OPENAI_API_KEY", ""))
+        has_anthropic = not _is_placeholder_api_key(getattr(llm_config, "ANTHROPIC_API_KEY", ""))
+        preferred = (preferred_provider or "").strip().lower()
+        if preferred == "openai" and has_openai:
+            return "openai"
+        if preferred == "anthropic" and has_anthropic:
+            return "anthropic"
+        if has_openai:
+            return "openai"
+        if has_anthropic:
+            return "anthropic"
         return "anthropic"
-    if preferred == "openai" and has_anthropic:
-        logger.warning(
-            "OpenAI indisponivel para cascade API; usando Anthropic",
-            extra={"action": "resolve_api_provider", "provider": "anthropic"},
-        )
-        return "anthropic"
-    if preferred == "anthropic" and has_openai:
-        logger.warning(
-            "Anthropic indisponivel para cascade API; usando OpenAI",
-            extra={"action": "resolve_api_provider", "provider": "openai"},
-        )
-        return "openai"
 
-    if has_openai:
-        return "openai"
-    if has_anthropic:
-        return "anthropic"
-    return "anthropic"
+    registry = llm_config.get_provider_registry()
+    preferred = (preferred_provider or "").strip().lower()
+    if preferred and preferred != "auto":
+        if preferred in registry and llm_config.provider_available(preferred):
+            if registry[preferred].get("kind", "") != "ollama":
+                return preferred
+
+    for provider_id, spec in registry.items():
+        if spec.get("kind", "").strip().lower() == "ollama":
+            continue
+        if llm_config.provider_available(provider_id):
+            return provider_id
+
+    # fallback final
+    return preferred or "openai"
 
 
 def _select_cascade_api_provider() -> str:
-    configured = (
-        str(getattr(llm_config, "PROVIDER_CASCADE_API", "auto")).strip().lower()
-    )
-    if configured in {"anthropic", "openai"}:
+    configured = str(getattr(llm_config, "PROVIDER_CASCADE_API", "auto")).strip().lower()
+    if configured and configured != "auto":
         return configured
     primary = str(getattr(llm_config, "PRIMARY_PROVIDER", "ollama")).strip().lower()
     return primary
@@ -77,7 +77,9 @@ def _select_cascade_api_provider() -> str:
 def _source_for_api_provider(provider: str) -> ExtractionSource:
     if provider == "openai":
         return ExtractionSource.API_OPENAI
-    return ExtractionSource.API_ANTHROPIC
+    if provider == "anthropic":
+        return ExtractionSource.API_ANTHROPIC
+    return ExtractionSource.HYBRID
 
 
 # ============================================================
@@ -221,7 +223,8 @@ def extract_with_ollama(
         raise
     except Exception as e:
         logger.error(
-            "Ollama extraction error: %s", e,
+            "Ollama extraction error: %s",
+            e,
             extra={"artigo_id": artigo_id, "model": model, "action": "extract_local"},
         )
         metrics.total_time_ms = (time.time() - start_time) * 1000
@@ -295,7 +298,8 @@ Retorne APENAS o YAML corrigido, sem explicações.
         raise
     except Exception as e:
         logger.error(
-            "Ollama repair error: %s", e,
+            "Ollama repair error: %s",
+            e,
             extra={"artigo_id": artigo_id, "model": model, "action": "repair_local"},
         )
         metrics.total_time_ms = (time.time() - start_time) * 1000
@@ -320,7 +324,7 @@ def _extract_yaml_from_response(response: object) -> str:
     return _extract_yaml_block(str(response))
 
 
-def _estimate_api_cost(provider: Literal["anthropic", "openai"], tokens: int) -> float:
+def _estimate_api_cost(provider: str, tokens: int) -> float:
     if provider == "anthropic":
         return tokens * 0.000009
     return tokens * 0.00001
@@ -330,7 +334,7 @@ def extract_with_api(
     text: str,
     prompt_template: str,
     *,
-    provider: Literal["anthropic", "openai"] = "anthropic",
+    provider: str = "openai",
     images: list[Path] | None = None,
     artigo_id: str = "",
     client: Any | None = None,
@@ -380,7 +384,12 @@ def extract_with_api(
             except ImportError:
                 import pdf_vision
 
-            if provider == "anthropic":
+            provider_kind = (
+                client.get_provider_kind(provider)
+                if hasattr(client, "get_provider_kind")
+                else provider
+            )
+            if provider_kind == "anthropic":
                 image_blocks = pdf_vision.get_images_for_anthropic(images)
             else:
                 image_blocks = pdf_vision.get_images_for_openai(images)
@@ -413,7 +422,8 @@ def extract_with_api(
         raise
     except Exception as e:
         logger.error(
-            "API extraction error: %s", e,
+            "API extraction error: %s",
+            e,
             extra={"artigo_id": artigo_id, "provider": provider, "action": "extract_api"},
         )
         metrics.total_time_ms = (time.time() - start_time) * 1000
@@ -439,7 +449,7 @@ def _try_api_only_extraction(
         yaml_content, metrics = extract_with_api(
             text,
             prompt_template,
-            provider=cast(Literal["anthropic", "openai"], api_provider),
+            provider=api_provider,
             images=images,
             artigo_id=artigo_id,
         )
@@ -476,9 +486,7 @@ def _try_local_extraction(
 ) -> LocalAttemptResult:
     """Executa tentativas locais com validação e repair opcional."""
     result = LocalAttemptResult(
-        source=ExtractionSource.LOCAL_OLLAMA_VISION
-        if images
-        else ExtractionSource.LOCAL_OLLAMA
+        source=ExtractionSource.LOCAL_OLLAMA_VISION if images else ExtractionSource.LOCAL_OLLAMA
     )
 
     for attempt in range(max_local_retries):
@@ -562,7 +570,7 @@ def _try_api_extraction(
         yaml_content, api_metrics = extract_with_api(
             text,
             prompt_template,
-            provider=cast(Literal["anthropic", "openai"], api_provider),
+            provider=api_provider,
             images=images,
             artigo_id=artigo_id,
         )
@@ -599,8 +607,7 @@ def extract_cascade(
     text: str,
     prompt_template: str,
     *,
-    strategy: Literal["local_first", "api_first", "local_only", "api_only"]
-    | None = None,
+    strategy: Literal["local_first", "api_first", "local_only", "api_only"] | None = None,
     images: list[Path] | None = None,
     confidence_threshold: float | None = None,
     max_local_retries: int = 2,
@@ -732,15 +739,14 @@ def _validate_yaml(yaml_content: str, artigo_id: str) -> ValidationResult | None
         return validate_yaml(yaml_content)
     except Exception as e:
         logger.warning(
-            "Validation failed: %s", e,
+            "Validation failed: %s",
+            e,
             extra={"artigo_id": artigo_id, "action": "validate"},
         )
         return None
 
 
-def _estimate_confidence(
-    yaml_content: str, validation: ValidationResult | None
-) -> float:
+def _estimate_confidence(yaml_content: str, validation: ValidationResult | None) -> float:
     """
     Estima confiança da extração com scoring granular.
 
@@ -772,9 +778,14 @@ def _estimate_confidence(
 
     # --- 2. Campos obrigatórios (peso 0.25) ---
     required_fields = [
-        "ArtigoID", "ClasseIA", "Mecanismo_Estruturado", "Quotes",
-        "ProblemaNegócio_Contexto", "Intervenção_Descrição",
-        "ResultadoTipo", "NívelEvidência",
+        "ArtigoID",
+        "ClasseIA",
+        "Mecanismo_Estruturado",
+        "Quotes",
+        "ProblemaNegócio_Contexto",
+        "Intervenção_Descrição",
+        "ResultadoTipo",
+        "NívelEvidência",
     ]
     fields_found = sum(1 for f in required_fields if f in yaml_content)
     fields_ratio = fields_found / len(required_fields)
@@ -809,8 +820,11 @@ def _estimate_confidence(
 
     # --- 4. Narrativas substanciais (peso 0.15) ---
     narrative_fields = [
-        "ProblemaNegócio_Contexto", "Intervenção_Descrição",
-        "Dados_Descrição", "Mecanismo_Declarado", "Mecanismo_Inferido",
+        "ProblemaNegócio_Contexto",
+        "Intervenção_Descrição",
+        "Dados_Descrição",
+        "Mecanismo_Declarado",
+        "Mecanismo_Inferido",
     ]
     narratives_present = sum(1 for f in narrative_fields if f in yaml_content)
     narrative_ratio = narratives_present / len(narrative_fields)

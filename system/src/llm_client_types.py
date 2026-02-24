@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from functools import wraps
-from typing import Callable, Literal, TypeVar, cast
+from typing import Callable, TypeVar, cast
 import random
 import time
 
@@ -23,7 +23,7 @@ except (ImportError, ModuleNotFoundError):  # pragma: no cover
     openai = None  # type: ignore[assignment]
 
 _F = TypeVar("_F", bound=Callable[..., str])
-Provider = Literal["anthropic", "openai", "ollama"]
+Provider = str
 
 try:
     from . import exceptions as _exceptions

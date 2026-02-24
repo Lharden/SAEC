@@ -18,16 +18,12 @@ class _FakeCompletions:
         outcome = self._outcomes.get(model, "---\nok: true\n---")
         if isinstance(outcome, Exception):
             raise outcome
-        return SimpleNamespace(
-            choices=[SimpleNamespace(message=SimpleNamespace(content=outcome))]
-        )
+        return SimpleNamespace(choices=[SimpleNamespace(message=SimpleNamespace(content=outcome))])
 
 
 def _openai_like_client(outcomes: dict[str, str | Exception]):
     completions = _FakeCompletions(outcomes)
-    return SimpleNamespace(
-        chat=SimpleNamespace(completions=completions), _calls=completions
-    )
+    return SimpleNamespace(chat=SimpleNamespace(completions=completions), _calls=completions)
 
 
 def test_llm_config_does_not_require_anthropic_when_ollama_enabled(monkeypatch) -> None:
@@ -140,9 +136,7 @@ def test_ollama_hybrid_routes_text_to_cloud_and_image_to_vision() -> None:
     client._call_with_retry = lambda fn, **kwargs: fn()  # type: ignore[method-assign]
 
     text_content = [{"type": "text", "text": "conteudo textual"}]
-    image_content = [
-        {"type": "image_url", "image_url": {"url": "data:image/png;base64,abc"}}
-    ]
+    image_content = [{"type": "image_url", "image_url": {"url": "data:image/png;base64,abc"}}]
 
     client._call_ollama_hybrid(text_content, "intro", 1000, artigo_id="ART_TEST")
     client._call_ollama_hybrid(image_content, "intro", 1000, artigo_id="ART_TEST")
@@ -307,3 +301,72 @@ def test_openai_image_block_is_converted_for_anthropic_quotes() -> None:
     assert converted["source"]["type"] == "base64"
     assert converted["source"]["media_type"] == "image/png"
     assert converted["source"]["data"] == "abcd1234"
+
+
+def test_llm_config_accepts_dynamic_provider_ids_from_yaml(monkeypatch, tmp_path) -> None:
+    providers_yaml = tmp_path / "providers.yaml"
+    providers_yaml.write_text(
+        "providers:\n"
+        "  litellm_gateway:\n"
+        "    kind: openai_compatible\n"
+        "    enabled: true\n"
+        "    base_url: http://127.0.0.1:4000\n"
+        "    api_key: litellm\n"
+        "    model: glm-5\n",
+        encoding="utf-8",
+    )
+
+    monkeypatch.setenv("LLM_PROVIDERS_FILE", str(providers_yaml))
+    monkeypatch.setenv("PRIMARY_PROVIDER", "litellm_gateway")
+    monkeypatch.setenv("PROVIDER_EXTRACT", "litellm_gateway")
+    monkeypatch.setenv("PROVIDER_REPAIR", "litellm_gateway")
+    monkeypatch.setenv("PROVIDER_QUOTES", "litellm_gateway")
+    monkeypatch.setenv("PROVIDER_CASCADE_API", "litellm_gateway")
+    monkeypatch.setenv("OLLAMA_ENABLED", "false")
+    monkeypatch.setenv("OPENAI_API_KEY", "")
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "")
+
+    cfg = LLMConfig()
+    errors = cfg.validate()
+
+    assert errors == []
+    assert cfg.provider_available("litellm_gateway") is True
+
+
+def test_llm_client_builds_openai_compatible_provider_from_registry(monkeypatch) -> None:
+    calls: list[dict[str, object]] = []
+
+    class _FakeOpenAI:
+        def __init__(self, **kwargs):
+            calls.append(kwargs)
+
+    monkeypatch.setattr(llm_client, "OpenAI", _FakeOpenAI)
+
+    cfg = SimpleNamespace(
+        get_provider_registry=lambda: {
+            "litellm_gateway": {
+                "kind": "openai_compatible",
+                "enabled": "true",
+                "base_url": "http://127.0.0.1:4000",
+                "api_key": "litellm",
+                "api_key_env": "",
+                "model": "glm-5",
+                "vision_model": "",
+                "repair_model": "",
+            }
+        },
+        get_httpx_timeout=lambda: 30.0,
+        RETRY_MAX_RETRIES=0,
+        RETRY_BASE_DELAY=0.0,
+        RETRY_MAX_DELAY=0.0,
+        RETRY_JITTER=0.0,
+        RETRY_MAX_ELAPSED=10.0,
+    )
+    ctx = SimpleNamespace(llm_config=cfg, paths=SimpleNamespace())
+
+    client = llm_client.LLMClient(context=ctx)
+
+    assert calls
+    assert calls[0]["api_key"] == "litellm"
+    assert calls[0]["base_url"] == "http://127.0.0.1:4000"
+    assert client.list_available_providers().get("litellm_gateway") is True

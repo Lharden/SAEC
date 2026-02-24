@@ -11,6 +11,7 @@ import sys
 from typing import Literal
 from urllib.error import URLError
 from urllib.request import urlopen
+import yaml
 
 
 HealthStatus = Literal["OK", "WARN", "FAIL"]
@@ -66,6 +67,47 @@ def check_disk_space(target: Path, *, min_free_gb: float = 1.0) -> HealthCheckRe
 
 def check_api_keys(env_path: Path) -> HealthCheckResult:
     values = _parse_env_file(env_path)
+    providers_file_raw = values.get("LLM_PROVIDERS_FILE", "").strip()
+    if providers_file_raw:
+        providers_file = Path(providers_file_raw).expanduser()
+        if not providers_file.is_absolute():
+            providers_file = (env_path.parent.parent / providers_file).resolve()
+        if providers_file.exists():
+            try:
+                payload = yaml.safe_load(providers_file.read_text(encoding="utf-8")) or {}
+                providers = payload.get("providers", {}) if isinstance(payload, dict) else {}
+                configured: list[str] = []
+                if isinstance(providers, dict):
+                    for provider_id, spec in providers.items():
+                        if not isinstance(spec, dict):
+                            continue
+                        enabled = str(spec.get("enabled", True)).lower() not in {
+                            "0",
+                            "false",
+                            "no",
+                            "off",
+                        }
+                        if not enabled:
+                            continue
+                        model = str(spec.get("model", "")).strip()
+                        if not model:
+                            continue
+                        key_literal = str(spec.get("api_key", "")).strip()
+                        key_env = str(spec.get("api_key_env", "")).strip()
+                        if (
+                            key_literal
+                            or key_env
+                            or str(spec.get("kind", "")).strip().lower() == "ollama"
+                        ):
+                            configured.append(str(provider_id))
+                if configured:
+                    return _ok(
+                        "API keys",
+                        "Providers YAML ativos: " + ", ".join(configured),
+                    )
+            except (OSError, yaml.YAMLError, ValueError):
+                pass
+
     anthropic = bool(values.get("ANTHROPIC_API_KEY", "").strip())
     openai = bool(values.get("OPENAI_API_KEY", "").strip())
     extract_route = values.get("PROVIDER_EXTRACT", "auto").strip() or "auto"

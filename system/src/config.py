@@ -8,6 +8,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 from dotenv import load_dotenv
+import yaml
 
 
 # Carregar .env do diretório system
@@ -40,9 +41,7 @@ if not _system_dir.exists():
 
 _env_path = _system_dir / ".env"
 if _env_path.exists():
-    load_dotenv(
-        _env_path, override=True
-    )  # override=True para recarregar em kernels Jupyter
+    load_dotenv(_env_path, override=True)  # override=True para recarregar em kernels Jupyter
 else:
     # Tentar carregar de .env.template se .env não existir
     load_dotenv(_system_dir / ".env.template", override=True)
@@ -156,18 +155,13 @@ class LLMConfig:
     """Configuração dos LLMs."""
 
     # APIs (cloud)
-    ANTHROPIC_API_KEY: str = field(
-        default_factory=lambda: _env_str("ANTHROPIC_API_KEY", "")
-    )
+    ANTHROPIC_API_KEY: str = field(default_factory=lambda: _env_str("ANTHROPIC_API_KEY", ""))
     OPENAI_API_KEY: str = field(default_factory=lambda: _env_str("OPENAI_API_KEY", ""))
-    OPENAI_BASE_URL: str = field(
-        default_factory=lambda: _env_str("OPENAI_BASE_URL", "")
-    )
+    OPENAI_BASE_URL: str = field(default_factory=lambda: _env_str("OPENAI_BASE_URL", ""))
+    LLM_PROVIDERS_FILE: str = field(default_factory=lambda: _env_str("LLM_PROVIDERS_FILE", ""))
 
     # Ollama (local)
-    OLLAMA_ENABLED: bool = field(
-        default_factory=lambda: _env_bool("OLLAMA_ENABLED", "true")
-    )
+    OLLAMA_ENABLED: bool = field(default_factory=lambda: _env_bool("OLLAMA_ENABLED", "true"))
     OLLAMA_BASE_URL: str = field(
         default_factory=lambda: _env_str(
             "OLLAMA_BASE_URL",
@@ -182,9 +176,7 @@ class LLMConfig:
             "",
         )
     )
-    OPENAI_MODEL: str = field(
-        default_factory=lambda: _env_str("OPENAI_MODEL", "")
-    )
+    OPENAI_MODEL: str = field(default_factory=lambda: _env_str("OPENAI_MODEL", ""))
 
     # Modelos (Ollama)
     # Separar modelos por função para manter qualidade/custo:
@@ -217,54 +209,32 @@ class LLMConfig:
     )
 
     # Estratégia
-    USE_TWO_PASS: bool = field(
-        default_factory=lambda: _env_bool("USE_TWO_PASS", "true")
-    )
-    PRIMARY_PROVIDER: str = field(
-        default_factory=lambda: _env_str("PRIMARY_PROVIDER", "ollama")
-    )
-    PROVIDER_EXTRACT: str = field(
-        default_factory=lambda: _env_str("PROVIDER_EXTRACT", "auto")
-    )
-    PROVIDER_REPAIR: str = field(
-        default_factory=lambda: _env_str("PROVIDER_REPAIR", "auto")
-    )
-    PROVIDER_QUOTES: str = field(
-        default_factory=lambda: _env_str("PROVIDER_QUOTES", "anthropic")
-    )
+    USE_TWO_PASS: bool = field(default_factory=lambda: _env_bool("USE_TWO_PASS", "true"))
+    PRIMARY_PROVIDER: str = field(default_factory=lambda: _env_str("PRIMARY_PROVIDER", "ollama"))
+    PROVIDER_EXTRACT: str = field(default_factory=lambda: _env_str("PROVIDER_EXTRACT", "auto"))
+    PROVIDER_REPAIR: str = field(default_factory=lambda: _env_str("PROVIDER_REPAIR", "auto"))
+    PROVIDER_QUOTES: str = field(default_factory=lambda: _env_str("PROVIDER_QUOTES", "auto"))
     PROVIDER_CASCADE_API: str = field(
-        default_factory=lambda: _env_str("PROVIDER_CASCADE_API", "openai")
+        default_factory=lambda: _env_str("PROVIDER_CASCADE_API", "auto")
     )
 
     # Limites
-    MAX_REPAIR_ATTEMPTS: int = field(
-        default_factory=lambda: _env_int("MAX_REPAIR_ATTEMPTS", "3")
-    )
+    MAX_REPAIR_ATTEMPTS: int = field(default_factory=lambda: _env_int("MAX_REPAIR_ATTEMPTS", "3"))
 
     # Timeouts (segundos)
-    TIMEOUT_TOTAL: float = field(
-        default_factory=lambda: _env_float("LLM_TIMEOUT_TOTAL", "180")
-    )
-    TIMEOUT_CONNECT: float = field(
-        default_factory=lambda: _env_float("LLM_TIMEOUT_CONNECT", "15")
-    )
-    TIMEOUT_READ: float = field(
-        default_factory=lambda: _env_float("LLM_TIMEOUT_READ", "165")
-    )
+    TIMEOUT_TOTAL: float = field(default_factory=lambda: _env_float("LLM_TIMEOUT_TOTAL", "180"))
+    TIMEOUT_CONNECT: float = field(default_factory=lambda: _env_float("LLM_TIMEOUT_CONNECT", "15"))
+    TIMEOUT_READ: float = field(default_factory=lambda: _env_float("LLM_TIMEOUT_READ", "165"))
 
     # Retry
-    RETRY_MAX_RETRIES: int = field(
-        default_factory=lambda: _env_int("LLM_RETRY_MAX_RETRIES", "3")
-    )
+    RETRY_MAX_RETRIES: int = field(default_factory=lambda: _env_int("LLM_RETRY_MAX_RETRIES", "3"))
     RETRY_BASE_DELAY: float = field(
         default_factory=lambda: _env_float("LLM_RETRY_BASE_DELAY", "1.0")
     )
     RETRY_MAX_DELAY: float = field(
         default_factory=lambda: _env_float("LLM_RETRY_MAX_DELAY", "30.0")
     )
-    RETRY_JITTER: float = field(
-        default_factory=lambda: _env_float("LLM_RETRY_JITTER", "0.25")
-    )
+    RETRY_JITTER: float = field(default_factory=lambda: _env_float("LLM_RETRY_JITTER", "0.25"))
     RETRY_MAX_ELAPSED: float = field(
         default_factory=lambda: _env_float("LLM_RETRY_MAX_ELAPSED", "120.0")
     )
@@ -303,64 +273,67 @@ class LLMConfig:
         """Valida configuração. Retorna lista de erros."""
         errors = []
 
-        has_anthropic = not _is_placeholder_api_key(self.ANTHROPIC_API_KEY)
-        has_openai = not _is_placeholder_api_key(self.OPENAI_API_KEY)
-        has_ollama = bool(self.OLLAMA_ENABLED)
+        provider_registry = self.get_provider_registry()
+        provider_ids = set(provider_registry.keys())
+        available = {
+            provider_id: self.provider_available(provider_id) for provider_id in provider_ids
+        }
 
-        if has_anthropic and not (self.ANTHROPIC_MODEL or "").strip():
+        # Mensagens específicas para legado (mantém UX e testes existentes).
+        has_anthropic = available.get("anthropic", False)
+        has_openai = available.get("openai", False)
+        if (
+            "anthropic" in provider_registry
+            and has_anthropic
+            and not (provider_registry["anthropic"].get("model", "").strip())
+        ):
             errors.append(
                 "ANTHROPIC_MODEL obrigatório quando ANTHROPIC_API_KEY estiver configurada."
             )
-        if has_openai and not (self.OPENAI_MODEL or "").strip():
+        if (
+            "openai" in provider_registry
+            and has_openai
+            and not (provider_registry["openai"].get("model", "").strip())
+        ):
+            errors.append("OPENAI_MODEL obrigatório quando OPENAI_API_KEY estiver configurada.")
+
+        if not any(available.values()):
             errors.append(
-                "OPENAI_MODEL obrigatório quando OPENAI_API_KEY estiver configurada."
+                "Nenhum provider disponível: configure OLLAMA_ENABLED=true, providers YAML ou uma API key válida."
             )
 
-        # Pelo menos um provider de extração precisa estar disponível.
-        if not (has_ollama or has_openai or has_anthropic):
-            errors.append(
-                "Nenhum provider disponível: configure OLLAMA_ENABLED=true ou uma API key válida (OPENAI/ANTHROPIC)."
-            )
-
-        # Com two-pass ativo, é necessário ao menos um provider para repair.
-        if self.USE_TWO_PASS and not (has_ollama or has_openai or has_anthropic):
-            errors.append(
-                "USE_TWO_PASS=true exige ao menos um provider configurado para repair (Ollama/OpenAI/Anthropic)."
-            )
+        if self.USE_TWO_PASS and not any(available.values()):
+            errors.append("USE_TWO_PASS=true exige ao menos um provider configurado para repair.")
 
         provider_routes = {
             "PROVIDER_EXTRACT": self._provider_choice(self.PROVIDER_EXTRACT),
             "PROVIDER_REPAIR": self._provider_choice(self.PROVIDER_REPAIR),
             "PROVIDER_QUOTES": self._provider_choice(self.PROVIDER_QUOTES),
         }
+        route_allowed = {"auto", *provider_ids}
         for key, value in provider_routes.items():
-            if value not in {"auto", "anthropic", "openai", "ollama"}:
+            if value not in route_allowed:
                 errors.append(
-                    f"{key} inválido: {value}. Use auto, anthropic, openai ou ollama."
+                    f"{key} inválido: {value}. Use auto ou um provider cadastrado no YAML."
                 )
 
         cascade_choice = self._provider_choice(self.PROVIDER_CASCADE_API)
-        if cascade_choice not in {"auto", "anthropic", "openai"}:
+        if cascade_choice not in route_allowed:
             errors.append(
-                f"PROVIDER_CASCADE_API inválido: {cascade_choice}. Use auto, anthropic ou openai."
+                f"PROVIDER_CASCADE_API inválido: {cascade_choice}. Use auto ou um provider cadastrado no YAML."
             )
 
-        available = {
-            "anthropic": has_anthropic,
-            "openai": has_openai,
-            "ollama": has_ollama,
-        }
         primary_provider = self._provider_choice(self.PRIMARY_PROVIDER)
-        if primary_provider not in available:
+        if primary_provider not in provider_ids:
             errors.append(
-                f"PRIMARY_PROVIDER inválido: {self.PRIMARY_PROVIDER}. Use anthropic, openai ou ollama."
+                f"PRIMARY_PROVIDER inválido: {self.PRIMARY_PROVIDER}. Cadastre esse provider no YAML ou use um existente."
             )
         else:
             needs_primary = (
                 any(value == "auto" for value in provider_routes.values())
                 or cascade_choice == "auto"
             )
-            if needs_primary and not available[primary_provider]:
+            if needs_primary and not available.get(primary_provider, False):
                 errors.append(
                     f"PRIMARY_PROVIDER={self.PRIMARY_PROVIDER} não está disponível com a configuração atual."
                 )
@@ -370,6 +343,141 @@ class LLMConfig:
     @staticmethod
     def _provider_choice(value: str) -> str:
         return (value or "auto").strip().lower()
+
+    def _resolve_providers_file(self) -> Path | None:
+        raw = (self.LLM_PROVIDERS_FILE or "").strip()
+        if not raw:
+            return None
+        candidate = Path(raw).expanduser()
+        if not candidate.is_absolute():
+            candidate = (_PROJECT_ROOT / candidate).resolve()
+        return candidate
+
+    @staticmethod
+    def _normalize_provider_spec(provider_id: str, spec: dict[str, Any]) -> dict[str, str]:
+        normalized: dict[str, str] = {
+            "id": provider_id,
+            "kind": str(spec.get("kind", "openai_compatible") or "openai_compatible")
+            .strip()
+            .lower(),
+            "enabled": "true" if bool(spec.get("enabled", True)) else "false",
+            "base_url": str(spec.get("base_url", "") or "").strip(),
+            "api_key": str(spec.get("api_key", "") or "").strip(),
+            "api_key_env": str(spec.get("api_key_env", "") or "").strip(),
+            "model": str(spec.get("model", "") or "").strip(),
+            "vision_model": str(spec.get("vision_model", "") or "").strip(),
+            "repair_model": str(spec.get("repair_model", "") or "").strip(),
+        }
+        return normalized
+
+    def _legacy_provider_registry(self) -> dict[str, dict[str, str]]:
+        registry: dict[str, dict[str, str]] = {
+            "ollama": {
+                "id": "ollama",
+                "kind": "ollama",
+                "enabled": "true" if bool(self.OLLAMA_ENABLED) else "false",
+                "base_url": (self.OLLAMA_BASE_URL or "").strip(),
+                "api_key": "ollama",
+                "api_key_env": "",
+                "model": (self.OLLAMA_MODEL_CLOUD or "").strip(),
+                "vision_model": (self.OLLAMA_MODEL_VISION or "").strip(),
+                "repair_model": (self.OLLAMA_MODEL_CLOUD_FALLBACK or "").strip(),
+            },
+            "openai": {
+                "id": "openai",
+                "kind": "openai_compatible",
+                "enabled": "true",
+                "base_url": (self.OPENAI_BASE_URL or "").strip(),
+                "api_key": (self.OPENAI_API_KEY or "").strip(),
+                "api_key_env": "",
+                "model": (self.OPENAI_MODEL or "").strip(),
+                "vision_model": "",
+                "repair_model": "",
+            },
+            "anthropic": {
+                "id": "anthropic",
+                "kind": "anthropic",
+                "enabled": "true",
+                "base_url": "",
+                "api_key": (self.ANTHROPIC_API_KEY or "").strip(),
+                "api_key_env": "",
+                "model": (self.ANTHROPIC_MODEL or "").strip(),
+                "vision_model": "",
+                "repair_model": "",
+            },
+        }
+        return registry
+
+    def get_provider_registry(self) -> dict[str, dict[str, str]]:
+        providers_file = self._resolve_providers_file()
+        if providers_file is None or not providers_file.exists():
+            return self._legacy_provider_registry()
+
+        try:
+            payload = yaml.safe_load(providers_file.read_text(encoding="utf-8")) or {}
+        except (OSError, yaml.YAMLError, ValueError):
+            return self._legacy_provider_registry()
+
+        providers_block = payload.get("providers", {}) if isinstance(payload, dict) else {}
+        if not isinstance(providers_block, dict):
+            return self._legacy_provider_registry()
+
+        parsed: dict[str, dict[str, str]] = {}
+        for raw_id, raw_spec in providers_block.items():
+            provider_id = str(raw_id or "").strip().lower()
+            if not provider_id or not isinstance(raw_spec, dict):
+                continue
+            parsed[provider_id] = self._normalize_provider_spec(provider_id, raw_spec)
+
+        if not parsed:
+            return self._legacy_provider_registry()
+        return parsed
+
+    @staticmethod
+    def _spec_enabled(spec: dict[str, str]) -> bool:
+        return str(spec.get("enabled", "true")).strip().lower() not in {
+            "0",
+            "false",
+            "no",
+            "off",
+        }
+
+    @staticmethod
+    def _spec_api_key(spec: dict[str, str]) -> str:
+        literal = (spec.get("api_key", "") or "").strip()
+        if literal:
+            return literal
+        env_key = (spec.get("api_key_env", "") or "").strip()
+        if env_key:
+            return os.getenv(env_key, "").strip()
+        return ""
+
+    def provider_available(self, provider_id: str) -> bool:
+        registry = self.get_provider_registry()
+        spec = registry.get((provider_id or "").strip().lower())
+        if not spec:
+            return False
+        if not self._spec_enabled(spec):
+            return False
+
+        kind = (spec.get("kind", "") or "openai_compatible").strip().lower()
+        model = (spec.get("model", "") or "").strip()
+
+        if kind == "ollama":
+            return bool((spec.get("base_url", "") or "").strip()) and bool(model)
+
+        api_key = self._spec_api_key(spec)
+        if _is_placeholder_api_key(api_key):
+            return False
+        if not model:
+            return False
+        return True
+
+    def list_available_providers(self) -> dict[str, bool]:
+        registry = self.get_provider_registry()
+        return {
+            provider_id: self.provider_available(provider_id) for provider_id in registry.keys()
+        }
 
     def get_masked_keys(self) -> dict:
         """Retorna status das chaves para exibição (sem expor fragmentos)."""
@@ -385,11 +493,7 @@ class LLMConfig:
             "anthropic": status(self.ANTHROPIC_API_KEY),
             "openai": (
                 f"{status(self.OPENAI_API_KEY)}"
-                + (
-                    f" @ {self.OPENAI_BASE_URL.strip()}"
-                    if self.OPENAI_BASE_URL.strip()
-                    else ""
-                )
+                + (f" @ {self.OPENAI_BASE_URL.strip()}" if self.OPENAI_BASE_URL.strip() else "")
             ),
             "ollama": (
                 f"{'ON' if self.OLLAMA_ENABLED else 'OFF'} "
@@ -403,6 +507,7 @@ class LLMConfig:
                 f"quotes={self._provider_choice(self.PROVIDER_QUOTES)}, "
                 f"cascade_api={self._provider_choice(self.PROVIDER_CASCADE_API)}"
             ),
+            "providers_file": self.LLM_PROVIDERS_FILE or "(legado .env)",
         }
 
 
@@ -411,27 +516,19 @@ class LocalProcessingConfig:
     """Configuração para processamento local (marker, surya, ollama)."""
 
     # Marker-PDF
-    MARKER_ENABLED: bool = field(
-        default_factory=lambda: _env_bool("MARKER_ENABLED", "true")
-    )
+    MARKER_ENABLED: bool = field(default_factory=lambda: _env_bool("MARKER_ENABLED", "true"))
     MARKER_BATCH_MULTIPLIER: int = field(
         default_factory=lambda: _env_int("MARKER_BATCH_MULTIPLIER", "2")
     )
 
     # Surya-OCR
-    SURYA_ENABLED: bool = field(
-        default_factory=lambda: _env_bool("SURYA_ENABLED", "true")
-    )
+    SURYA_ENABLED: bool = field(default_factory=lambda: _env_bool("SURYA_ENABLED", "true"))
     SURYA_DPI: int = field(default_factory=lambda: _env_int("SURYA_DPI", "300"))
 
     # RAG
     RAG_ENABLED: bool = field(default_factory=lambda: _env_bool("RAG_ENABLED", "true"))
-    RAG_CHUNK_SIZE: int = field(
-        default_factory=lambda: _env_int("RAG_CHUNK_SIZE", "1000")
-    )
-    RAG_CHUNK_OVERLAP: int = field(
-        default_factory=lambda: _env_int("RAG_CHUNK_OVERLAP", "200")
-    )
+    RAG_CHUNK_SIZE: int = field(default_factory=lambda: _env_int("RAG_CHUNK_SIZE", "1000"))
+    RAG_CHUNK_OVERLAP: int = field(default_factory=lambda: _env_int("RAG_CHUNK_OVERLAP", "200"))
     RAG_TOP_K: int = field(default_factory=lambda: _env_int("RAG_TOP_K", "3"))
     RAG_MIN_CONTEXT_CHARS: int = field(
         default_factory=lambda: _env_int("RAG_MIN_CONTEXT_CHARS", "1200")
@@ -447,9 +544,7 @@ class LocalProcessingConfig:
     REPEAT_LINE_MIN_FRACTION: float = field(
         default_factory=lambda: _env_float("REPEAT_LINE_MIN_FRACTION", "0.5")
     )
-    REPEAT_LINE_MAX_LEN: int = field(
-        default_factory=lambda: _env_int("REPEAT_LINE_MAX_LEN", "80")
-    )
+    REPEAT_LINE_MAX_LEN: int = field(default_factory=lambda: _env_int("REPEAT_LINE_MAX_LEN", "80"))
 
     # Estratégia de cascata
     EXTRACTION_STRATEGY: str = field(
@@ -472,9 +567,7 @@ class LocalProcessingConfig:
         default_factory=lambda: _env_str("OLLAMA_OCR_MODEL", "glm-ocr:latest")
     )
     OLLAMA_EMBEDDING_MODEL: str = field(
-        default_factory=lambda: _env_str(
-            "OLLAMA_EMBEDDING_MODEL", "nomic-embed-text-v2-moe:latest"
-        )
+        default_factory=lambda: _env_str("OLLAMA_EMBEDDING_MODEL", "nomic-embed-text-v2-moe:latest")
     )
     OLLAMA_RERANKER_MODEL: str = field(
         default_factory=lambda: _env_str(
@@ -488,9 +581,7 @@ class ExtractionConfig:
     """Configuração de extração."""
 
     # Sempre usar estratégia híbrida (texto quando possível + imagens só quando necessário)
-    FORCE_HYBRID: bool = field(
-        default_factory=lambda: _env_bool("FORCE_HYBRID", "true")
-    )
+    FORCE_HYBRID: bool = field(default_factory=lambda: _env_bool("FORCE_HYBRID", "true"))
 
     # DPI apenas para páginas que realmente viram imagem
     IMAGE_DPI: int = field(default_factory=lambda: _env_int("IMAGE_DPI", "300"))
@@ -791,4 +882,3 @@ if __name__ == "__main__":
             print(f"  - {e}")
     else:
         print(f"\n[OK] Configuração válida")
-

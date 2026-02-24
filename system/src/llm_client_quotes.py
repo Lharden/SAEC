@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import importlib
 import logging
-from typing import Any, Tuple, TYPE_CHECKING
+from typing import Any, Tuple, TYPE_CHECKING, cast
 
 _fuzz: Any = None
 try:
@@ -30,11 +30,13 @@ def _load_extract_yaml_from_response():
 llm_config = _load_llm_config()
 extract_yaml_from_response = _load_extract_yaml_from_response()
 
+
 def _load_extraction_config():
     try:
         return importlib.import_module(".config", package=__package__).extraction_config
     except (ImportError, ModuleNotFoundError, TypeError):  # pragma: no cover
         return importlib.import_module("config").extraction_config
+
 
 extraction_config = _load_extraction_config()
 
@@ -78,6 +80,7 @@ def _openai_image_to_anthropic_block(block: dict[str, Any]) -> dict[str, Any] | 
 
 class LLMClientQuotesMixin:
     """Mixin com rotinas de quotes e validação."""
+
     anthropic: Any
     openai: Any
     ollama: Any
@@ -85,7 +88,9 @@ class LLMClientQuotesMixin:
     def _check_provider(self, provider: Any) -> None:  # pragma: no cover - interface
         raise NotImplementedError
 
-    def postprocess_extraction(self, yaml_content: str, use_llm_format: bool = True) -> str:  # pragma: no cover
+    def postprocess_extraction(
+        self, yaml_content: str, use_llm_format: bool = True
+    ) -> str:  # pragma: no cover
         raise NotImplementedError
 
     def extract_validated_with_fallback(
@@ -137,7 +142,11 @@ class LLMClientQuotesMixin:
         if not isinstance(quotes, list) or len(quotes) < 3:
             images = []
             if content_openai:
-                images = [b for b in content_openai if isinstance(b, dict) and b.get("type") == "image_url"]
+                images = [
+                    b
+                    for b in content_openai
+                    if isinstance(b, dict) and b.get("type") == "image_url"
+                ]
             if images and max_attempts > 0:
                 current = yaml_only
                 last_result = validate_yaml(current)
@@ -187,7 +196,9 @@ class LLMClientQuotesMixin:
                 if block.get("type") != "text":
                     continue
                 t = block.get("text") or ""
-                m = _re.match(r"^---\s*P[áa]gina\s+(\d+)\s*\(texto\)\s*---\n(.*)$", t, flags=_re.DOTALL)
+                m = _re.match(
+                    r"^---\s*P[áa]gina\s+(\d+)\s*\(texto\)\s*---\n(.*)$", t, flags=_re.DOTALL
+                )
                 if m:
                     page = int(m.group(1))
                     txt = m.group(2)
@@ -235,7 +246,9 @@ class LLMClientQuotesMixin:
         # 3) Reextrair quotes (somente imagens do conteúdo híbrido)
         images = []
         if content_openai:
-            images = [b for b in content_openai if isinstance(b, dict) and b.get("type") == "image_url"]
+            images = [
+                b for b in content_openai if isinstance(b, dict) and b.get("type") == "image_url"
+            ]
 
         if not images:
             return yaml_only, validate_yaml(yaml_only)
@@ -311,31 +324,57 @@ Quotes:
 
         content = list(images) + [{"type": "text", "text": prompt}]
 
-        if provider == "ollama":
-            model = llm_config.OLLAMA_MODEL_CODER
-            response = self.ollama.chat.completions.create(
-                model=model,
-                max_completion_tokens=max_tokens,
-                messages=[{"role": "user", "content": content}],
-            )
-            return response.choices[0].message.content
+        client_self = cast(Any, self)
+        provider_kind = (
+            client_self.get_provider_kind(provider)
+            if hasattr(client_self, "get_provider_kind")
+            else str(provider)
+        )
 
-        if provider == "anthropic":
+        if provider_kind == "anthropic":
             anthropic_content: list[dict[str, Any]] = []
             for block in images:
                 converted = _openai_image_to_anthropic_block(block)
                 if converted is not None:
                     anthropic_content.append(converted)
             anthropic_content.append({"type": "text", "text": prompt})
-            response = self.anthropic.messages.create(
-                model=llm_config.ANTHROPIC_MODEL,
+            anthropic_client = (
+                client_self.get_anthropic_client(provider)
+                if hasattr(client_self, "get_anthropic_client")
+                else self.anthropic
+            )
+            model = (
+                client_self.get_provider_model(provider, "vision")
+                if hasattr(client_self, "get_provider_model")
+                else llm_config.ANTHROPIC_MODEL
+            )
+            response = anthropic_client.messages.create(
+                model=model,
                 max_tokens=max_tokens,
                 messages=[{"role": "user", "content": anthropic_content}],
             )
-            return response.content[0].text
+            content_blocks = getattr(response, "content", None)
+            if isinstance(content_blocks, list):
+                for block in content_blocks:
+                    text = getattr(block, "text", None)
+                    if isinstance(text, str) and text:
+                        return text
+            return ""
 
-        response = self.openai.chat.completions.create(
-            model=llm_config.OPENAI_MODEL,
+        openai_client = (
+            client_self.get_openai_client(provider)
+            if hasattr(client_self, "get_openai_client")
+            else (self.ollama if provider == "ollama" else self.openai)
+        )
+        model = (
+            client_self.get_provider_model(provider, "vision")
+            if hasattr(client_self, "get_provider_model")
+            else (
+                llm_config.OLLAMA_MODEL_CODER if provider == "ollama" else llm_config.OPENAI_MODEL
+            )
+        )
+        response = openai_client.chat.completions.create(
+            model=model,
             max_completion_tokens=max_tokens,
             messages=[{"role": "user", "content": content}],
         )
