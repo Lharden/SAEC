@@ -1,0 +1,87 @@
+---
+ArtigoID: ART_012
+Ano: 2022
+TipoPublicação: Journal
+Referência_Curta: Elshaboury et al., 2022
+DOI: https://doi.org/10.3390/pr10020400
+SegmentoO&G: Cross-segment
+SegmentoO&G_Confiança: Alta
+Ambiente: Híbrido
+Complexidade: Alta
+Complexidade_Justificativa: F1=1 (pipelines onshore e offshore mencionados), F2=1 (36,000 km de pipelines, 73 agências/organizações), F3=1 (risco crítico - falhas com consequências catastróficas, perdas econômicas e ambientais)
+ProcessoSCM_Alvo: Manutenção/MRO
+TipoRisco_SCRM: Risco de ativos
+ObjetoCrítico: Pipelines de óleo e gás
+ProblemaNegócio_Contexto: 'Pipelines de óleo e gás são infraestrutura crítica para a economia, transportando produtos petrolíferos em ambientes onshore e offshore.
+
+  Falhas nesses pipelines resultam em consequências catastróficas, incluindo derramamentos de óleo, danos ambientais, perdas econômicas por parada de produção e riscos à segurança.
+
+  Técnicas de inspeção tradicionais são demoradas e custosas.
+
+  O estudo busca desenvolver modelos preditivos para antecipar fontes de falha em pipelines, permitindo ações de manutenção e substituição priorizadas antes da ocorrência de acidentes.'
+ClasseIA: Híbrido
+ClasseIA_Confiança: Alta
+TarefaAnalítica: Classificação
+FamíliaModelo: 'Redes neurais feedforward; Outro: RBF neural network; Regressão linear/logística'
+TipoDado: Tabular/ERP
+Maturidade: Protótipo
+Maturidade_Confiança: Alta
+Intervenção_Descrição: 'O estudo desenvolve três modelos de classificação para prever tipos de falha em pipelines: Multilayer Perceptron (MLP) neural network com backpropagation, Radial Basis Function (RBF) neural network, e Multinomial Logistic (MNL) regression. Os modelos utilizam cinco variáveis preditoras (diâmetro, tipo de serviço, tipo de facilidade, idade e uso do solo) para classificar falhas por corrosão e atividades de terceiros. A arquitetura MLP usa tangente hiperbólica e softmax como funções de ativação, enquanto RBF usa softmax e identity.
+
+  '
+Dados_Descrição: 'Dados históricos de incidentes de falha da base CONCAWE (Conservation of Clean Air and Water in Europe) de 2019, contendo 49 anos de dados de derramamento desde 1971. Dataset original com 586 registros de cinco causas de falha, reduzido para 354 incidentes com dados completos após remoção de 232 registros incompletos. Utilizados 253 acidentes causados por corrosão e atividades de terceiros. Cobertura de aproximadamente 36,000 km de pipelines operados por 73 agências na Europa, transportando 620 milhões m³ de petróleo bruto e produtos por ano. Dataset dividido 70% treino e 30% validação.
+
+  '
+CategoriaMecanismo: Antecipação de risco
+Mecanismo_Fonte: Misto
+Mecanismo_Declarado: '"The developed model can help pipeline operators and decision makers detect different failure sources in pipelines and prioritize the required maintenance and replacement actions." (p.1) O modelo permite antecipar fontes de falha antes da ocorrência, substituindo inspeções custosas por previsões baseadas em dados históricos.
+
+  '
+Mecanismo_Inferido: 'INFERIDO: O aprendizado de padrões históricos de falha permite que os modelos identifiquem combinações de fatores (diâmetro, idade, tipo de serviço, facilidade, uso do solo) associados a tipos específicos de falha. INFERIDO: A classificação probabilística do MNL fornece likelihood de cada tipo de falha, permitindo priorização baseada em risco. INFERIDO: A captura de relações não-lineares pelos modelos neurais (MLP e RBF) supera limitações de abordagens lineares tradicionais.
+
+  '
+Mecanismo_Estruturado: Dados históricos de incidentes CONCAWE → MLP/RBF/MNL classificação → Probabilidade de tipo de falha → Priorização de manutenção preventiva
+ResultadoTipo: Quantitativo
+Resultados_Quant: 'AVP MLP: 84% (vs. baseline literatura: 72.8%); AVP RBF: 85% (vs. baseline literatura: 72.8%); AVP MNL: 81% (vs. baseline literatura: 72.8%); Melhoria sobre literatura: MLP +15.4%, RBF +16.8%, MNL +11.3%; Area under ROC curve MLP: 0.7; Area under ROC curve RBF: 0.8'
+Resultados_Qual: O modelo RBF demonstrou melhor desempenho geral entre os três classificadores. Modelos neurais (MLP e RBF) superaram regressão MNL por capturarem relações não-lineares entre variáveis dependentes e independentes. Análise de importância identificou facility type e service type como preditores mais influentes.
+NívelEvidência: Experimento com dados reais
+Limitações_Artigo: 'Os autores declaram que a acurácia dos modelos pode ter sido comprometida pela indisponibilidade de fatores importantes como espessura, pressão operacional e resistência ao escoamento. Acesso a número significativo de registros de falha na indústria de O&G é frequentemente difícil devido a questões de confidencialidade. Dataset limitado a falhas por corrosão e terceiros, excluindo mecânicas, operacionais e desastres naturais devido à baixa probabilidade de ocorrência nos dados.
+
+  '
+Observação: 'Estudo focado em classificação de tipos de falha, não em previsão temporal. Os modelos foram validados com dados europeus da CONCAWE. Abordagem trata failure source como problema de classificação, diferenciando-se de estudos anteriores que tratavam como problema de predição contínua.
+
+  '
+Quotes:
+- QuoteID: Q001
+  TipoQuote: Contexto
+  Trecho: Oil and gas pipelines are lifelines for a country's economic survival. As a result, they must be closely monitored to maximize their performance and avoid product losses in the transportation of petroleum products.
+  Página: p.1
+- QuoteID: Q002
+  TipoQuote: Mecanismo
+  Trecho: The developed model can help pipeline operators and decision makers detect different failure sources in pipelines and prioritize the required maintenance and replacement actions.
+  Página: p.1
+- QuoteID: Q003
+  TipoQuote: Intervenção
+  Trecho: To address these inefficiencies, this study develops a model that anticipates sources of failure in oil pipelines based on specific factors related to pipe diameter and age, service (transported product), facility type, and land use.
+  Página: p.1
+- QuoteID: Q004
+  TipoQuote: Outcome
+  Trecho: With an average validity of 84% for the MLP, 85% for the RBF, and 81% for the MNL, the models can forecast pipeline failures owing to corrosion and third-party activities.
+  Página: p.1
+- QuoteID: Q005
+  TipoQuote: Método
+  Trecho: The data included 49 years of spillage data dating back to 1971, as well as 36,000 km of pipelines transporting 620 million m³ of crude oil and petroleum products per year across Europe.
+  Página: p.7
+- QuoteID: Q006
+  TipoQuote: Outcome
+  Trecho: This implies that the proposed MLP, RBF, and MNL models enhanced the AVP value reported in the literature by 15.4%, 16.8%, and 11.3%, respectively.
+  Página: p.13
+- QuoteID: Q007
+  TipoQuote: Limitação
+  Trecho: However, the prediction accuracy of models could have been compromised due to the non-availability of some important factors (e.g., thickness, operating pressure, and yield strength) that contribute to oil and gas pipeline failure.
+  Página: p.12
+- QuoteID: Q008
+  TipoQuote: Mecanismo
+  Trecho: The MLP and RBF models outperform the MNL regression model in terms of accuracy because they take into account the nonlinear relationship between the dependent and independent variables
+  Página: p.13
+---

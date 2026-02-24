@@ -1,0 +1,124 @@
+---
+ArtigoID: ART_004
+Ano: 2025
+TipoPublicação: Journal
+Referência_Curta: Babaei et al., 2025
+DOI: https://doi.org/10.1109/TEM.2025.3626659
+SegmentoO&G: Cross-segment
+SegmentoO&G_Confiança: Alta
+Ambiente: NR
+Complexidade: Média
+Complexidade_Justificativa: F1=0 (ambiente NR), F2=1 (múltiplos stakeholders e parceiros SC mencionados), F3=1 (risco e incerteza
+  são centrais no framework de decisão)
+ProcessoSCM_Alvo: Gestão de riscos da cadeia
+TipoRisco_SCRM: Múltiplos
+ObjetoCrítico: Estratégias de adoção de blockchain na cadeia de suprimentos
+ProblemaNegócio_Contexto: 'A indústria de O&G enfrenta desafios significativos incluindo extenso trabalho burocrático, processos
+  de reconciliação que aumentam custos monetários e de tempo, riscos de fraude, erros e ineficiências em transações multipartidárias,
+  além de alto risco de cyber-ataques.
+
+  Gestores de SC precisam avaliar diversas estratégias de adoção de blockchain usando critérios abrangentes e agregar resultados
+  para decisões informadas.
+
+  O estudo foca no setor de O&G norueguês, analisando quatro estratégias de adoção de blockchain considerando incerteza e
+  fatores de risco.'
+ClasseIA: Híbrido
+ClasseIA_Confiança: Alta
+TarefaAnalítica: Classificação
+FamíliaModelo: MCDM/Decisão; SAW; TOPSIS; DEA
+TipoDado: Tabular/ERP
+Maturidade: Conceito
+Maturidade_Confiança: Alta
+Intervenção_Descrição: 'Framework integrado combinando cinco técnicas de tomada de decisão: SAW (Simple Additive Weighted),
+  EM (Entropy Method), TOPSIS, SEDEA (Super-Efficiency DEA) e NDEA (Network DEA). Inclui modelo de otimização baseado em risco
+  e cenários e abordagem de comparação preditiva. Machine learning é aplicado para análise de similaridade e clustering dual-perspective
+  (K-means e hierárquico) para entender relações entre estratégias e métodos.
+
+  '
+Dados_Descrição: 'Dados do setor de O&G norueguês. Quinze critérios de avaliação incluindo: colaboração com parceiros SC (NCS),
+  pressões de clientes (CP), pressões de mercado (MP), segurança da informação (IIS), custos operacionais reduzidos (ROC),
+  rastreabilidade melhorada (IIT), expertise tecnológica (LE), ferramentas de implementação (LT), dados de benchmarking (LB),
+  awareness do cliente (LCA), colaboração de parceiros (LSCB), coordenação de parceiros (LSCO), imaturidade tecnológica (TI),
+  infraestrutura de TI limitada (LI), e preocupações de segurança (SC). Dados derivados de literatura e estudo de caso.
+
+  '
+CategoriaMecanismo: Priorização/alocação ótima
+Mecanismo_Fonte: Declarado
+Mecanismo_Declarado: 'O framework combina múltiplos modelos de decisão para fornecer avaliação abrangente. A agregação baseada
+  em cenários e risco permite incorporar incerteza no processo decisório. O modelo de consenso reconcilia resultados divergentes
+  dos diferentes métodos de avaliação, minimizando discrepâncias através de função objetivo de distância Manhattan. O clustering
+  dual-perspective revela similaridades entre estratégias e métodos.
+
+  '
+Mecanismo_Inferido: 'INFERIDO: A integração de múltiplos modelos de decisão (SAW, TOPSIS, DEA) reduz viés de método único
+  ao capturar diferentes filosofias de avaliação. INFERIDO: O modelo de otimização de consenso resolve conflitos entre rankings
+  divergentes através de minimização matemática de discrepâncias. INFERIDO: A análise de cenários permite adaptação às diferentes
+  tolerâncias a risco dos gestores.
+
+  '
+Mecanismo_Estruturado: Critérios de avaliação de blockchain → Múltiplos modelos MCDM + ML clustering → Otimização de consenso
+  baseada em cenário/risco → Ranking priorizado de estratégias de adoção
+ResultadoTipo: Misto
+Resultados_Quant: 'R²: TOPSIS 0.919549, SAW 0.906146, SEDEA 0.702592, NDEA 0.627929 (vs. baseline Munim et al. [24]); Adjusted
+  R²: SAW 0.937431, TOPSIS 0.879323, SEDEA 0.553888, NDEA 0.441893 (baseline: NR)'
+Resultados_Qual: Single-use strategy é mais efetiva sob condições de alto risco; transformational strategy preferida sob abordagem
+  de cenário ponderado. SAW e TOPSIS mostraram maior alinhamento com literatura existente. Modelos baseados em estrutura de
+  rede variaram mais. Principais drivers de adoção incluem pressões de mercado e cliente, necessidades de colaboração e infraestrutura
+  de TI limitada.
+NívelEvidência: Estudo de caso real
+Limitações_Artigo: 'O estudo focou primariamente no setor de O&G norueguês, e os achados podem não ser diretamente aplicáveis
+  a outras indústrias sem investigação adicional. Outra limitação foi a natureza estática da análise, que não considerou a
+  natureza dinâmica das cadeias de suprimentos.
+
+  '
+Observação: 'Framework proposto para avaliação de estratégias de adoção de blockchain, não implementação direta de blockchain.
+  ML usado para clustering e análise de similaridade, não para previsão operacional. Quatro estratégias avaliadas: single-use,
+  localization, substitution, transformation.
+
+  '
+Quotes:
+- QuoteID: Q001
+  TipoQuote: Contexto
+  Trecho: The Oil and Gas (O&G) industry faces significant challenges, including extensive paperwork and rec- onciliation
+    processes that escalate both monetary and time ex- pendituresassociatedwithtransactions.Furthermore,multiparty investment
+    and cooperation in the industry heighten the risks of fraud, errors, and inefficiencies in transactions.
+  Página: p.2
+- QuoteID: Q002
+  TipoQuote: Intervenção
+  Trecho: '2) Utilization of Various Decision-Making: Our methodol- ogy integrates diverse decision-making techniques, each
+    rooted in different theoretical philosophies; i.e., network decision-making, data-driven models, and consensus op- timization
+    frameworks, to assess blockchain deployment strategies.'
+  Página: p.4
+- QuoteID: Q003
+  TipoQuote: Método
+  Trecho: The methodology is based on a combination of established decision-making models; i.e., entropy method (EM), TOPSIS,
+    simple additive weighted (SAW), and data envelopment analysis (DEA) models, each selected for its distinctive ability
+    to offer insightful and complementary perspectives on the data.
+  Página: p.4
+- QuoteID: Q004
+  TipoQuote: Mecanismo
+  Trecho: Thus, BT adoption is vital for improving opera- tional efficiency and maintaining product integrity in the global
+    petroleum SC.
+  Página: p.5
+- QuoteID: Q005
+  TipoQuote: Outcome
+  Trecho: 'RQ3: How can evaluation results from different decision- making methodologies be consolidated to provide an optimal
+    unified perspective for OGSC managers?'
+  Página: p.3
+- QuoteID: Q006
+  TipoQuote: Limitação
+  Trecho: By tackling these limitations and chasing the proposed research directions, future work can expand upon the current
+    findings and provide more ex- haustive, generalizable, and actionable insights for SC managers considering BT.
+  Página: p.11
+- QuoteID: Q007
+  TipoQuote: Método
+  Trecho: Their study examined how blockchain strategies can mitigate these challenges, emphasizing optimization models tailored
+    to man- age SC dynamics and technological uncertainties, but it does notintegratedecision-makingmethodsorconsolidateevaluation
+    results.
+  Página: p.3
+- QuoteID: Q008
+  TipoQuote: Contexto
+  Trecho: The discussion demonstrates blockchain’s practical relevance in the O&G sector, provid- ing actionable insights
+    and decision-making tools for industry professionals, with a focus on scenario-based and risk-based approaches.
+  Página: p.9
+---

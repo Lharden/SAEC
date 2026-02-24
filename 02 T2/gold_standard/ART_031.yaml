@@ -1,0 +1,122 @@
+---
+ArtigoID: ART_031
+Ano: 2024
+TipoPublicação: Conference
+Referência_Curta: Zhang et al., 2024
+DOI: https://doi.org/10.2118/221969-MS
+SegmentoO&G: Upstream (E&P)
+SegmentoO&G_Confiança: Alta
+Ambiente: Onshore
+Complexidade: Média
+Complexidade_Justificativa: F1=0 (onshore oil field in West Africa), F2=1 (multiple facilities including well sites, pumping
+  stations, metering stations, joint stations, dehydration stations, transfer stations), F3=1 (harsh natural environment,
+  high risk of violence and terrorism, critical equipment monitoring)
+ProcessoSCM_Alvo: Manutenção/MRO
+TipoRisco_SCRM: Risco de ativos
+ObjetoCrítico: Reciprocating compressors and key machine pumps
+ProblemaNegócio_Contexto: 'Oil and gas fields in West Africa face challenges including harsh natural environments, low social
+  dependence, high security risks, and difficulties in engineering construction and production operation management.
+
+  Traditional management relies on experience and historical data with labor-intensive fixed watch and regular inspection
+  modes, non-interoperable data from multiple systems, and decision-making based on experience.
+
+  There is urgent need for unified management covering engineering construction and production operation phases with full
+  lifecycle control.'
+ClasseIA: Híbrido
+ClasseIA_Confiança: Alta
+TarefaAnalítica: Classificação
+FamíliaModelo: SVM/Kernel;ML/DL
+TipoDado: Séries temporais
+Maturidade: Piloto
+Maturidade_Confiança: Alta
+Intervenção_Descrição: 'The platform integrates Digital Twin technology with AI-based fault diagnosis for equipment maintenance.
+  A Support Vector Data Description (SVDD) algorithm is used for health state identification, combined with machine learning
+  and deep learning models for fault diagnosis. The system processes real-time SCADA data through OPC interface, extracts
+  fault-related features (statistical, spectral, time-domain), and uses trained models to identify, classify and warn about
+  different fault types. PCA-based dimensionality reduction and adaptive transmission algorithms enable operation in low-bandwidth
+  environments.
+
+  '
+Dados_Descrição: 'Real-time IoT sensor data collected via OPC interface from production SCADA systems, including temperature,
+  pressure, flow rate, operating parameters, vibration signals, operating currents, voltages. Historical data organized into
+  operational condition database for model training. Data includes high-frequency and low-frequency acquisition from multiple
+  virtual sensors across well sites, pumping stations, metering stations, and other facilities.
+
+  '
+CategoriaMecanismo: Detecção precoce/anomalias
+Mecanismo_Fonte: Misto
+Mecanismo_Declarado: 'The fault diagnosis model based on machine learning and deep learning enables automatic identification
+  and early warning of equipment faults. By training with annotated historical data, models learn features of various fault
+  modes and accurately identify, classify and warn about different fault types. The system transforms abnormality handling
+  from "real-time alarm and post-disposal" to "pre-warning and mid-control".
+
+  '
+Mecanismo_Inferido: 'INFERIDO: SVDD creates a hypersphere boundary that separates normal operating conditions from fault states,
+  enabling anomaly detection without requiring fault examples. INFERIDO: Feature extraction from time-domain, spectral and
+  statistical characteristics provides discriminative information that ML models use to distinguish fault types. INFERIDO:
+  Continuous real-time monitoring enables detection of deviations before equipment failure occurs, allowing preventive intervention.
+  INFERIDO: High-fidelity digital twin simulation creates baseline behavior patterns against which actual equipment performance
+  is compared.
+
+  '
+Mecanismo_Estruturado: Real-time sensor data → SVDD + ML/DL feature extraction and classification → Early fault detection
+  and health assessment → Predictive maintenance and pre-warning
+ResultadoTipo: Misto
+Resultados_Quant: 'Fault identification accuracy: 95% (baseline: NR); Early warning accuracy: 90% (baseline: NR); Model fidelity:
+  90% (baseline: NR); Response speed improvement: ~30% (baseline: NR); Labor and operation cost reduction: 37% (baseline:
+  NR); Fault disposal efficiency: 75% (baseline: NR); Production emergencies reduction: >30% (baseline: NR)'
+Resultados_Qual: Transformation from labor-intensive fixed inspection to less/unmanned centralized monitoring; Management
+  mode changed from manual judgment to automatic warning with intelligent analysis; Full lifecycle management of oilfield
+  core assets achieved; Enhanced data governance capability; Optimized operation and management processes
+NívelEvidência: Estudo de caso real
+Limitações_Artigo: 'The paper mentions that the mechanism model for combining compressor monitoring and warning technology
+  is still immature (p.5). Network transmission conditions are described as poor and highly unstable, requiring adaptive algorithms
+  to address these challenges.
+
+  '
+Observação: 'The platform represents an initial deployment (piloto) in West African oilfields. The paper focuses primarily
+  on the digital twin and fault diagnosis components, with procurement mentioned but not detailed with AI applications.
+
+  '
+Quotes:
+- QuoteID: Q001
+  TipoQuote: Contexto
+  Trecho: Abstract Oil and gas fields are often characterized by wide distribution of facilities and equipment, harsh natural
+    environments, difficulties in engineering construction and production operation and maintenance management, and increasingly
+    severe risks of violence and terrorism.
+  Página: p.1
+- QuoteID: Q002
+  TipoQuote: Intervenção
+  Trecho: On the digital twin platform, rapid modeling technology is applied to realize the twin construction of digital employees,
+    office environments and major equipment, the twin creation of business activities based on workflow engine, video conferencing
+    and instant messaging applications, and the management of models, documents, attributes and their associations of factory
+    objects such as production fa...
+  Página: p.3
+- QuoteID: Q003
+  TipoQuote: Método
+  Trecho: The traditional management methods rely on experience and historical data, which make it difficult to cope with
+    the complex and changing underground environment and equipment operating conditions, as well as the realistic and complex
+    production environment.
+  Página: p.2
+- QuoteID: Q004
+  TipoQuote: Outcome
+  Trecho: 2 SPE-221969-MS the company's data governance capability, optimizes the operation and management process, improves
+    the production operation efficiency, directly reduces the labor cost and operation cost by about 37%, improves the efficiency
+    of production operation fault disposal to 75%, reduces the number of production emergencies by more than 30%, and realizes
+    the full life-cycle management of th...
+  Página: p.2
+- QuoteID: Q005
+  TipoQuote: Outcome
+  Trecho: The platform seamlessly integrates application bandwidth adaptive scheduling with client-side caching and fusion
+    technology, improved Forward Error Correction coding (FEC) and Automatic Retransmission Request (ARQ) algorithms, Principal
+    Component Analysis (PCA)-based dimensionality reduction algorithms, "protagonist aura" active sampling, and layered adaptive
+    coding technology, transmission protoc...
+  Página: p.3
+- QuoteID: Q006
+  TipoQuote: Outcome
+  Trecho: Aiming at the problem of poor network transmission conditions, this paper researches the adaptive dimensionality
+    reduction algorithm for digital twin high-dimensional animation data, improved Forward Error Correction coding (FEC) and
+    Automatic Retransmission Request (ARQ) algorithms, and adaptive transmission algorithms based on active sampling of the
+    "protagonist aura" model.
+  Página: p.1
+---

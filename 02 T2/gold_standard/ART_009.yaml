@@ -1,0 +1,116 @@
+---
+ArtigoID: ART_009
+Ano: 2023
+TipoPublicação: Conference
+Referência_Curta: Cheng et al., 2023
+DOI: https://doi.org/10.2118/216490-MS
+SegmentoO&G: Upstream (E&P)
+SegmentoO&G_Confiança: Alta
+Ambiente: Offshore
+Complexidade: Alta
+Complexidade_Justificativa: 'F1=1 (offshore platforms, FPSO, submarine pipelines), F2=1 (multiple platforms: 8 WHP, 4 central
+  platforms, 1 EPP, 1 FPSO with complex supply chain), F3=1 (safety management, equipment failures, environmental risks explicitly
+  addressed)'
+ProcessoSCM_Alvo: Manutenção/MRO
+TipoRisco_SCRM: Risco de ativos
+ObjetoCrítico: Equipamentos e instalações offshore (plataformas, bombas, tubulações submarinas, cabos, FPSO)
+ProblemaNegócio_Contexto: 'CNOOC enfrentava desafios na gestão de produção offshore com dados não integrados em data lake,
+
+  afetando acesso em tempo real e tomada de decisão. A falta de sistemas automatizados para gestão
+
+  de produção de óleo e gás resultava em baixa eficiência operacional. Operações diárias careciam
+
+  de plataforma unificada de informação, exigindo coleta manual de dados de produção e parâmetros
+
+  operacionais de equipamentos. O objetivo era reduzir custos operacionais e de manutenção em 10%
+
+  através de monitoramento inteligente e manutenção preditiva.'
+ClasseIA: Híbrido
+ClasseIA_Confiança: Média
+TarefaAnalítica: Detecção de anomalia
+FamíliaModelo: 'Outro: Árvore de decisão; Outro: Machine learning'
+TipoDado: Multimodal
+Maturidade: Piloto
+Maturidade_Confiança: Alta
+Intervenção_Descrição: "Sistema de monitoramento de produção inteligente offshore utilizando arquitetura cloud-edge. \nIntegra\
+  \ tecnologias de IoT, big data, visão computacional para reconhecimento de imagem, \nárvores de decisão com métodos de self-learning\
+  \ para monitoramento de condição de poços com \nbombeio artificial, e algoritmos de diagnóstico de saúde de equipamentos.\
+  \ O sistema inclui \ndigital twin para reservatórios, poços e processos de superfície, além de NLP e machine learning \n\
+  para análise de dados. Edge computing realiza processamento local enquanto cloud executa \ntreinamento de modelos.\n"
+Dados_Descrição: "Dados multimodais coletados de plataformas offshore via IoT: dados de produção em tempo real \n(vazão, pressão,\
+  \ temperatura), dados de equipamentos (status operacional, vibração), vídeo \nde vigilância, dados de séries temporais de\
+  \ sensores, dados geológicos de reservatório, \narquivos de equipamentos e instalações. Fontes incluem sistemas PCS, DCS,\
+  \ SCADA via \nprotocolos OPC e Modbus. Projeto piloto no campo X em Bohai Bay com 8 WHP, 4 plataformas \ncentrais, 1 EPP\
+  \ e 1 FPSO.\n"
+CategoriaMecanismo: Integração de dados dispersos
+Mecanismo_Fonte: Misto
+Mecanismo_Declarado: "The system establishes a closed-loop management model of production operation through \nreal-time collection,\
+  \ simulation, model diagnosis, expert decision, and remote control. \nEdge computing reduces network load and data transmission\
+  \ delay while enabling intelligent \nscreening and processing of production data. Cloud-edge collaboration solves problems\
+  \ of \nlarge delay in real-time data analysis.\n"
+Mecanismo_Inferido: 'INFERIDO: A integração de dados dispersos de múltiplas plataformas em data lake unificado permite visibilidade
+  holística das operações. INFERIDO: A arquitetura cloud-edge reduz latência ao processar dados críticos localmente enquanto
+  análises complexas são executadas na nuvem. INFERIDO: Modelos de diagnóstico de saúde baseados em árvores de decisão transformam
+  dados de sensores em alertas acionáveis de manutenção preditiva. INFERIDO: A detecção precoce de anomalias em equipamentos
+  evita falhas catastróficas e paradas não programadas.
+
+  '
+Mecanismo_Estruturado: Dados IoT multimodais (sensores, vídeo, SCADA) → Edge computing + algoritmos de diagnóstico + digital
+  twin → Detecção de anomalias e predição de falhas → Manutenção preditiva e redução de custos operacionais
+ResultadoTipo: Misto
+Resultados_Quant: 'Redução de custos operacionais e de manutenção: 10% (baseline: NR)'
+Resultados_Qual: Sistema piloto implementado com sucesso em Bohai Bay, estabelecendo precedente para padronização de infraestrutura
+  digital na CNOOC; melhoria na interoperabilidade de dados e integração de aplicações; capacitação para monitoramento em
+  tempo real e manutenção preditiva de equipamentos offshore
+NívelEvidência: Estudo de caso real
+Limitações_Artigo: "O artigo indica que a CNOOC está atualmente na fase de exploração de pesquisa e desenvolvimento \nda construção\
+  \ de campo inteligente, com inteligência majoritariamente refletida em suporte à \ndecisão gerencial auxiliar. Reconhece\
+  \ necessidade de inovação de pensamento e integração \norgânica de tecnologias de hardware e software para aprofundar aplicações\
+  \ de negócio.\n"
+Quotes:
+- QuoteID: Q001
+  TipoQuote: Contexto
+  Trecho: 'Despite the above advantages and a good foundation for the construction of an offshore intelligent oilfield production
+    monitoring system in the X oil and gas field production operation group, there are four main challenges and problems:
+    1.'
+  Página: p.5
+- QuoteID: Q002
+  TipoQuote: Intervenção
+  Trecho: Based on the company's unified data management standards and information system construction requirements, the construction
+    approach is centered on ‘cloudification + platformization + cloud-edge collaboration + agile development and delivery.’
+    The system development employs the DevOps model, employing a cloud-edge architecture construction mode and a ‘data + platform
+    + modular application’ framewo...
+  Página: p.6
+- QuoteID: Q003
+  TipoQuote: Método
+  Trecho: By integrating various types of geological data and dynamic monitoring data, applying professional geological reservoir
+    research methods, and linking geological reservoir data, algorithm models, and analysis results, a comprehensive model
+    that facilitates professional collaborative research is established.
+  Página: p.14
+- QuoteID: Q004
+  TipoQuote: Mecanismo
+  Trecho: It enables two-dimensional and three-dimensional comprehensive displays of reservoirs, well networks, production
+    processes, and facilities, thereby building capabilities for real-time perception, integrated coordination, monitoring
+    and prediction, and analysis and optimization, thus helping in high-quality operation, and maximization of offshore oilfield
+    asset value.
+  Página: p.7
+- QuoteID: Q005
+  TipoQuote: Outcome
+  Trecho: This trailblazing endeavor is contributing towards an increased production and a reduction in operational and maintenance
+    expenses by 10% for the oil and gas field.
+  Página: p.20
+- QuoteID: Q006
+  TipoQuote: Intervenção
+  Trecho: 'The data service system encompasses four subsystems: (I) Production management, encompassing remote operation monitoring,
+    production dynamic tracking, reservoir dynamic management, and well pattern injection and production deployment management;
+    (II) Equipment and facilities management, which includes equipment health management, submarine pipeline operation and
+    maintenance management, submarine c...'
+  Página: p.1
+- QuoteID: Q007
+  TipoQuote: Intervenção
+  Trecho: To further reduce the construction cost and development difficulty of the offshore intelligent oilfield production
+    monitoring system, we adopted an implementation strategy based on "steady advancement, pilot first, top-level design,
+    comprehensive planning." We selected the X oil and gas field production operation group in Bohai bay as the pilot construction
+    unit for the production monitoring digit...
+  Página: p.5
+---

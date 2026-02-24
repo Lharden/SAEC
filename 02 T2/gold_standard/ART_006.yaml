@@ -1,0 +1,119 @@
+---
+ArtigoID: ART_006
+Ano: 2025
+TipoPublicação: Conference
+Referência_Curta: Ghosh & Mondal, 2025
+DOI: 10.1109/RAIT65068.2025.11089303
+SegmentoO&G: Cross-segment
+SegmentoO&G_Confiança: Alta
+Ambiente: NR
+Complexidade: Média
+Complexidade_Justificativa: F1=0 (ambiente não especificado), F2=1 (15 empresas globais analisadas, cadeia de suprimentos
+  global), F3=1 (riscos ambientais e regulatórios críticos - compliance com UNSDGs)
+ProcessoSCM_Alvo: Monitoramento/visibilidade
+TipoRisco_SCRM: Risco ambiental/regulatório
+ObjetoCrítico: Relatórios ESG e práticas de sustentabilidade corporativa
+ProblemaNegócio_Contexto: 'A cadeia de suprimentos global de óleo e gás enfrenta intensa pressão por compliance ambiental
+  e alegações de greenwashing em relatórios de sustentabilidade.
+
+  Com governos mandando publicação de relatórios ESG periodicamente, as empresas são compelidas a demonstrar compromisso com
+  sustentabilidade, porém há ceticismo crescente sobre transparência e precisão dos relatórios.
+
+  A análise tradicional desses relatórios é subjetiva e intensiva em mão de obra, criando necessidade de soluções automatizadas,
+  escaláveis e objetivas.'
+ClasseIA: NLP
+ClasseIA_Confiança: Alta
+TarefaAnalítica: Classificação
+FamíliaModelo: 'Outro: Sentiment Analysis (TextBlob)'
+TipoDado: Texto
+Maturidade: Protótipo
+Maturidade_Confiança: Alta
+Intervenção_Descrição: 'Framework unificado baseado em NLP para avaliar compliance ambiental e detectar greenwashing em relatórios
+  ESG. O sistema possui 5 módulos: extração de dados de PDFs, pré-processamento de texto (tokenização, remoção de stopwords,
+  lematização), análise de sentimento usando TextBlob, avaliação de compliance ambiental comparando métricas extraídas com
+  thresholds dos UNSDGs, e detecção de greenwashing através de keyword matching combinado com análise de sentimento.
+
+  '
+Dados_Descrição: 'Relatórios ESG de 2023 de 15 empresas líderes do setor de óleo e gás (5 empresas por segmento: upstream,
+  midstream, downstream). Total de 30 observações (15 empresas × 2 tipos de avaliação: compliance ambiental e greenwashing).
+  Dados extraídos de websites públicos das empresas e repositórios de dados de sustentabilidade da ONU.
+
+  '
+CategoriaMecanismo: Automação informacional (NLP)
+Mecanismo_Fonte: Misto
+Mecanismo_Declarado: 'NLP facilita a extração de métricas essenciais nos relatórios, reconhece padrões na linguagem corporativa
+  e destaca discrepâncias entre claims declarados e performance real. Técnicas como tokenização, NER e análise de sentimento
+  permitem processar grandes volumes de texto e revelar sinais sutis de greenwashing.
+
+  '
+Mecanismo_Inferido: 'INFERIDO: A extração automatizada de keywords e dados numéricos dos relatórios ESG reduz a subjetividade
+  da análise manual. INFERIDO: A análise de sentimento identifica tom excessivamente positivo sem dados de suporte como indicador
+  de greenwashing. INFERIDO: A comparação com thresholds pré-definidos dos UNSDGs padroniza a avaliação de compliance entre
+  diferentes empresas.
+
+  '
+Mecanismo_Estruturado: Relatórios ESG (PDF) → NLP (extração + sentiment analysis + keyword matching) → Classificação de compliance
+  e flags de greenwashing → Avaliação de sustentabilidade e transparência corporativa
+ResultadoTipo: Quantitativo
+Resultados_Quant: 'Acurácia OGSC: 0.87 (baseline: NR); Precisão OGSC: 0.92 EC e 0.89 GW (baseline: NR); Recall OGSC: 0.92
+  EC e 0.88 GW (baseline: NR); F1-Score OGSC: 0.90 EC e 0.87 GW (baseline: NR); ROC AUC: 0.88 (baseline: NR)'
+Resultados_Qual: Framework demonstra robustez na avaliação de compliance ambiental e detecção de greenwashing, com melhor
+  performance no midstream para compliance e downstream para greenwashing
+NívelEvidência: Experimento com dados reais
+Limitações_Artigo: 'Dependência excessiva de relatórios ESG para análise de dados; tamanho limitado da amostra; abordagem
+  de keyword matching que demanda estudos futuros sobre adaptabilidade e precisão do modelo usando mais datasets e trabalho
+  colaborativo com órgãos reguladores.
+
+  '
+Observação: 'O framework foi implementado em Python usando Google Colab. Ferramentas principais: pdfminer (extração de PDF),
+  nltk (pré-processamento), TextBlob (análise de sentimento), scikit-learn (análise de erros).
+
+  '
+Quotes:
+- QuoteID: Q001
+  TipoQuote: Contexto
+  Trecho: 6th International Conference on Recent Advances in Information Technology (RAIT) 2025 979-8-3315-2480-7/25/$31.00
+    ©2025 IEEE Assessing Sustainability Efforts and Greenwashing in Global Oil and Gas Supply ChainNatural Language Processing
+    Approach Sanchari Ghosh Department of Management Studies and Industrial Engineering Indian Institute of Technology (ISM),
+    Dhanbad Jharkhand, India 22dr0240@iitism....
+  Página: p.1
+- QuoteID: Q002
+  TipoQuote: Intervenção
+  Trecho: 'Figure 1: Sequence Diagram of the Model The system processes ESG reports as text-based files (.pdf), cleans unnecessary
+    words and tokenizes relevant texts, accordingly, analyses the sentiments, evaluates sustainability compliances and finally
+    detects greenwashing.'
+  Página: p.2
+- QuoteID: Q003
+  TipoQuote: Método
+  Trecho: 'Luo, “Small Data Challenges in Big Data Era: A Survey of Recent Progress on Unsupervised and Semi-Supervised Methods,”
+    IEEE Transactions on Pattern Analysis and Machine Intelligence, vol.'
+  Página: p.6
+- QuoteID: Q004
+  TipoQuote: Outcome
+  Trecho: 'Table 4: Performance Metrics Streamwise and Feature wise Performance Metrics Upstream Midstream Downstream OGSC
+    EC GW EC GW EC GW EC GW Accuracy 0.80 0.80 1 0.80 0.80 1 0.87 0.87 Precision 0.83 0.83 1 0.88 0.83 1 0.92 0.89 Recall
+    0.83 0.83 1 0.75 0.83 1 0.92 0.88 F1 Score 0.80 0.80 1 0.76 0.80 1 0.90 0.87 Above result highlights overall robustness
+    of the framework, it has the best performance in p...'
+  Página: p.4
+- QuoteID: Q005
+  TipoQuote: Outcome
+  Trecho: The performance of proposed framework has been examined thoroughly under the metrics of accuracy, precision, recall,
+    F1 score, Receiver Operating Characteristic Area Under the Curve (ROC AUC) score, and confusion matrix.
+  Página: p.4
+- QuoteID: Q006
+  TipoQuote: Outcome
+  Trecho: 'Table 1: Feature Selection under Different Supply Chain Stages for Sustainability Efforts and Greenwashing Detection
+    Supply Chain Stage Feature Selection for Sustainability Efforts Feature Selection for Greenwashing Detection Upstream
+    Emission reduction targets, such as greenhouse gas (GHG) emissions, flaring reductions (UNSDG 13).'
+  Página: p.2
+- QuoteID: Q007
+  TipoQuote: Outcome
+  Trecho: 'Table 2: Module Details for the Proposed Framework Module Module Name Activities 1 Data Extraction Module Raw text
+    data has been extracted from the ESG reports with .pdf extension, while ensuring text accuracy from various formats.'
+  Página: p.2
+- QuoteID: Q008
+  TipoQuote: Outcome
+  Trecho: Figure 2 represents comparison of such performance metrics across different supply chain stages by combining EC
+    and GW together to showcase overall robustness of the proposed framework.
+  Página: p.4
+---

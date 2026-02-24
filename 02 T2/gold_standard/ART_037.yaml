@@ -1,0 +1,129 @@
+---
+ArtigoID: ART_037
+Ano: 2024
+TipoPublicação: Conference
+Referência_Curta: Almaazmi et al., 2024
+DOI: https://doi.org/10.2118/222960-MS
+SegmentoO&G: Downstream
+SegmentoO&G_Confiança: Alta
+Ambiente: Híbrido
+Complexidade: Alta
+Complexidade_Justificativa: F1=1 (operações globais incluindo portos marítimos), F2=1 (22 IHPs, 390 portos, 112 países, múltiplos
+  fornecedores), F3=1 (custos logísticos críticos e complexidade de rede global)
+ProcessoSCM_Alvo: Logística/transporte
+TipoRisco_SCRM: Risco de transporte/logística
+ObjetoCrítico: Inventory Holding Points (IHPs) e rotas de transporte na rede global de supply chain
+ProblemaNegócio_Contexto: 'A Borouge, empresa petroquímica joint venture entre ADNOC e Borealis, opera uma rede global de
+  supply chain com planta de produção em Al Ruwais (UAE), 22
+
+  Inventory Holding Points distribuídos globalmente e 390 portos servindo 112 países. A empresa necessitava de um digital
+  twin para otimização de rede logística e planejamento de
+
+  supply chain, visando selecionar os IHPs ótimos para atender clientes com base em custos, capacidades e lead times, reduzindo
+  custos logísticos variáveis enquanto mantém níveis de
+
+  serviço.'
+ClasseIA: Otimização/heurísticas
+ClasseIA_Confiança: Alta
+TarefaAnalítica: Otimização
+FamíliaModelo: Programação matemática
+TipoDado: Tabular/ERP
+Maturidade: Produção
+Maturidade_Confiança: Alta
+Intervenção_Descrição: 'Digital twin de supply chain desenvolvido usando Supply Chain Guru X (SCGX) para otimização de rede
+  e Data Guru para transformação de dados. O modelo utiliza algoritmos de otimização de rede multi-echelon, simulação de eventos
+  discretos e otimização de rotas de transporte. Permite criação de múltiplos cenários para avaliar diferentes configurações
+  de IHPs, capacidades e políticas de sourcing, comparando custos logísticos variáveis (LVC), utilização de DIT e inventário
+  final.
+
+  '
+Dados_Descrição: 'Dados de 12 meses incluindo: plano de produção, previsão de demanda, dados históricos de transporte, posição
+  de inventário da rede. Master data de IHPs, mapeamentos cliente-país, 400-500 SKUs, capacidades de embalagem e armazenamento.
+  Dados transacionais de invoices, transferências de estoque, inventário on-hand e planos de produção. Taxas de transporte
+  para frete marítimo, ferroviário e rodoviário. Modelo com 22 IHPs, 211 InPos (reduzidos de 390), 112 clientes agregados
+  por país.
+
+  '
+CategoriaMecanismo: Otimização de trade-offs
+Mecanismo_Fonte: Misto
+Mecanismo_Declarado: 'O modelo permite comparar diferentes cenários baseados em critérios como LVC (Logistics Variable Cost),
+  utilização de DIT e inventário final. A otimização de seleção de IHP é feita removendo restrições da baseline para permitir
+  que o modelo encontre soluções que não estão limitadas aos fluxos impostos para mimetizar a baseline, chegando a configurações
+  de rede que minimizam custos.
+
+  '
+Mecanismo_Inferido: 'INFERIDO: O digital twin integra dados dispersos de múltiplas fontes (ERP, transporte, inventário) em
+  um modelo unificado, permitindo visão holística da rede. INFERIDO: A simulação de cenários what-if permite antecipar bottlenecks
+  e problemas em períodos futuros antes que ocorram. INFERIDO: A otimização multi-objetivo balanceia trade-offs entre custo,
+  capacidade e nível de serviço para encontrar configuração ótima de rede.
+
+  '
+Mecanismo_Estruturado: Dados de produção, demanda, transporte e inventário → Otimização de rede multi-echelon e simulação
+  → Avaliação quantitativa de trade-offs custo-serviço → Seleção ótima de IHPs com redução de 9% em custos logísticos
+ResultadoTipo: Misto
+Resultados_Quant: 'Redução de custos logísticos: 9% (vs. baseline: cenário atual 12 meses)'
+Resultados_Qual: Maior visibilidade da rede; capacidade de simular cenários what-if; autonomia para análise estratégica; identificação
+  proativa de bottlenecks futuros; redução do tempo para geração de relatórios; método quantitativo para avaliação de estratégias
+  alternativas
+NívelEvidência: Estudo de caso real
+Limitações_Artigo: 'Os autores mencionam que custos do último leg (porto de destino ao cliente) não são modelados na rede.
+  Há necessidade de validação e aprovação de etapas intermediárias por stakeholders que podem não ter entendimento completo
+  da tecnologia. O modelo opera em nível de aproximação mais alto usando critérios de agregação e simplificação, diferindo
+  de sistemas transacionais que analisam dados no máximo nível de detalhe. Desafios incluem converter requisitos operacionais
+  complexos para requisitos estratégicos e balancear múltiplos requisitos de cenários de diferentes usuários.
+
+  '
+Observação: 'O artigo descreve implementação de digital twin usando ferramentas comerciais (Supply Chain Guru X e Data Guru)
+  em empresa petroquímica downstream. Embora não use ML/AI no sentido estrito, utiliza algoritmos de otimização avançados
+  embarcados na plataforma SCGX. O projeto foi desenvolvido em 8 meses e está em produção com execução mensal.
+
+  '
+Quotes:
+- QuoteID: Q001
+  TipoQuote: Intervenção
+  Trecho: From this perspective, it is essential to understand the need to shift from the level of detail typical of transactional
+    systems that analyze data at the maximum level of detail to a model that operates at a higher level of approximation using
+    aggregation and simplification criteria.
+  Página: p.10
+- QuoteID: Q002
+  TipoQuote: Método
+  Trecho: To reduce the risk associated with the intrinsic nature of this methodology, it is crucial to involve all stakeholders
+    so that the initiative has the organization’s support, which understands its nature, timelines, and methodology.
+  Página: p.10
+- QuoteID: Q003
+  TipoQuote: Outcome
+  Trecho: As also mentioned within the results sub-section and the image below, the optimized baseline models (scenarios 5,
+    10, 11 and 12) show a cost savings of around 9%.
+  Página: p.11
+- QuoteID: Q004
+  TipoQuote: Limitação
+  Trecho: Note that a dummy plant beside the Al Ruwais facility, named as MFG_0000 has also been configured into the model
+    so that demand which cannot be satisfied due to specific constraints is then satisfied by the dummy plant.
+  Página: p.8
+- QuoteID: Q005
+  TipoQuote: Outcome
+  Trecho: Model identified potential cost savings of up to 9% of supply chain logistics cost compared to the baseline for
+    the 12-month period.
+  Página: p.2
+- QuoteID: Q006
+  TipoQuote: Outcome
+  Trecho: Scenario Description Comment 1 BaselineNoLT All lead times from dummy plant to IHPs are set to zero Used for debugging
+    infeasibility 2 Optimize IHP selection Baseline flows disabled & flow count constraints disabled All baseline constraints
+    removed, thus enabling optimization 3 Optimize IHP + CN constrained Constraints of (2) and inventory constraints for CN
+    warehouses Optimized scenario with an i...
+  Página: p.9
+- QuoteID: Q007
+  TipoQuote: Outcome
+  Trecho: 11 Exclusion of selected transportation policies Constraints of (4) + specific transport policies excluded To exclude
+    specific lanes 12 Scenario (4) + (7) + (10) Constraints related to (4) & (7) and (10) Combining three scenarios into one
+    Once these scenarios were created, the baseline model was run, along with these scenarios and the total cost for each
+    scenario is displayed below.
+  Página: p.9
+- QuoteID: Q008
+  TipoQuote: Outcome
+  Trecho: Also, as the model is a multi-period model, the reports coming out of the model will give a 12-month future view
+    of the flows and operations within the network and can be used to alert stakeholders should there be any bottlenecks that
+    appear in periods in the future such as shortage of inventory at a specific note, unavailability of material to satisfy
+    demand, etc.
+  Página: p.11
+---

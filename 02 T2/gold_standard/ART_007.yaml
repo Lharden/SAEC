@@ -1,0 +1,102 @@
+---
+ArtigoID: ART_007
+Ano: 2023
+TipoPublicação: Conference
+Referência_Curta: Sharma & McDonald, 2023
+DOI: https://doi.org/10.2118/215114-MS
+SegmentoO&G: Cross-segment
+SegmentoO&G_Confiança: Alta
+Ambiente: NR
+Complexidade: Média
+Complexidade_Justificativa: F1=0 (ambiente NR), F2=1 (cadeia complexa com múltiplos fornecedores implícitos), F3=1 (riscos
+  de mercado volátil e disrupções mencionados)
+ProcessoSCM_Alvo: Integração/coordenação
+TipoRisco_SCRM: Múltiplos
+ObjetoCrítico: Processos de source-to-pay, gestão de fornecedores, e operações de payables
+ProblemaNegócio_Contexto: 'A indústria de óleo e gás opera em ambiente complexo com riscos significativos de gestão da cadeia
+  de suprimentos.
+
+  A volatilidade dos preços de energia e a situação macroeconômica criada pela COVID-19 evidenciaram a necessidade
+
+  de práticas de supply chain resilientes e robustas. O setor tem sido lento em reconhecer o valor estratégico do SCM,
+
+  permanecendo em abordagens táticas e reativas, expondo-se a riscos de volatilidade de mercado e crises globais.'
+ClasseIA: Híbrido
+ClasseIA_Confiança: Média
+TarefaAnalítica: Automação (RPA+IA)
+FamíliaModelo: 'Outro: Framework conceitual com AI; ML; IoT e automação'
+TipoDado: Tabular/ERP
+Maturidade: Conceito
+Maturidade_Confiança: Alta
+Intervenção_Descrição: "O artigo propõe um framework conceitual para modernização da cadeia de suprimentos utilizando tecnologias\
+  \ da \nIndústria 4.0, incluindo inteligência artificial, machine learning, robótica, IoT e sistemas automatizados. \nA solução\
+  \ integra spend analytics, cost modeling, automação de payables, digital price books, e um ecossistema \nde \"Digital Brain\"\
+  \ que conecta ferramentas de category management, market intelligence e should-cost modeling.\n"
+Dados_Descrição: "O artigo não utiliza dados empíricos específicos. Apresenta um framework conceitual baseado em melhores\
+  \ práticas \nda indústria. Menciona uso de dados de ERP, invoices, delivery receipts, e market intelligence como inputs\
+  \ \npara o sistema proposto, sem especificar volumes ou períodos.\n"
+CategoriaMecanismo: Integração de dados dispersos
+Mecanismo_Fonte: Misto
+Mecanismo_Declarado: "\"By automating routine tasks, staff can focus more on strategic areas, thereby further driving organizational\
+  \ \ngrowth.\" O modelo manage-by-exception \"optimizes the utilization of resources\" e permite \"rapid response mechanism\
+  \ \nto potential problems, thus reducing their overall impact on operations.\" O Digital Brain ecosystem \"fuels sound \n\
+  decision-making processes\" através de dados limpos e confiáveis.\n"
+Mecanismo_Inferido: 'INFERIDO: A automação de processos rotineiros libera recursos humanos para atividades estratégicas de
+  maior valor. INFERIDO: A integração de dados dispersos em uma plataforma unificada permite visibilidade em tempo real e
+  decisões informadas. INFERIDO: O modelo manage-by-exception concentra atenção humana apenas em anomalias, otimizando eficiência
+  operacional. INFERIDO: A padronização de dados e categorização permite benchmarking e should-cost modeling consistentes.
+
+  '
+Mecanismo_Estruturado: Dados transacionais (invoices, ERP) → Automação + Analytics + AI → Visibilidade integrada e decisão
+  por exceção → Eficiência operacional e redução de custos
+ResultadoTipo: Qualitativo
+Resultados_Quant: NR
+Resultados_Qual: Enhanced operational efficiencies, cost optimization, improved strategic positioning, rapid response to supply
+  chain disruptions, improved service levels, better resource allocation, risk mitigation, and sustainability improvements
+NívelEvidência: Proposta teórica/framework
+Limitações_Artigo: "O artigo reconhece que a implementação do modelo demanda \"substantial investment in technology, data\
+  \ analytics, \nand training, along with a significant shift in organizational culture, underlining trust and employee empowerment.\"\
+  \ \nTambém menciona que \"the path to digital transformation is rife with challenges, from managing change and enhancing\
+  \ \ncommunication to understanding existing systems.\"\n"
+Observação: "Este é um artigo conceitual/prescritivo que propõe melhores práticas e um framework para modernização da cadeia\
+  \ \nde suprimentos, sem implementação ou validação empírica. O foco está em recomendações estratégicas baseadas em \ntecnologias\
+  \ da Indústria 4.0, não em uma solução técnica específica de IA testada.\n"
+Quotes:
+- QuoteID: Q001
+  TipoQuote: Contexto
+  Trecho: 'Concept V: Strategic Sourcing and Category Management Strategic sourcing and category management form an integral
+    part of efficient supply chain management, particularly in the context of the oil and gas industry.'
+  Página: p.5
+- QuoteID: Q002
+  TipoQuote: Método
+  Trecho: Methodology – The How Establishing a "Best-In-Class" Supply Chain organization is often a complex endeavor, with
+    no universal formula for success.
+  Página: p.2
+- QuoteID: Q003
+  TipoQuote: Outcome
+  Trecho: Companies that can meet these ESG goals and emission reduction targets have the potential to trade at higher valuations,
+    ultimately contributing to improved financial performance and investment attractiveness.
+  Página: p.2
+- QuoteID: Q004
+  TipoQuote: Contexto
+  Trecho: Abstract The oil and gas industry operates in a complex and challenging environment with significant supply chain
+    management risks.
+  Página: p.1
+- QuoteID: Q005
+  TipoQuote: Contexto
+  Trecho: This paper aims to provide a comprehensive review of these risks and proposes strategies to create a best-in-class
+    supply chain practice using Industry 4.0 technologies.
+  Página: p.1
+- QuoteID: Q006
+  TipoQuote: Contexto
+  Trecho: 'Theme I: The Indispensable Shift towards Strategic Supply Chain Management In an era characterized by unstable
+    market dynamics, such as the fluctuating West Texas Intermediate (WTI) prices and the disruptions instigated by the COVID-19
+    pandemic, the necessity for a resilient Supply Chain Management (SCM) system in the oil and gas industry has been brought
+    to the forefront.'
+  Página: p.1
+- QuoteID: Q007
+  TipoQuote: Contexto
+  Trecho: By adopting the concepts and strategies discussed in this paper, the oil and gas industry can modernize its supply
+    chain, achieve operational excellence, and gain a competitive advantage in an increasingly dynamic and demanding market.
+  Página: p.9
+---

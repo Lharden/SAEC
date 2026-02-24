@@ -1,0 +1,118 @@
+---
+ArtigoID: ART_024
+Ano: 2024
+TipoPublicação: Conference
+Referência_Curta: Abdelaziem et al., 2024
+DOI: https://doi.org/10.2118/223359-MS
+SegmentoO&G: Upstream (E&P)
+SegmentoO&G_Confiança: Alta
+Ambiente: NR
+Complexidade: Média
+Complexidade_Justificativa: F1=0 (ambiente não especificado), F2=1 (processo de licitação envolve múltiplos fornecedores e
+  contratos complexos), F3=1 (risco de viés humano e erros em avaliações críticas de contratos)
+ProcessoSCM_Alvo: Seleção/qualificação de fornecedores; Procurement/compras; Gestão de contratos
+TipoRisco_SCRM: Risco de fornecimento; Risco operacional
+ObjetoCrítico: Processo de avaliação técnica de propostas e licitações; contratos de serviços de drilling e produção
+ProblemaNegócio_Contexto: 'O processo de avaliação de propostas técnicas na indústria de óleo e gás é trabalhoso, intensivo
+  em mão de obra e suscetível a viés humano.
+
+  As empresas dependem de abordagens tradicionais com revisões manuais extensivas de documentos escaneados não estruturados.
+
+  A implementação de LLMs isoladamente, sem integração com técnicas de data analytics e ML, resultou em interpretações errôneas
+  significativas devido à natureza complexa dos documentos de licitação.
+
+  Empresas de O&G preferem soluções on-premises por questões de privacidade.'
+ClasseIA: Híbrido
+ClasseIA_Confiança: Alta
+TarefaAnalítica: Extração de informação (NLP)
+FamíliaModelo: Transformers/Attention; Redes neurais feedforward
+TipoDado: Texto
+Maturidade: Protótipo
+Maturidade_Confiança: Alta
+NívelEvidência: Experimento com dados reais
+Intervenção_Descrição: 'Sistema baseado em LLM (LlaMa2) integrado com OCR, NLP e data analytics para automatizar avaliação
+  técnica de licitações. O workflow inclui: extração de dados via OCR e LlamaParse, embeddings com sentence transformers (allmpnet-base-v2),
+  vector store para busca semântica, RAG avançado para recuperação contextual, e fine-tuning supervisionado via QLoRA/PEFT
+  para comparação de cláusulas contratuais. Implementa chat buffering para manter contexto em conversas prolongadas.
+
+  '
+Dados_Descrição: 'Documentos técnicos de dois contratos expirados relacionados a operações de produção e drilling. Primeiro
+  contrato com aproximadamente 30 páginas cobrindo equipamentos, químicos, serviços e novas tecnologias. Segundo contrato
+  com quase 50 páginas focado em químicos, tradenames e serviços. Mais de 150 itens precificados nos contratos estudados,
+  reduzidos a 20 itens críticos baseados em critérios de operações esperadas. Dados mascarados por questões de privacidade.
+
+  '
+CategoriaMecanismo: Automação informacional (NLP)
+Mecanismo_Fonte: Misto
+Mecanismo_Declarado: 'O artigo declara que a implementação de LLM no processo de licitação provou ser promissora para revisar
+  e classificar dados técnicos das propostas submetidas com base em critérios pré-definidos. O RAG melhora a performance dos
+  LLMs garantindo recuperação de contexto relevante de fontes externas através de cálculos de similaridade semântica. O fine-tuning
+  supervisionado ajuda a minimizar alucinações e melhorar a capacidade de comparação de cláusulas entre diferentes contratos.
+
+  '
+Mecanismo_Inferido: 'INFERIDO: A transformação de documentos escaneados em formatos estruturados via OCR e parsers elimina
+  a barreira de dados não estruturados e permite processamento automatizado. INFERIDO: Os embeddings e vector stores capturam
+  similaridade semântica, permitindo busca e comparação eficiente entre especificações técnicas e datasheets de fornecedores.
+  INFERIDO: O RAG previne alucinações ao restringir o modelo a raciocinar apenas dentro do contexto fornecido, aumentando
+  a confiabilidade das respostas. INFERIDO: O fine-tuning via QLoRA adapta o modelo para compreender variações na descrição
+  de serviços entre contratos, melhorando matching semântico.
+
+  '
+Mecanismo_Estruturado: Documentos escaneados de licitação → OCR + LLM (LlaMa2) + RAG + SFT → Extração estruturada + Similaridade
+  semântica + Comparação automatizada → Avaliação técnica padronizada e acelerada
+ResultadoTipo: Misto
+Resultados_Quant: 'Acurácia de extração LlamaParse: >95% vs OCR tradicional: 75% (baseline: OCR pytesseract); Acurácia de
+  avaliação de especificações: 83% (baseline: NR); Acurácia de query no contrato original: 100% com human feedback vs 70%
+  sem human feedback (baseline: sem feedback); Melhoria de 5% em similarity matching após SFT (baseline: sem SFT)'
+Resultados_Qual: LLMs demonstram potencial significativo para auxiliar engenheiros técnicos no processo de avaliação. A incorporação
+  de feedback humano melhora substancialmente o processo e maximiza os resultados.
+Limitações_Artigo: O workflow proposto foi limitado a analisar as seções técnicas dos documentos de proposta, e não generalizou
+  sobre termos e condições ou outros aspectos de compras. Estudo realizado com apenas dois contratos expirados, limitando
+  a generalização dos resultados.
+Quotes:
+- QuoteID: Q001
+  TipoQuote: Contexto
+  Trecho: LLMs have proven to be beneficial in enhancing DSS and reducing potential human bias across different fields, including
+    the oil and gas industry, with different tasks such as well construction planning and real-time operations in the oilfield
+    (He et al.
+  Página: p.3
+- QuoteID: Q002
+  TipoQuote: Intervenção
+  Trecho: This paper introduces an AIassistant chatbot based on the power of open-source large language models (LLMs), natural
+    language processing (NLP), and data analytics, to aid in automating the entire workflow of technical tendering processes,
+    facilitating an improved decision support system (DSS), and mitigating potential subjectivity.
+  Página: p.1
+- QuoteID: Q003
+  TipoQuote: Método
+  Trecho: As mentioned in the dataset section in Methodology, the proposed workflow has been tested on different contracts
+    to study the effectiveness of the introduced approach.
+  Página: p.11
+- QuoteID: Q004
+  TipoQuote: Outcome
+  Trecho: It was found that the workflow achieved 1.0 accuracy on querying and populating data from the original contract,
+    however, the workflow performance on the other contracts varied significantly to reach 0.85 and 0.65.
+  Página: p.11
+- QuoteID: Q005
+  TipoQuote: Limitação
+  Trecho: Challenges and Future Work The proposed workflow was limited to analyzing the technical sections of bid documents,
+    and did not generalize about terms and conditions or other procurement aspects.
+  Página: p.11
+- QuoteID: Q006
+  TipoQuote: Outcome
+  Trecho: 2024) Enhancing Knowledge Management Systems (KMS) NLP, DL, LLMs, FAISS indexing Efficient document extraction,
+    improved search capabilities Handling heterogeneous data, accuracy in retrieval (Singh, Jia, and Nalagatla 2023) Drilling
+    and production analytics GPT, cloud-native AI Real-time data analysis, operational optimization Potential for incorrect
+    answers, data curation needs (Yi et al.
+  Página: p.3
+- QuoteID: Q007
+  TipoQuote: Outcome
+  Trecho: It was observed that the testing dataset showed 5% improvement when it came to issues related to similarity matching
+    or variations in items description, however, no improvement was achieved when pricing units were different as it was not
+    the focus of the proposed SFT.
+  Página: p.11
+- QuoteID: Q008
+  TipoQuote: Outcome
+  Trecho: 2024b) Natural Language querying of upstream datasets LLMs, embeddings, indexing Fast, accurate search results,
+    improved data discovery Handling unstructured data, accurate indexing (A.
+  Página: p.3
+---

@@ -1,0 +1,119 @@
+---
+ArtigoID: ART_027
+Ano: 2021
+TipoPublicação: Conference
+Referência_Curta: Abd Rahman et al., 2021
+DOI: https://doi.org/10.1109/ICOTEN52080.2021.9493499
+SegmentoO&G: Upstream (E&P)
+SegmentoO&G_Confiança: Alta
+Ambiente: NR
+Complexidade: Média
+Complexidade_Justificativa: F1=0 (ambiente NR), F2=1 (projetos de capital com múltiplos stakeholders e complexidade mencionada),
+  F3=1 (risco explicitamente mencionado como fator crítico de decisão)
+ProcessoSCM_Alvo: Planejamento de demanda | Gestão de riscos da cadeia
+TipoRisco_SCRM: Múltiplos
+ObjetoCrítico: Projetos de capital upstream, investimentos em exploração e produção
+ProblemaNegócio_Contexto: 'O setor de projetos de capital upstream de óleo e gás na Malásia enfrenta desafios significativos
+  na tomada de decisões estratégicas.
+
+  Os tomadores de decisão não conseguem produzir decisões precisas sem análises detalhadas baseadas em grandes volumes de
+  dados.
+
+  Fatores como economia de projeto, complexidade, risco, termos fiscais, geografia, clima político e preço de hidrocarbonetos
+  influenciam os padrões de decisão.
+
+  A incorporação de ML e big data é proposta como abordagem para acelerar o processo de tomada de decisão, especialmente em
+  contextos de incerteza como novos investimentos e crises econômicas.'
+ClasseIA: Híbrido
+ClasseIA_Confiança: Média
+TarefaAnalítica: Previsão
+FamíliaModelo: Redes neurais feedforward; Regressão linear/logística
+TipoDado: Tabular/ERP
+Maturidade: Conceito
+Maturidade_Confiança: Alta
+Intervenção_Descrição: 'O estudo propõe um modelo conceitual de algoritmo de ML para análise prescritiva em projetos de capital
+  upstream. O framework combina múltiplas técnicas analíticas: S-Curve Envelope, Financial Pinch Sensitivity, Portfolio, Probabilistic,
+  SWOT, Clustering analysis, e Multivariate imputation based on Chained Equation (MICE). A abordagem utiliza elementos de
+  análise mistos (blended elements) para suporte à decisão, combinando análises desde regressão linear básica até redes neurais
+  artificiais sofisticadas.
+
+  '
+Dados_Descrição: 'O artigo não especifica datasets concretos utilizados. Menciona que os dados provêm de fontes internas e
+  externas das organizações, incluindo dados de inventário de ativos de informação. Os tipos de dados considerados incluem:
+  dados de projeto econômico, complexidade de projeto, dados de risco, termos fiscais, dados geográficos, clima político e
+  preços de hidrocarbonetos. O framework é conceitual sem implementação com dados reais.
+
+  '
+CategoriaMecanismo: Redução de incerteza
+Mecanismo_Fonte: Misto
+Mecanismo_Declarado: '"The prescriptive analysis uses statistical models and ML algorithms to define the possibilities and
+  to recommend actions. These models and algorithms can discover patterns in big data that human analysts may overlook."
+
+  '
+Mecanismo_Inferido: 'INFERIDO: A integração de múltiplas técnicas analíticas (S-Curve, Financial Pinch, Clustering, MICE)
+  permite capturar diferentes dimensões do problema de decisão. INFERIDO: A combinação de análise descritiva e prescritiva
+  reduz incerteza ao transformar dados brutos em recomendações acionáveis. INFERIDO: O ML identifica padrões em big data que
+  analistas humanos não conseguem detectar, permitindo decisões mais informadas. INFERIDO: A abordagem blended permite comparação
+  entre métodos e seleção da técnica mais adequada para cada contexto específico.
+
+  '
+Mecanismo_Estruturado: Dados multi-fonte (projeto, risco, fiscal, mercado) → ML + técnicas estatísticas (clustering, regressão,
+  redes neurais) → Identificação de padrões e recomendações → Suporte à decisão estratégica de investimento
+ResultadoTipo: Qualitativo
+Resultados_Quant: NR
+Resultados_Qual: Framework conceitual proposto para melhorar tomada de decisão via ML; identificação de fatores influenciadores
+  de decisão (economia, complexidade, risco, fiscal, geografia, política, preço); proposta de análise mista combinando múltiplas
+  técnicas para suporte decisório
+NívelEvidência: Proposta teórica/framework
+Limitações_Artigo: 'NR
+
+  '
+Observação: 'Artigo conceitual que não apresenta implementação prática ou validação empírica do framework proposto. O foco
+  é identificar tipos de análise ML aplicáveis ao contexto upstream O&G da Malásia, sem demonstração com dados reais. A contribuição
+  é primariamente teórica, mapeando técnicas analíticas para suporte à decisão de investimento em projetos de capital.
+
+  '
+Quotes:
+- QuoteID: Q001
+  TipoQuote: Outcome
+  Trecho: 978-1-6654-1224-7/21/$31.00 ©2021 IEEE Machine Learning Algorithm Model for Improving Business Decisions Making
+    in Upstream Oil & Gas Mohd Shahrizan Abd Rahman Faculty of Defence Science and Technology Universiti Pertahanan National
+    Malaysia Kuala Lumpur, Malaysia mshahrizan.ar@gmail.com Tengku Mohd Tengku Sembok Faculty of Defence Science and Technology
+    Universiti Pertahanan National Malaysia Kua...
+  Página: p.1
+- QuoteID: Q002
+  TipoQuote: Limitação
+  Trecho: However, the decisionmaker cannot produce the most accurate decision without detailed analysis based on a huge data
+    received.
+  Página: p.1
+- QuoteID: Q003
+  TipoQuote: Outcome
+  Trecho: '[14] Hoi K Suen, Pui Wa Lei & Hongli Li, (2012), Data Analysis for Effective Decision Making, Chapter 7, DOI: 10.1093/oxfordhb/9780195369809.013.005
+    [15] David Arnott, Graham Pervan, Peter O’Donnell & Gemma Dodson, (2004), An Analysis of Decision Support System research:
+    Preliminary Results.'
+  Página: p.5
+- QuoteID: Q004
+  TipoQuote: Outcome
+  Trecho: Epstein & Kristi Yuthas, (2008), Managing Opportunities and Risk, Published by The Society of Management Accountants
+    of Canada, the American Institute of Certificated Public Accountants and the Chartered Institute of Management Accountants.
+  Página: p.5
+- QuoteID: Q005
+  TipoQuote: Outcome
+  Trecho: '2021 International Congress of Advanced Technology and Engineering (ICOTEN) | 978-1-6654-1224-7/21/$31.00 ©2021
+    IEEE | DOI: 10.1109/ICOTEN52080.2021.9493499 Authorized licensed use limited to: Reprints Desk.'
+  Página: p.1
+- QuoteID: Q006
+  TipoQuote: Outcome
+  Trecho: 'Anani & Rajunor B., (2012), Portfolio Analysis Models: A Review European Journal of Business and Management www.iiste.org
+    ISSN 2222-1905 (Paper) ISSN 22222839 (Online) Vol 4, No.18.'
+  Página: p.5
+- QuoteID: Q007
+  TipoQuote: Limitação
+  Trecho: However, in the long run, one cannot maintain vitality and quality of life without being involved in an innovative
+    economy.
+  Página: p.3
+- QuoteID: Q008
+  TipoQuote: Outcome
+  Trecho: Downloaded on January 19,2026 at 23:12:10 UTC from IEEE Xplore.
+  Página: p.1
+---

@@ -1,0 +1,128 @@
+---
+ArtigoID: ART_028
+Ano: 2025
+TipoPublicação: Conference
+Referência_Curta: Bruzzone et al., 2025
+DOI: https://doi.org/10.1016/j.procs.2025.02.056
+SegmentoO&G: Upstream (E&P)
+SegmentoO&G_Confiança: Alta
+Ambiente: Offshore
+Complexidade: Alta
+Complexidade_Justificativa: F1=1 (FPSO offshore), F2=1 (múltiplos fornecedores de materiais exóticos como duplex, super duplex,
+  titanium), F3=1 (risco alto de atrasos e cost overruns significativos - 38% overrun combinado em 9 projetos)
+ProcessoSCM_Alvo: Procurement/compras
+TipoRisco_SCRM: Risco de fornecimento
+ObjetoCrítico: Materiais exóticos para piping (duplex, super duplex, titanium)
+ProblemaNegócio_Contexto: 'Projetos FPSO enfrentam atrasos significativos e estouros de orçamento devido à complexidade da
+  construção e conversão.
+
+  Estudo de 9 projetos FPSO revelou overrun combinado de 38% e atraso coletivo de 12 anos.
+
+  O setor de piping é particularmente crítico, representando 60-70% da duração total devido à aquisição de materiais exóticos
+  (duplex, super duplex, titanium) com poucos fornecedores qualificados.
+
+  A aquisição de materiais exóticos requer 5-7 meses, representando 1/6 do cronograma total de 36 meses do projeto.'
+ClasseIA: Híbrido
+ClasseIA_Confiança: Alta
+TarefaAnalítica: Previsão
+FamíliaModelo: Redes neurais feedforward; Análise de regressão
+TipoDado: Tabular/ERP
+Maturidade: Protótipo
+Maturidade_Confiança: Média
+Intervenção_Descrição: 'Modelo híbrido que combina análise de dados históricos com redes neurais preditivas para estimativa
+  antecipada de Material Take Off (MTO). A rede neural foi treinada em base de dados centralizada contendo especificações
+  de componentes e requisitos técnicos de múltiplos projetos FPSO. O modelo prediz a lista de itens do MTO e quantidades de
+  matérias-primas a serem adquiridas, focando especialmente no setor de piping identificado como crítico para o Critical Path.
+
+  '
+Dados_Descrição: 'Base de dados centralizada construída com dados de vários projetos FPSO de diferentes clientes, incluindo
+  projetos de construção e conversão. Campos categorizados incluem: Project Number, Service Descriptions, Material Specifications,
+  Unit of Measure, e Weight metrics. Dados verificados contra padrões de engenharia e especificações de materiais. Dataset
+  de teste com 12.557 registros demonstrado nos resultados.
+
+  '
+CategoriaMecanismo: Antecipação de risco
+Mecanismo_Fonte: Misto
+Mecanismo_Declarado: '"The proactive strategy of early fabrication, supported by accurate material quantity estimation and
+  optimized transportation logistics, contributes to smoother workflows and reduced risk of delays." "This in-depth assessment
+  of project schedules and planning assumptions reveals critical insights that show the need for effective inventory management,
+  rigorous planning, coordination and management at every stage. The proposed solution to this is early MTO (Material Take
+  Off) generated using the latest innovation in technology."
+
+  '
+Mecanismo_Inferido: 'INFERIDO: A rede neural identifica padrões em dados históricos de projetos similares para estimar quantidades
+  de materiais antes da fase de engenharia detalhada. INFERIDO: A estimativa antecipada de MTO permite iniciar procurement
+  de materiais de longo lead-time (5-7 meses) mais cedo no ciclo do projeto. INFERIDO: A integração de dados dispersos de
+  múltiplos projetos em base centralizada permite correlações mais precisas entre especificações técnicas e quantidades de
+  materiais.
+
+  '
+Mecanismo_Estruturado: Dados históricos de projetos FPSO → Rede neural preditiva + análise de dados históricos → Estimativa
+  antecipada de MTO → Procurement proativo de materiais críticos com redução de atrasos
+ResultadoTipo: Quantitativo
+Resultados_Quant: 'MSE: 0.15563 (baseline: NR); Erro de predição típico: 0.006669-0.746632 em valores de teste variando de
+  0.27-9.112'
+Resultados_Qual: O modelo demonstra capacidade de prever quantidades de materiais com baixo erro, habilitando estratégias
+  proativas de procurement e fabricação antecipada que contribuem para fluxos de trabalho mais suaves e redução de risco de
+  atrasos
+NívelEvidência: Experimento com dados reais
+Limitações_Artigo: '"However, the prediction accuracy diminishes when addressing new or significantly different projects,
+  as the reliance on historical patterns may not accurately reflect the unique scope and complexity." "Critical challenges
+  include the precise selection and integration of relevant historical data and the appropriate weighting of variables to
+  ensure the model''s applicability to current project requirements."
+
+  '
+Observação: 'O artigo também aborda estratégias de Local Content Requirements para minimização de penalidades, com foco em
+  procurement de materiais no Brasil e transporte para yards na Ásia. O contexto brasileiro é relevante pois o Brasil é o
+  principal mercado de FPSO com 22 adições esperadas em 2022-2027.
+
+  '
+Quotes:
+- QuoteID: Q001
+  TipoQuote: Contexto
+  Trecho: Addressing root causes of project overdue Even though FPSO projects have brought numerous advantages in terms of
+    flexibility and overcoming physical limitations, their complex nature is associated with risks and complications that
+    challenge the projects delivery causing economic losses, disagreements and even project abandonment [19].
+  Página: p.2
+- QuoteID: Q002
+  TipoQuote: Intervenção
+  Trecho: Systematic Data Acquisition The proposed Data Acquisition framework concentrates on systematically gathering data
+    from pasts and current FPSO projects, that could give essential information for accurately constructing Material Take
+    Off (MTO), Maintenance Activity Support and Data Mining to find process optimization opportunities.
+  Página: p.3
+- QuoteID: Q003
+  TipoQuote: Método
+  Trecho: A methodical approach is required to make sure for data accuracy, completeness, and standardization across all relevant
+    parameters, thus systems engineering methodologies are applied to enhance data integration and management.
+  Página: p.3
+- QuoteID: Q004
+  TipoQuote: Outcome
+  Trecho: / Procedia Computer Science 253 (2025) 3318–3324 the piping discipline faces significant delays due to the limited
+    availability and procurement complexities of special materials that are vital for the FPSO project and that are extremely
+    susceptible to external and environmental pressure like changes in market price or scarcity of raw materials.
+  Página: p.7
+- QuoteID: Q005
+  TipoQuote: Outcome
+  Trecho: 12552 2.000 1.983120 0.016880 12553 0.480 0.520104 -0.040104 12554 5.010 4.933487 0.076513 12555 3.000 2.487671
+    0.512329 12556 1.000 0.993331 0.006669 The development of this predictive neural network models based on high-granularity
+    historical datasets helps project management in enhancing MTO estimation accuracy and procurement planning.
+  Página: p.6
+- QuoteID: Q006
+  TipoQuote: Outcome
+  Trecho: As Brazil hosts the largest number of FPSO projects, its laws and regulations are used as reference and its local
+    content was considered a 40 % work completed locally, with penalties imposed for non-compliance.
+  Página: p.6
+- QuoteID: Q007
+  TipoQuote: Outcome
+  Trecho: Bruzzone1,2,*, Kirill Sinelshchikov3, Marco Gotelli1,2, Filippo Monaci2, Xhulia Sina2, Filippo Ghisi2, Luca Cirillo2,
+    Antonio Giovannetti2 1DIME, Genoa University, Via Opera Pia 15a, Genova, 16145, Italy 2Simulation Team, Via Magliotto
+    2, Savona, 17100, Italy 3 Sim4Future, Via Trento 43, Genova, 16145, Italy Abstract Floating Production Storage and Offloading
+    (FPSO) units are essential yet complex...
+  Página: p.1
+- QuoteID: Q008
+  TipoQuote: Outcome
+  Trecho: 'This is an open access article under the CC BY-NC-ND license (https://creativecommons.org/licenses/by-nc-nd/4.0)
+    Peer-review under responsibility of the scientific committee of the 6th International Conference on Industry 4.0 and Smart
+    Manufacturing 10.1016/j.procs.2025.02.056 Keywords: FPSO; Machine Learning; CPM; Procurement * Corresponding author.'
+  Página: p.1
+---

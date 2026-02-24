@@ -1,0 +1,127 @@
+---
+ArtigoID: ART_011
+Ano: 2020
+TipoPublicação: Journal
+Referência_Curta: Kwon et al., 2020
+DOI: https://dx.doi.org/10.1021/acs.iecr.0c01957
+SegmentoO&G: Downstream
+SegmentoO&G_Confiança: Alta
+Ambiente: Onshore
+Complexidade: Média
+Complexidade_Justificativa: F1=0 (onshore petrochemical plant), F2=1 (global supply chain with Middle East imports, ~2 month
+  transportation), F3=1 (financial risk from price volatility, hedge trading for risk management)
+ProcessoSCM_Alvo: Planejamento de produção | Gestão de estoques | Procurement/compras | Gestão de riscos da cadeia
+TipoRisco_SCRM: Risco financeiro | Risco de demanda
+ObjetoCrítico: Naphtha (raw material) and petrochemical products (ethylene, propylene, butadiene, benzene, toluene, xylene)
+ProblemaNegócio_Contexto: 'Petrochemical plants face significant financial risk due to volatile prices of raw materials (naphtha)
+  and final products in the global market.
+
+  Korean petrochemical companies import over 90% of raw materials from the Middle East with approximately two-month delivery
+  times, making precise purchase timing and inventory management critical.
+
+  The profit margin is highly sensitive to market conditions, requiring intelligent decision-making for resource trade, production
+  planning, inventory management, and financial risk management through paper trading (hedge trading) to offset potential
+  gains or losses from forward-looking investments.'
+ClasseIA: Híbrido
+ClasseIA_Confiança: Alta
+TarefaAnalítica: Previsão
+FamíliaModelo: Redes neurais feedforward; Regressão linear/logística; Simulação; Programação matemática
+TipoDado: Séries temporais
+Maturidade: Protótipo
+Maturidade_Confiança: Média
+Intervenção_Descrição: 'The framework integrates three decision models: (1) Price prediction using System Dynamics (SD), Multiple
+  Linear Regression (MLR), and Artificial Neural Network (ANN) to forecast naphtha and product prices; (2) Paper trading model
+  using Nonlinear Programming (NLP) to determine optimal naphtha purchase timing and quantity for financial risk hedging;
+  (3) Production planning model using Mixed Integer Linear Programming (MILP) to optimize naphtha-cracking yield, inventory
+  levels, and product sales timing based on predicted prices.
+
+  '
+Dados_Descrição: 'Historical monthly price data from May 2009 to December 2010 used for training prediction models, with forecasting
+  for January to December 2011. The study considered 35 descriptors including historical prices, demand/supply quantities,
+  crude oil reference prices, and financial statistics (margin, cash flow). The case study examines a real petrochemical plant
+  with 3.6 million tons/year naphtha capacity, 0.3 million tons/month cracking process capacity, and storage tanks ranging
+  from 80,000 to 300,000 tons.
+
+  '
+CategoriaMecanismo: Antecipação de risco
+Mecanismo_Fonte: Declarado
+Mecanismo_Declarado: 'The framework reduces financial risk by predicting future prices and enabling paper trading to hedge
+  against price volatility. Price prediction with ~82.3% accuracy allows determination of optimal purchase timing when prices
+  are expected to be low. The production planning model adapts cracking yields and inventory levels based on predicted prices
+  - storing products when favorable sale prices are expected and selling at most favorable periods.
+
+  '
+Mecanismo_Inferido: 'INFERIDO: The integration of price prediction with production planning enables proactive inventory positioning
+  before price movements occur. INFERIDO: Paper trading creates a financial buffer that offsets losses from incorrect predictions
+  in some months with gains in others. INFERIDO: The System Dynamics model provides causal loop understanding between market
+  factors, enabling better anticipation of price trends.
+
+  '
+Mecanismo_Estruturado: Historical price/market data → SD/ANN/MLR prediction + MILP optimization → Optimal timing/quantity
+  decisions → Maximized operating profit with reduced financial risk
+ResultadoTipo: Quantitativo
+Resultados_Quant: 'Operating profit improvement: 13.8% (vs. baseline: Case 1 without any model); Total sales improvement:
+  5.50% (5.23 billion USD vs. baseline: 4.95 billion USD); Annual operating profit: 338 million USD (vs. baseline: 297 million
+  USD); Paper trading net profit: ~20 million USD annually; Price prediction accuracy: 82.3%'
+Resultados_Qual: The comprehensive decision framework enables petrochemical companies to make intelligent decisions on purchase
+  timing, inventory management, production strategy, and financial risk hedging under volatile market conditions
+NívelEvidência: Simulação com dados reais
+Limitações_Artigo: 'The proposed framework still has limits as a complete business intelligence which enables real petrochemical
+  industries to make strategic decisions. Future research needs to address diversification of the petrochemical value chain
+  including different raw material options and product markets, integration of system-level solutions including optimal yield
+  with process operation policy.
+
+  '
+Observação: 'The study examines 7 different cases with combinations of decision models (price prediction, paper trading, adaptive
+  operation strategy). The SD model was selected for its capability of both quantitative and qualitative analysis, providing
+  causality understanding between descriptors unlike MLR and ANN which are limited to output prediction.
+
+  '
+Quotes:
+- QuoteID: Q001
+  TipoQuote: Contexto
+  Trecho: INTRODUCTION In the petrochemical industry, intelligent decision making involving resource trade, production planning,
+    resource inventory, and risk management is of paramount importance to ensure the proﬁtability, logistic reliability, and
+    ﬁnancial safety at the plant and enterprise levels.1 Furthermore, the prices of raw materials and products have shown
+    astonishing variations in the global petro...
+  Página: p.1
+- QuoteID: Q002
+  TipoQuote: Intervenção
+  Trecho: The system dynamics prediction model (SD) is the best approach to understanding the dynamic behavior of complex
+    problems with time using ﬂows, loops, and time delays.
+  Página: p.4
+- QuoteID: Q003
+  TipoQuote: Método
+  Trecho: All the selected factors, which are historical monthly data from May 2009 to December 2010, are used for training
+    the prediction models (MLR, ANN, and SD) to predict future prices from January 2011 to December 2011.
+  Página: p.6
+- QuoteID: Q004
+  TipoQuote: Outcome
+  Trecho: As a result, the optimal production planning using the proposed model enabled the improvement of the total sales
+    by 5.50% and the operating proﬁt by 13.8% in comparison with the BAU case.
+  Página: p.1
+- QuoteID: Q005
+  TipoQuote: Outcome
+  Trecho: In this study, the accuracy of naphtha price prediction is approximately 82.3%, as shown in Figure 3.
+  Página: p.6
+- QuoteID: Q006
+  TipoQuote: Outcome
+  Trecho: In particular, the paper trade in the month with relative low prediction accuracy resulted in a negative proﬁt.26
+    For instance, the loss by paper trading is the highest in February 2011 owing to the incorrect price prediction and limitation
+    of product inventories (see Figure 3).
+  Página: p.6
+- QuoteID: Q007
+  TipoQuote: Contexto
+  Trecho: For instance, a new mathematical optimization model was developed to ensure the maximum business proﬁt in the Norwegian
+    petrochemical industry.2 The mixed integer linear programming (MILP) technique was used for developing an optimization
+    model that identiﬁes synergic beneﬁts with mergers and acquisitions in the Korean petrochemical industry.3 Other studies
+    have focused on solving speciﬁc problems...
+  Página: p.1
+- QuoteID: Q008
+  TipoQuote: Outcome
+  Trecho: = + OC TUC THC t (8) = U UR UT r c i r c i r c i , , , , , , (9) ∑∑∑ = ∈ ∈ ∈ U TSc r R c C i I r c i , , (10) ∑∑∑
+    = ∈ ∈ ∈ TUC UT UC r c i r R c C i I r c i , , , , (11) where Ur,c,i, URr,c,i, UTr,c,i, UCr,c,i, and TUC are the amount
+    of unloading of raw materials from c to i, transferred unloading rate for raw materials from c to i, required planning
+    during unloading of raw materials from c to i, u...
+  Página: p.4
+---
