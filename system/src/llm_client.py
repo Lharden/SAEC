@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+from typing import Any, Union
 
 # APIs
 from anthropic import Anthropic
@@ -68,9 +69,9 @@ class LLMClient(LLMClientPostprocessMixin, LLMClientQuotesMixin):
         self.llm_config = context.llm_config if context else llm_config
         self.paths = context.paths if context else paths
 
-        self.anthropic = None
-        self.openai = None
-        self.ollama = None
+        self.anthropic: Anthropic | None = None
+        self.openai: OpenAI | None = None
+        self.ollama: OpenAI | None = None
         self._usage_totals = {
             "tokens_in": 0,
             "tokens_out": 0,
@@ -171,7 +172,7 @@ class LLMClient(LLMClientPostprocessMixin, LLMClientQuotesMixin):
             cache_creation_input_tokens or 0
         )
 
-    def _build_system_prompt(self, prompt: str, provider: str):
+    def _build_system_prompt(self, prompt: str, provider: str) -> Union[str, list[dict[str, Any]]]:
         if provider == "anthropic":
             if self.llm_config.PROMPT_CACHE_ENABLED:
                 return [
@@ -401,7 +402,7 @@ Comece o YAML com --- e termine com ---
         intro: str,
         max_tokens: int,
         artigo_id: str | None = None,
-        system_prompt: object | None = None,
+        system_prompt: Union[str, list[dict[str, Any]]] | None = None,
     ) -> str:
         """Chamada para Claude com conteúdo híbrido."""
 
@@ -461,7 +462,7 @@ Comece o YAML com --- e termine com ---
         intro: str,
         max_tokens: int,
         artigo_id: str | None = None,
-        system_prompt: object | None = None,
+        system_prompt: str | None = None,
     ) -> str:
         """Chamada para OpenAI com conteúdo híbrido."""
 
@@ -517,7 +518,7 @@ Comece o YAML com --- e termine com ---
         intro: str,
         max_tokens: int,
         artigo_id: str | None = None,
-        system_prompt: object | None = None,
+        system_prompt: str | None = None,
     ) -> str:
         """Chamada para Ollama (OpenAI-compatible) com conteúdo híbrido.
 
@@ -560,7 +561,7 @@ Comece o YAML com --- e termine com ---
         user_message: str,
         max_tokens: int,
         artigo_id: str | None = None,
-        system_prompt: object | None = None,
+        system_prompt: Union[str, list[dict[str, Any]]] | None = None,
     ) -> str:
         """Chamada para Claude com visão."""
 
@@ -622,7 +623,7 @@ Comece o YAML com --- e termine com ---
         user_message: str,
         max_tokens: int,
         artigo_id: str | None = None,
-        system_prompt: object | None = None,
+        system_prompt: str | None = None,
     ) -> str:
         """Chamada para OpenAI com visão."""
 
@@ -678,7 +679,7 @@ Comece o YAML com --- e termine com ---
         user_message: str,
         max_tokens: int,
         artigo_id: str | None = None,
-        system_prompt: object | None = None,
+        system_prompt: str | None = None,
     ) -> str:
         """Chamada para Ollama (OpenAI-compatible) com visão."""
 

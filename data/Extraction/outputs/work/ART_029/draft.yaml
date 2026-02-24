@@ -1,0 +1,81 @@
+---
+ArtigoID: ART_029
+Ano: 2025
+TipoPublicação: Journal
+Referência_Curta: Yao et al., 2025
+DOI: https://doi.org/10.3390/su17178019
+SegmentoO&G: Cross-segment
+SegmentoO&G_Confiança: Alta
+Ambiente: NR
+Complexidade: Média
+Complexidade_Justificativa: F1=0 (não específico offshore/onshore), F2=1 (análise nacional com múltiplos fornecedores e dependência de importação >72% petróleo), F3=1 (risco crítico de segurança energética nacional explicitamente mencionado)
+ProcessoSCM_Alvo: Gestão de riscos da cadeia
+TipoRisco_SCRM: Múltiplos
+ObjetoCrítico: Resiliência da cadeia de suprimentos de petróleo e gás da China
+ProblemaNegócio_Contexto: 'A indústria de petróleo e gás da China enfrenta crescente dependência de importações (>72% petróleo bruto, ~45% gás natural) combinada com incertezas geopolíticas, eventos climáticos extremos e pressões de transição energética.
+
+  A avaliação e previsão da resiliência industrial tornou-se crítica para garantir a segurança energética nacional.
+
+  O estudo busca desenvolver um sistema de indicadores multidimensionais de resiliência e prever cenários futuros para subsidiar políticas de desenvolvimento sustentável do setor.'
+ClasseIA: Deep Learning
+ClasseIA_Confiança: Alta
+TarefaAnalítica: Previsão
+FamíliaModelo: Redes neurais feedforward
+TipoDado: Séries temporais
+Maturidade: Protótipo
+Maturidade_Confiança: Alta
+Intervenção_Descrição: 'Rede neural BP (backpropagation) com arquitetura 24×7×1 construída em MATLAB R2024b usando função newff. Os 24 indicadores de resiliência ponderados pelo método de entropia servem como inputs, e o score de resiliência como output. Taxa de aprendizado 0.01, threshold de erro 1×10⁻⁶, máximo 1000 iterações. Modelo usado para previsão de resiliência 2023-2032 sob quatro cenários.
+
+  '
+Dados_Descrição: 'Dados de indicadores da indústria de petróleo e gás da China de 2001-2022 obtidos do China Statistical Yearbook, China Energy Statistical Yearbook e relatórios anuais de desenvolvimento do setor. Dataset com 22 observações temporais e 24 variáveis indicadoras. Divisão: 70% treino, 30% teste. Valores ausentes imputados por interpolação linear.
+
+  '
+CategoriaMecanismo: Antecipação de risco
+Mecanismo_Fonte: Misto
+Mecanismo_Declarado: '"It can reflect the interactive relationship between the resilience level and the elements of the OGI system, and it is used to simulate and predict the development status of resilience in the OGI, providing an important basis for measuring changes in industry resilience."
+
+  '
+Mecanismo_Inferido: 'INFERIDO: A rede neural BP captura padrões não-lineares nas relações entre indicadores multidimensionais e resiliência agregada. INFERIDO: A simulação multi-cenário permite comparar trajetórias de desenvolvimento sob diferentes condições de política e mercado. INFERIDO: A ponderação por entropia reduz viés subjetivo na agregação de indicadores heterogêneos. INFERIDO: O modelo fornece antecipação quantificada de níveis de resiliência futuros para suporte à decisão estratégica.
+
+  '
+Mecanismo_Estruturado: Indicadores históricos ponderados → BP neural network com cenários parametrizados → Scores de resiliência previstos → Comparação de trajetórias para decisão estratégica
+ResultadoTipo: Misto
+Resultados_Quant: 'R² treino: 0.846 (baseline: NR); R² teste: 0.829 (baseline: NR); Erro médio absoluto: <10% exceto 1 amostra (baseline: NR); Cenário green-transition: +5.49% resiliência até 2032 (vs. baseline 2022)'
+Resultados_Qual: Modelo demonstrou boa capacidade de replicação comportamental e alta força preditiva; Cenário de transformação verde apresentou maior potencial de melhoria de resiliência; Inovação e recuperação emergem como drivers dominantes de resiliência
+NívelEvidência: Simulação com dados reais
+Limitações_Artigo: 'Autores reconhecem que valores de alguns indicadores foram derivados por interpolação devido a registros históricos incompletos, podendo introduzir erros de medição. Variações em padrões estatísticos entre fontes de dados podem afetar consistência do dataset. Previsões de longo prazo estão sujeitas a incerteza inerente pois desenvolvimentos econômicos, tecnológicos e políticos futuros não podem ser previstos com alta precisão.
+
+  '
+Observação: 'Estudo foca em resiliência industrial agregada nacional, não em operações específicas de supply chain. A aplicação de IA é para previsão macroeconômica setorial com foco em políticas públicas.
+
+  '
+Quotes:
+- QuoteID: Q001
+  TipoQuote: Mecanismo
+  Trecho: It can reflect the interactive relationship between the resilience level and the elements of the OGI system, and it is used to simulate and predict the development status of resilience in the OGI, providing an important basis for measuring changes in industry resilience.
+  Página: p.11
+- QuoteID: Q002
+  TipoQuote: Intervenção
+  Trecho: This paper uses MATLAB R2024b software and establishes a prediction model for the resilience of China's OGI from 2001 to 2022 based on the BP neural network model.
+  Página: p.11
+- QuoteID: Q003
+  TipoQuote: Contexto
+  Trecho: the domestic OGI's dependence on foreign supplies has continued to rise, with crude oil import reliance exceeding 72% and natural gas import reliance approaching 45%
+  Página: p.1
+- QuoteID: Q004
+  TipoQuote: Outcome
+  Trecho: The R2 values of the test set and training set are both greater than 0.8, indicating that the simulated values of the model are close to the actual values, the model is reasonably constructed, and it has good behavior replication capabilities.
+  Página: p.11
+- QuoteID: Q005
+  TipoQuote: Outcome
+  Trecho: Forecasts show that under the green-transition scenario, resilience will improve the most, increasing by 5.49% by 2032 and reaching the threshold for strong resilience earlier than under other scenarios.
+  Página: p.1
+- QuoteID: Q006
+  TipoQuote: Limitação
+  Trecho: owing to the incompleteness of historical records, certain indicator values were derived through interpolation, which may introduce potential measurement errors
+  Página: p.14
+- QuoteID: Q007
+  TipoQuote: Método
+  Trecho: A total of 24 indicators in the recovery, adaptability, responsiveness, and innovation subsystems and the weights calculated by the entropy method are used as input layer data, and the OGI resilience score is used as output layer data.
+  Página: p.4
+---

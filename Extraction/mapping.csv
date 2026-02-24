@@ -1,39 +1,39 @@
 ArtigoID,Arquivo,Processado,Status
-ART_001,A hybrid data envelopment analysis and artificial intelligence framework for sustainable supplier selection a case study in the petrochemical industry.pdf,Sim,Aprovado
-ART_002,A Novel Hybrid Model for Vendor Selection in a Supply Chain by Using Artificial Intelligence Techniques Case Study Petroleum Companies.pdf,Sim,Aprovado
-ART_003,Adaptive Neural Network for CO2 Reduction A Predictive Model Integrating MCMC and GAT Techniques for Oil Vessel Supply Chain.pdf,Sim,Aprovado
-ART_004,An Efficiency-Uncertainty-Based Consensus Optimization Framework With Dual-Perspective Clustering Analysis for Blockchain Adoption in Supply Chains.pdf,Sim,Aprovado
-ART_005,Applying Machine Learning to the Fuel Theft Problem on Pipelines.pdf,Sim,Aprovado
-ART_006,Assessing_Sustainability_Efforts_and_Greenwashing_in_Global_Oil_and_Gas_Supply_Chain-_Natural_Language_Processing_Approach.pdf,Sim,Aprovado
-ART_007,Best Practices for Building a Modern and Resilient Supply Chain Framework in the Oil and Gas Industry.pdf,Sim,Aprovado
-ART_008,Carbon intensity of global crude oil trading and market policy implications.pdf,Sim,Aprovado
-ART_009,China Offshore Intelligent Oilfield Production Monitoring System Design and Technical Path Forward for Implementation.pdf,Sim,Aprovado
-ART_010,Clustering with machine learning and using NDEA in development planning a case study in the petroch.pdf,Sim,Aprovado
-ART_011,Comprehensive Decision Framework Combining Price Prediction and Production-Planning Models for Strategic Operation of a Petrochemical Industry.pdf,Não,Falhou validação
-ART_012,Data-Driven Models for Forecasting Failure Modes in Oil and Gas Pipes.pdf,Sim,Aprovado
-ART_013,Data-Driven Optimization for Oilfield Operations.pdf,Não,Falhou validação
-ART_014,Data-driven PHM solution for health monitoring of mud motor power sections while drilling.pdf,Sim,Aprovado
-ART_015,Development of a decision support system for assessing the supply chain risk mitigation strategies an application in Indian petroleum supply chain.pdf,Não,Falhou validação
-ART_016,Digital Twin Applications in EPC Projects.pdf,Não,Falhou validação
-ART_017,Efficiency enhancement of energy supply chains using a machine learning-driven network evaluation framework for blockchain adoption.pdf,Não,Falhou validação
-ART_018,Energy Commodity Logistics Planning method based on Machine Learning method.pdf,Sim,Aprovado
-ART_019,Enhancing Supply Chain Efficiency through Predictive Analytics A Systematic Approach to Forecast Unit of Activity.pdf,Sim,Aprovado
-ART_020,Estimating Import Lead Times Using Business Intelligence and Machine Learning Within the CRISP-DM Framework A Case Study in Oil and Gas Services Industry.pdf,Sim,Aprovado
-ART_021,Failure Prediction Methodology for ESP and Operational Behavior.pdf,Sim,Aprovado
-ART_022,FlexDelivery – Integrated Logistics in the Offshore Sector.pdf,Não,Falhou validação
-ART_023,Implementing Cognitive Procurement and its Influence on Supply Chain During the Era of Digital Transformation in Oil and Gas Industry 4.0.pdf,Sim,Aprovado
-ART_024,Innovative Approach of Generative AI for Automating Technical Bid Evaluations in Oil Companies.pdf,Não,Falhou validação
-ART_025,Leveraging AI for Inventory Management and Accurate Forecast-An Industrial Field Study.pdf,Não,Falhou validação
-ART_026,Leveraging Large Language Models for Cost Management and Supply Chain Optimization.pdf,Sim,Aprovado
-ART_027,Machine Learning Algorithm Model for Improving Business Decisions Making in Upstream Oil & Gas.pdf,Não,Falhou validação
-ART_028,Machine Learning and Simulation Modeling Large Offshore and Production Plants to improve Engineering and Construction.pdf,Não,Falhou validação
-ART_029,Measuring Multidimensional Resilience of China’s Oil and Gas Industry and Forecasting Resilience Under Multiple Scenarios.pdf,Sim,Aprovado
-ART_030,Multi-Model Machine Learning Approaches for Fault and Anomaly Detection in Petroleum Product Distribution A Comparison.pdf,Sim,Aprovado
-ART_031,Oil and Gas Field Digital Twin Full Lifecycle Management Platform and Application Based on Meta Universe Technology.pdf,Sim,Aprovado
-ART_032,Proposed Risk Management Decision Support Methodology for Oil and Gas Construction Projects.pdf,Não,Falhou validação
-ART_033,Quantifying Tail Risk Spillovers in Chinese Petroleum Supply Chain Enterprises A Neural-Network-Inspired Multi-Layer Machine Learning Framework.pdf,Sim,Aprovado
-ART_034,Reference Synthetic Dataset for Drilling Inventory Optimization.pdf,Não,Falhou validação
-ART_035,Self-Healing Databases for Emergency Response Logistics in Remote and Infrastructure-Poor Settings.pdf,Sim,Aprovado
-ART_036,Streamlining Procurement Through Digital Transformation Enhancing Efficiency and Compliance.pdf,Sim,Aprovado
-ART_037,Supply Chain Network Optimization & Simulation Model Digital Twin.pdf,Sim,Aprovado
-ART_038,Systems of distributed artificial intelligence for analysis of oil product transportation processes evidence from Russia.pdf,Não,Falhou validação
+ART_001,A hybrid data envelopment analysis and artificial intelligence framework for sustainable supplier selection a case study in the petrochemical industry.pdf,Não,
+ART_002,A Novel Hybrid Model for Vendor Selection in a Supply Chain by Using Artificial Intelligence Techniques Case Study Petroleum Companies.pdf,Não,
+ART_003,Adaptive Neural Network for CO2 Reduction A Predictive Model Integrating MCMC and GAT Techniques for Oil Vessel Supply Chain.pdf,Não,
+ART_004,An Efficiency-Uncertainty-Based Consensus Optimization Framework With Dual-Perspective Clustering Analysis for Blockchain Adoption in Supply Chains.pdf,Não,
+ART_005,Applying Machine Learning to the Fuel Theft Problem on Pipelines.pdf,Não,
+ART_006,Assessing_Sustainability_Efforts_and_Greenwashing_in_Global_Oil_and_Gas_Supply_Chain-_Natural_Language_Processing_Approach.pdf,Não,
+ART_007,Best Practices for Building a Modern and Resilient Supply Chain Framework in the Oil and Gas Industry.pdf,Não,
+ART_008,Carbon intensity of global crude oil trading and market policy implications.pdf,Não,
+ART_009,China Offshore Intelligent Oilfield Production Monitoring System Design and Technical Path Forward for Implementation.pdf,Não,
+ART_010,Clustering with machine learning and using NDEA in development planning a case study in the petroch.pdf,Não,
+ART_011,Comprehensive Decision Framework Combining Price Prediction and Production-Planning Models for Strategic Operation of a Petrochemical Industry.pdf,Não,
+ART_012,Data-Driven Models for Forecasting Failure Modes in Oil and Gas Pipes.pdf,Não,
+ART_013,Data-Driven Optimization for Oilfield Operations.pdf,Não,
+ART_014,Data-driven PHM solution for health monitoring of mud motor power sections while drilling.pdf,Não,
+ART_015,Development of a decision support system for assessing the supply chain risk mitigation strategies an application in Indian petroleum supply chain.pdf,Não,
+ART_016,Digital Twin Applications in EPC Projects.pdf,Não,
+ART_017,Efficiency enhancement of energy supply chains using a machine learning-driven network evaluation framework for blockchain adoption.pdf,Não,
+ART_018,Energy Commodity Logistics Planning method based on Machine Learning method.pdf,Não,
+ART_019,Enhancing Supply Chain Efficiency through Predictive Analytics A Systematic Approach to Forecast Unit of Activity.pdf,Não,
+ART_020,Estimating Import Lead Times Using Business Intelligence and Machine Learning Within the CRISP-DM Framework A Case Study in Oil and Gas Services Industry.pdf,Não,
+ART_021,Failure Prediction Methodology for ESP and Operational Behavior.pdf,Não,
+ART_022,FlexDelivery – Integrated Logistics in the Offshore Sector.pdf,Não,
+ART_023,Implementing Cognitive Procurement and its Influence on Supply Chain During the Era of Digital Transformation in Oil and Gas Industry 4.0.pdf,Não,
+ART_024,Innovative Approach of Generative AI for Automating Technical Bid Evaluations in Oil Companies.pdf,Não,
+ART_025,Leveraging AI for Inventory Management and Accurate Forecast-An Industrial Field Study.pdf,Não,
+ART_026,Leveraging Large Language Models for Cost Management and Supply Chain Optimization.pdf,Não,
+ART_027,Machine Learning Algorithm Model for Improving Business Decisions Making in Upstream Oil & Gas.pdf,Não,
+ART_028,Machine Learning and Simulation Modeling Large Offshore and Production Plants to improve Engineering and Construction.pdf,Não,
+ART_029,Measuring Multidimensional Resilience of China’s Oil and Gas Industry and Forecasting Resilience Under Multiple Scenarios.pdf,Não,
+ART_030,Multi-Model Machine Learning Approaches for Fault and Anomaly Detection in Petroleum Product Distribution A Comparison.pdf,Não,
+ART_031,Oil and Gas Field Digital Twin Full Lifecycle Management Platform and Application Based on Meta Universe Technology.pdf,Não,
+ART_032,Proposed Risk Management Decision Support Methodology for Oil and Gas Construction Projects.pdf,Não,
+ART_033,Quantifying Tail Risk Spillovers in Chinese Petroleum Supply Chain Enterprises A Neural-Network-Inspired Multi-Layer Machine Learning Framework.pdf,Não,
+ART_034,Reference Synthetic Dataset for Drilling Inventory Optimization.pdf,Não,
+ART_035,Self-Healing Databases for Emergency Response Logistics in Remote and Infrastructure-Poor Settings.pdf,Não,
+ART_036,Streamlining Procurement Through Digital Transformation Enhancing Efficiency and Compliance.pdf,Não,
+ART_037,Supply Chain Network Optimization & Simulation Model Digital Twin.pdf,Não,
+ART_038,Systems of distributed artificial intelligence for analysis of oil product transportation processes evidence from Russia.pdf,Não,

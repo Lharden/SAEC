@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-SAEC-O&G CLI - Interface de linha de comando unificada.
+SAEC CLI - Interface de linha de comando unificada.
 
 Comandos disponíveis:
     saec status          - Mostra status do sistema
@@ -38,7 +38,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 
 app = typer.Typer(
     name="saec",
-    help="SAEC-O&G - Sistema Autônomo de Extração CIMO",
+    help="SAEC - Sistema Autônomo de Extração CIMO",
     add_completion=True,
     rich_markup_mode="rich",
 )
@@ -55,7 +55,7 @@ def status():
     """Mostra status do sistema e configuração."""
     from src.config import paths, llm_config, local_config
 
-    console.print(Panel.fit("[bold blue]SAEC-O&G Status[/bold blue]"))
+    console.print(Panel.fit("[bold blue]SAEC Status[/bold blue]"))
 
     # Paths
     table = Table(title="Caminhos", show_header=True)
@@ -76,8 +76,8 @@ def status():
     table2.add_column("Provider", style="cyan")
     table2.add_column("Status", style="white")
 
-    table2.add_row("Anthropic", keys["anthropic"])
-    table2.add_row("OpenAI", keys["openai"])
+    table2.add_row("Cloud provider 1", keys["anthropic"])
+    table2.add_row("Cloud provider 2", keys["openai"])
     table2.add_row("Ollama", keys["ollama"])
 
     console.print(table2)
@@ -458,7 +458,7 @@ def run(
     skip_consolidate: bool = typer.Option(False, "--skip-consolidate", help="Pular consolidação"),
 ):
     """Executa pipeline completo (ingest -> extract -> validate -> consolidate)."""
-    console.print(Panel.fit("[bold blue]Pipeline Completo SAEC-O&G[/bold blue]"))
+    console.print(Panel.fit("[bold blue]Pipeline Completo SAEC[/bold blue]"))
 
     steps = []
     if not skip_ingest:
@@ -580,3 +580,4 @@ def rag_search(
 
 if __name__ == "__main__":
     app()
+

@@ -1,4 +1,4 @@
-# SAEC-O&G - Sistema Autônomo de Extração CIMO
+# SAEC - Sistema Autônomo de Extração CIMO
 
 Pipeline Python para extração de dados CIMO (Contexto, Intervenção, Mecanismo, Outcome) de artigos científicos sobre IA + SCM/SCRM no setor de Óleo & Gás.
 
@@ -129,7 +129,7 @@ Task(subagent_type="Explore", prompt="Find all LLM API calls and their error han
 Task(subagent_type="Plan", prompt="Plan implementation of parallel article processing")
 ```
 
-### Subagents Customizados SAEC-O&G
+### Subagents Customizados SAEC
 
 Definidos em `.claude/agents/`:
 
@@ -243,3 +243,4 @@ Exemplo:
 📋 **Motivo**: Detectei relato de erro no código
 ⏳ **Ação**: Vou investigar metodicamente antes de propor correção
 ```
+

@@ -9,8 +9,8 @@ import re
 # Tipos Literais (Enums do Codebook)
 # ============================================================
 
-SegmentoOG = Literal[
-    "Upstream (E&P)", "Midstream", "Downstream", "Cross-segment", "NR"
+SegmentoDominio = Literal[
+    "Operacao Primaria", "Operacao de Movimentacao", "Operacao de Processamento", "Transversal", "NR"
 ]
 
 Ambiente = Literal["Offshore", "Onshore", "Híbrido", "NR"]
@@ -103,8 +103,8 @@ class ExtractionSchema(BaseModel):
     DOI: Optional[str] = None
 
     # -------------------- CONTEXTO (C) --------------------
-    SegmentoOG: Any = Field(..., alias="SegmentoO&G")
-    SegmentoOG_Confiança: Confianca = Field(..., alias="SegmentoO&G_Confiança")
+    SegmentoDominio: Any = Field(..., alias="SegmentoSetorial")
+    SegmentoDominio_Confiança: Confianca = Field(..., alias="SegmentoSetorial_Confiança")
     Ambiente: Ambiente
     Complexidade: Complexidade
     Complexidade_Justificativa: str
@@ -317,8 +317,8 @@ if __name__ == "__main__":
         "Ano": 2024,
         "TipoPublicação": "Journal",
         "Referência_Curta": "Silva et al., 2024",
-        "SegmentoO&G": "Upstream (E&P)",
-        "SegmentoO&G_Confiança": "Alta",
+        "SegmentoSetorial": "Operacao Primaria",
+        "SegmentoSetorial_Confiança": "Alta",
         "Ambiente": "Offshore",
         "Complexidade": "Alta",
         "Complexidade_Justificativa": "F1=1 (offshore), F2=1 (>5 fornecedores), F3=1 (risco crítico)",
@@ -360,3 +360,5 @@ if __name__ == "__main__":
             print(f"  - {e}")
     else:
         print("Todos os campos validados com sucesso!")
+
+

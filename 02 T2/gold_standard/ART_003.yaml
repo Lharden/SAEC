@@ -1,0 +1,90 @@
+---
+ArtigoID: "ART_003"
+Ano: 2025
+TipoPublicação: "Conference"
+Referência_Curta: "Chirici et al., 2025"
+DOI: "https://doi.org/10.1007/978-981-96-2625-0_41"
+
+SegmentoO&G: "Midstream"
+SegmentoO&G_Confiança: "Média"
+Ambiente: "Onshore"
+Complexidade: "Média"
+Complexidade_Justificativa: "F1=0 (IA aplicada ao planejamento/produção do WBS em ambiente fabril), F2=1 (dataset com 15,000 empresas), F3=1 (pressão crítica por emissões e conformidade regulatória)."
+ProcessoSCM_Alvo: "Planejamento de produção; Seleção/qualificação de fornecedores"
+TipoRisco_SCRM: "Risco ambiental/regulatório"
+ObjetoCrítico: "Configuração de WBS e decisões de produção para navios de petróleo"
+
+ProblemaNegócio_Contexto: |
+  O setor de produção de navios de petróleo precisa reduzir emissões sem perder eficiência operacional.
+  O artigo destaca pressão regulatória crescente (como IMO 2020 e ETS) e necessidade de decisões mais inteligentes na cadeia.
+  O problema envolve otimizar Work Breakdown Structure com múltiplos objetivos simultâneos.
+  Métodos tradicionais têm dificuldade de tratar interdependências do grafo produtivo e incertezas operacionais.
+
+ClasseIA: "Híbrido"
+ClasseIA_Confiança: "Alta"
+TarefaAnalítica: "Otimização"
+FamíliaModelo: "Transformers/Attention; Redes Bayesianas"
+TipoDado: "Tabular/ERP"
+Maturidade: "Protótipo"
+Maturidade_Confiança: "Alta"
+
+Intervenção_Descrição: |
+  O estudo propõe um algoritmo híbrido que integra Graph Attention Networks (GAT) com Monte Carlo Markov Chain (MCMC).
+  O GAT prioriza nós/componentes mais críticos no grafo do WBS e o MCMC simula cenários com incerteza operacional.
+  A combinação ajusta iterativamente pesos de atenção para otimizar emissões, lead time e custos.
+
+Dados_Descrição: |
+  Foi gerado um dataset sintético com 15,000 empresas envolvidas na produção de navios de petróleo na Europa.
+  Cada empresa possui identificador, atividades e métricas de CO2, lead time, cost savings e financial health.
+  A estrutura do problema foi modelada como DAG para representar dependências entre componentes/processos do WBS.
+
+CategoriaMecanismo: "Otimização de trade-offs"
+Mecanismo_Fonte: "Misto"
+Mecanismo_Declarado: |
+  The GAT assigns dynamic attention weights to these nodes, prioritizing those with the most significant impact on the overall supply chain.
+  The MCMC method is used to simulate various scenarios within the supply chain, accounting for uncertainties such as fluctuating material availability or unexpected delays.
+  The combined GAT-MCMC algorithm iteratively refines the WBS configurations by adjusting the attention weights in response to the MCMC outputs.
+Mecanismo_Inferido: "INFERIDO: A representação em DAG torna explícitas as dependências e permite focar caminhos críticos do WBS. INFERIDO: O mecanismo de atenção do GAT prioriza componentes com maior influência simultânea em emissões, prazo e custo. INFERIDO: O MCMC testa robustez sob cenários incertos e sustenta decisões de trade-off mais estáveis."
+Mecanismo_Estruturado: "WBS em DAG + métricas operacionais → GAT (atenção dinâmica) + MCMC (simulação probabilística) → Priorização de componentes e cenários → Otimização conjunta de CO2, lead time e custos"
+
+ResultadoTipo: "Misto"
+Resultados_Quant: "Redução de CO2: 22% (vs. baseline: 500 para 390 metric tons por vessel); Redução de lead time: 16% (vs. baseline: 24 para 20.2 months); Cost savings: 15% (vs. baseline: NR); Financial health score: 7.85 (vs. baseline: 7.2)"
+Resultados_Qual: "Os resultados indicam capacidade robusta de otimização multidimensional da cadeia, conciliando objetivos ambientais e financeiros."
+NívelEvidência: "Simulação com dados sintéticos"
+Limitações_Artigo: |
+  This combination has shown potential in supply chain optimization but requires rigorous testing to confirm its effectiveness in real-world applications.
+
+Quotes:
+  - QuoteID: Q001
+    TipoQuote: "Contexto"
+    Trecho: "The crude oil industry, particularly in the production of vessels, faces signiﬁcant pres- sures to balance environmental sustainability with operational efﬁciency."
+    Página: "p.2"
+  - QuoteID: Q002
+    TipoQuote: "Intervenção"
+    Trecho: "This paper proposes an innovative machine learning algorithm that integrates Graph Attention Networks (GAT) with Monte Carlo Markov Chain (MCMC) techniques to optimize the Work Breakdown Structure (WBS) in crude oil vessel production."
+    Página: "p.2"
+  - QuoteID: Q003
+    TipoQuote: "Método"
+    Trecho: "A synthetic dataset of 15,000 companies involved in crude oil vessel production in Europe was generated for this study."
+    Página: "p.5"
+  - QuoteID: Q004
+    TipoQuote: "Mecanismo"
+    Trecho: "The GAT assigns dynamic attention weights to these nodes, prioritizing those with the most signiﬁcant impact on the overall supply chain."
+    Página: "p.6"
+  - QuoteID: Q005
+    TipoQuote: "Mecanismo"
+    Trecho: "The MCMC method is used to simulate various scenarios within the supply chain, accounting for uncertainties such as ﬂuctuating material availability or unexpected delays."
+    Página: "p.6"
+  - QuoteID: Q006
+    TipoQuote: "Outcome"
+    Trecho: "The model achieved a 22% reduction in CO2 emissions, lowering emissions from 500 metric tons to 390 metric tons per vessel, consistent with recent studies employing advanced optimization techniques [9]."
+    Página: "p.7"
+  - QuoteID: Q007
+    TipoQuote: "Outcome"
+    Trecho: "The model also decreased lead times by 16%, bringing aver- age production times from 24 months down to 20.2 months, corroborating results seen in similar GAT-based applications."
+    Página: "p.7"
+  - QuoteID: Q008
+    TipoQuote: "Limitação"
+    Trecho: "This combination has shown potential in supply chain optimization but requires rigorous testing to conﬁrm its effectiveness in real-world applications."
+    Página: "p.5"
+---

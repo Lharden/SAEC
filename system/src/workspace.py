@@ -70,7 +70,14 @@ def create_project(
     )
 
     manifest_path.write_text(
-        json.dumps(summary.to_dict(), indent=2, ensure_ascii=False),
+        json.dumps(
+            {
+                **summary.to_dict(),
+                "profile_required": True,
+            },
+            indent=2,
+            ensure_ascii=False,
+        ),
         encoding="utf-8",
     )
     return summary

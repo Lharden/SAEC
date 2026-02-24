@@ -1,0 +1,52 @@
+---
+ArtigoID: ART_034
+Ano: 2024
+TipoPublicação: Conference
+Referência_Curta: Abdelaziem et al., 2024
+DOI: https://doi.org/10.2118/220950-MS
+SegmentoO&G: Upstream (E&P)
+SegmentoO&G_Confiança: Alta
+Ambiente: Onshore
+Complexidade: Média
+Complexidade_Justificativa: F1=0 (onshore - foco em empresa hipotética terrestre), F2=1 (~500 SKUs únicos mencionados, sistema de inventário complexo com múltiplos fornecedores), F3=1 (risco de estoque mencionado - obsolescência, capital imobilizado)
+ProcessoSCM_Alvo: Gestão de estoques
+TipoRisco_SCRM: Risco de estoque
+ObjetoCrítico: Inventário de perfuração (drilling inventory) - SKUs de tubulares, equipamentos de completação, equipamentos de elevação artificial e árvores de natal
+ProblemaNegócio_Contexto: 'O inventário de perfuração representa um ativo caro em empresas integradas de petróleo, com valores médios de 5 milhões USD e até 50% do capital total investido.
+
+  A pesquisa em otimização de inventário é limitada por restrições de compartilhamento de dados devido a preocupações com privacidade, vantagem competitiva e propriedade intelectual.
+
+  O artigo aborda a criação de um dataset sintético de referência para sistemas de inventário de perfuração, permitindo que pesquisadores desenvolvam abordagens inovadoras de gestão de inventário que poderiam identificar problemas financeiros e alcançar economias substanciais.'
+ClasseIA: Híbrido
+ClasseIA_Confiança: Média
+TarefaAnalítica: Clustering
+FamíliaModelo: Clustering;Análise de séries temporais
+TipoDado: Séries temporais
+Maturidade: Conceito
+Maturidade_Confiança: Alta
+Intervenção_Descrição: 'O artigo apresenta uma metodologia de geração de dataset sintético baseada em processo (process-driven) combinada com conhecimento de domínio, e demonstra o uso de técnicas analíticas incluindo clustering para identificar padrões em transações de inventário. A análise inclui decomposição de séries temporais (tendência, sazonalidade, resíduos), análise de distribuição de transações por SKU, e identificação de itens obsoletos seguindo a regra 80/20 (Pareto). As técnicas são aplicadas para elucidar desafios latentes, maximizar lucros e alcançar reduções de custos.
+
+  '
+Dados_Descrição: 'Dataset sintético gerado com: histórico de 20+ anos de transações, valor médio de ativos de 5 milhões USD, aproximadamente 500 SKUs únicos, mais de 15.000 transações (recebimentos, emissões, devoluções, vendas, empréstimos, inspeções, descarte). O dataset cobre especificações de SKUs multidisciplinares incluindo tubulares, acessórios de perfuração, equipamentos de completação e materiais de cabeça de poço. Dados correlacionados com preços de petróleo ajustados pela inflação e atividades de perfuração de empresa hipotética de médio porte (média de 10 poços/ano).
+
+  '
+CategoriaMecanismo: Integração de dados dispersos
+Mecanismo_Fonte: Misto
+Mecanismo_Declarado: '"analytics and clustering techniques are promising in elucidating latent challenges, maximizing profits, and achieving cost savings up to 10% of the inventory''s total value" (p.2). O papel da análise é "identify pain points" e revelar padrões ocultos em transações de estoque.
+
+  '
+Mecanismo_Inferido: 'INFERIDO: A geração de dataset sintético permite superar barreiras de privacidade que impedem pesquisa em otimização de inventário. INFERIDO: O clustering identifica padrões em transações de SKUs que revelam obsolescência e ineficiências de demanda. INFERIDO: A análise de séries temporais com decomposição permite separar tendências de longo prazo de variações sazonais, melhorando a compreensão do comportamento do estoque. INFERIDO: A regra 80/20 aplicada a itens obsoletos prioriza SKUs para ação corretiva (revenda, empréstimo ou descarte).
+
+  '
+Mecanismo_Estruturado: Dados sintéticos de transações de inventário → Clustering + Análise de séries temporais + Pareto → Identificação de padrões e obsolescência → Redução de custos de estoque (até 10%)
+ResultadoTipo: Misto
+Resultados_Quant: 'Potencial de economia: até 10% do valor total do inventário (baseline: NR); Regra 80/20: 20% dos itens obsoletos representam >80% do valor (baseline: NR)'
+Resultados_Qual: Dataset sintético validado que replica transações reais de inventário de perfuração; Identificação de padrões de sazonalidade em transações; Detecção de SKUs obsoletos e tendências de demanda; Framework replicável e adaptável disponibilizado como open-source
+NívelEvidência: Simulação com dados sintéticos
+Limitações_Artigo: 'Os autores declaram: (1) SKUs e descrições limitados a especificações comuns da região MENA, não cobrindo casos excepcionais como HPHT, multilaterais e completações inteligentes; (2) Trabalho focado em perfuração e sidetrack, não cobrindo workover e intervenção; (3) Dataset enfatiza itens principais, excluindo itens raramente usados; (4) Analytics foram qualitativos, não quantitativos - objetivo primário foi produzir dataset sintético; (5) Subjetividade potencial apesar de esforços para minimizar viés.
+
+  '
+Observação: 'O artigo foca primariamente na criação de um dataset sintético de referência para permitir futuras pesquisas em analytics e ML para otimização de inventário. A aplicação de técnicas analíticas é demonstrada através de clustering e análise de séries temporais. A intervenção visa servir como benchmark para futuras pesquisas na área.
+
+  '
+---

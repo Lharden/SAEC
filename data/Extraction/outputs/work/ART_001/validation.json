@@ -1,0 +1,23 @@
+{
+  "is_valid": true,
+  "errors": [],
+  "warnings": [
+    "[R10] Verifique: Ambiente reflete onde a IA ATUA, n\u00e3o onde o ativo opera",
+    "[NARRATIVA] ProblemaNeg\u00f3cio_Contexto curto: 1 linhas (m\u00edn. 3)"
+  ],
+  "rules_passed": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12
+  ],
+  "rules_failed": []
+}

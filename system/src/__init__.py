@@ -1,3 +1,6 @@
-"""SAEC-O&G - Sistema Autônomo de Extração CIMO para Oil & Gas"""
+"""SAEC - Sistema autonomo de extracao CIMO para revisoes sistematicas."""
 
-__version__ = "1.0.0"
+from .version import __build_date__, __version__
+
+__all__ = ["__version__", "__build_date__"]
+

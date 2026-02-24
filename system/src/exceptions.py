@@ -1,4 +1,4 @@
-"""Custom exceptions for SAEC-O&G."""
+"""Custom exceptions for SAEC."""
 
 from __future__ import annotations
 
@@ -34,3 +34,4 @@ class LLMError(ExtractError):
         super().__init__(message)
         self.provider = provider
         self.retriable = retriable
+

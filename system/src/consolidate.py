@@ -1,5 +1,6 @@
 """Consolidação de YAMLs em Excel."""
 
+import importlib
 import logging
 from datetime import datetime
 from pathlib import Path
@@ -7,8 +8,6 @@ from typing import Any, Optional, Set, cast
 
 import pandas as pd
 import yaml
-
-import importlib
 
 
 def _load_validators():
@@ -164,6 +163,130 @@ def _resolve_runtime_profile_fields() -> list[str]:
     return [field.field_id for field in spec.fields]
 
 
+def _discover_yaml_files(yamls_dir: Path) -> list[Path]:
+    yaml_files = sorted(yamls_dir.glob("*.yaml"))
+    if not yaml_files:
+        print(f"[WARN] Nenhum YAML encontrado em {yamls_dir}")
+        return []
+    print(f"[INFO] Processando {len(yaml_files)} arquivos YAML...")
+    return yaml_files
+
+
+def _resolve_qa_filter_ids(qa_report_path: Path | None) -> Set[str] | None:
+    if qa_report_path is None:
+        return None
+    if not qa_report_path.exists():
+        raise FileNotFoundError(f"QA report not found: {qa_report_path}")
+    return _load_qa_ok_ids(qa_report_path)
+
+
+def _collect_rows_and_validation(
+    yaml_files: list[Path],
+    *,
+    only_valid: bool,
+    require_qa_ok: bool,
+    qa_ok_ids: Set[str] | None,
+) -> tuple[list[dict[str, Any]], list[dict[str, str]], list[dict[str, Any]]]:
+    rows: list[dict[str, Any]] = []
+    errors: list[dict[str, str]] = []
+    validation_results: list[dict[str, Any]] = []
+
+    for yaml_path in yaml_files:
+        artigo_id = yaml_path.stem
+        try:
+            data = load_yaml(yaml_path)
+            validation = _validate_yaml_file(yaml_path)
+            validation_results.append(
+                {
+                    "ArtigoID": artigo_id,
+                    "Válido": "Sim" if validation.is_valid else "Não",
+                    "Erros": len(validation.errors),
+                    "Avisos": len(validation.warnings),
+                    "Detalhes": "; ".join(validation.errors[:3]),
+                }
+            )
+
+            if only_valid and not validation.is_valid:
+                print(f"  [SKIP] {artigo_id}: {len(validation.errors)} erros de validação")
+                continue
+
+            if require_qa_ok:
+                if qa_ok_ids is None:
+                    raise ValueError("require_qa_ok=True exige qa_report_path")
+                if artigo_id not in qa_ok_ids:
+                    print(f"  [SKIP] {artigo_id}: QA != OK")
+                    continue
+
+            flat = flatten_extraction(data)
+            flat["_source_file"] = yaml_path.name
+            flat["_valid"] = validation.is_valid
+            rows.append(flat)
+        except (yaml.YAMLError, ValueError, KeyError, TypeError) as e:
+            errors.append({"ArtigoID": artigo_id, "Erro": str(e)[:200]})
+            print(f"  [ERRO] {artigo_id}: {e}")
+
+    return rows, errors, validation_results
+
+
+def _collect_quotes_rows(yaml_files: list[Path]) -> list[dict[str, Any]]:
+    quotes_rows: list[dict[str, Any]] = []
+    for yaml_path in yaml_files:
+        try:
+            data = load_yaml(yaml_path)
+            for quote in data.get("Quotes", []):
+                quotes_rows.append(
+                    {
+                        "ArtigoID": data.get("ArtigoID", yaml_path.stem),
+                        "QuoteID": quote.get("QuoteID", ""),
+                        "TipoQuote": quote.get("TipoQuote", ""),
+                        "Trecho": quote.get("Trecho", ""),
+                        "Página": quote.get("Página", ""),
+                    }
+                )
+        except (yaml.YAMLError, ValueError, KeyError, TypeError) as e:
+            logger.warning("Failed to load quotes from %s: %s", yaml_path.name, e)
+    return quotes_rows
+
+
+def _build_metadata(total_files: int, consolidated_rows: int, error_rows: int) -> pd.DataFrame:
+    metadata_rows = [
+        {"Campo": "Data Consolidação", "Valor": datetime.now().strftime("%Y-%m-%d %H:%M:%S")},
+        {"Campo": "Total Arquivos", "Valor": total_files},
+        {"Campo": "Artigos Consolidados", "Valor": consolidated_rows},
+        {"Campo": "Artigos com Erro", "Valor": error_rows},
+        {"Campo": "Versão Guia", "Valor": "v3.3"},
+        {"Campo": "Sistema", "Valor": "SAEC v1.0"},
+    ]
+    return pd.DataFrame(metadata_rows)
+
+
+def _write_excel_outputs(
+    output_excel: Path,
+    *,
+    exported_rows: pd.DataFrame,
+    quotes_rows: list[dict[str, Any]],
+    validation_results: list[dict[str, Any]],
+    metadata_df: pd.DataFrame,
+) -> None:
+    output_excel.parent.mkdir(parents=True, exist_ok=True)
+    with pd.ExcelWriter(output_excel, engine="openpyxl") as writer:
+        exported_rows.to_excel(writer, sheet_name="Extrações", index=False)
+        if quotes_rows:
+            pd.DataFrame(quotes_rows).to_excel(writer, sheet_name="Quotes", index=False)
+        if validation_results:
+            pd.DataFrame(validation_results).to_excel(
+                writer, sheet_name="Validação", index=False
+            )
+        metadata_df.to_excel(writer, sheet_name="Metadata", index=False)
+
+
+def _write_audit_csv(output_audit: Path | None, validation_results: list[dict[str, Any]]) -> None:
+    if output_audit is None:
+        return
+    pd.DataFrame(validation_results).to_csv(output_audit, index=False, encoding="utf-8")
+    print(f"[OK] Auditoria: {output_audit}")
+
+
 def consolidate_yamls(
     yamls_dir: Path,
     output_excel: Path,
@@ -184,144 +307,44 @@ def consolidate_yamls(
     Returns:
         DataFrame consolidado
     """
-    rows = []
-    errors = []
-    validation_results = []
-
-    yaml_files = sorted(yamls_dir.glob("*.yaml"))
-
+    yaml_files = _discover_yaml_files(yamls_dir)
     if not yaml_files:
-        print(f"[WARN] Nenhum YAML encontrado em {yamls_dir}")
         return pd.DataFrame()
 
-    print(f"[INFO] Processando {len(yaml_files)} arquivos YAML...")
+    qa_ok_ids = _resolve_qa_filter_ids(qa_report_path)
+    rows, errors, validation_results = _collect_rows_and_validation(
+        yaml_files,
+        only_valid=only_valid,
+        require_qa_ok=require_qa_ok,
+        qa_ok_ids=qa_ok_ids,
+    )
 
-    qa_ok_ids: Optional[Set[str]] = None
-    if qa_report_path:
-        if not qa_report_path.exists():
-            raise FileNotFoundError(f"QA report not found: {qa_report_path}")
-        qa_ok_ids = _load_qa_ok_ids(qa_report_path)
-
-    for yaml_path in yaml_files:
-        artigo_id = yaml_path.stem
-
-        try:
-            # Carregar YAML
-            data = load_yaml(yaml_path)
-
-            # Validar
-            validation = _validate_yaml_file(yaml_path)
-            validation_results.append({
-                "ArtigoID": artigo_id,
-                "Válido": "Sim" if validation.is_valid else "Não",
-                "Erros": len(validation.errors),
-                "Avisos": len(validation.warnings),
-                "Detalhes": "; ".join(validation.errors[:3])  # Primeiros 3 erros
-            })
-
-            # Se only_valid e não é válido, pular
-            if only_valid and not validation.is_valid:
-                print(f"  [SKIP] {artigo_id}: {len(validation.errors)} erros de validação")
-                continue
-
-            # Se require_qa_ok e não está OK no QA, pular
-            if require_qa_ok:
-                if qa_ok_ids is None:
-                    raise ValueError("require_qa_ok=True exige qa_report_path")
-                if artigo_id not in qa_ok_ids:
-                    print(f"  [SKIP] {artigo_id}: QA != OK")
-                    continue
-
-            # Achatar para linha
-            flat = flatten_extraction(data)
-            flat["_source_file"] = yaml_path.name
-            flat["_valid"] = validation.is_valid
-            rows.append(flat)
-
-        except (yaml.YAMLError, ValueError, KeyError, TypeError) as e:
-            errors.append({
-                "ArtigoID": artigo_id,
-                "Erro": str(e)[:200]
-            })
-            print(f"  [ERRO] {artigo_id}: {e}")
-
-    # Criar DataFrame principal
     df = pd.DataFrame(rows)
-
     if df.empty:
         print("[WARN] Nenhum dado para consolidar")
         return df
 
-    # Ordenar por ArtigoID
     if "ArtigoID" in df.columns:
         df = df.sort_values("ArtigoID")
 
-    # Remover colunas internas
     df_export = df.drop(columns=["_source_file", "_valid"], errors="ignore")
-
-    # Salvar Excel
-    output_excel.parent.mkdir(parents=True, exist_ok=True)
-
-    with pd.ExcelWriter(output_excel, engine="openpyxl") as writer:
-        # Aba principal: Extrações
-        df_export.to_excel(writer, sheet_name="Extrações", index=False)
-
-        # Aba: Quotes expandidas
-        quotes_rows = []
-        for yaml_path in yaml_files:
-            try:
-                data = load_yaml(yaml_path)
-                for q in data.get("Quotes", []):
-                    quotes_rows.append({
-                        "ArtigoID": data.get("ArtigoID", yaml_path.stem),
-                        "QuoteID": q.get("QuoteID", ""),
-                        "TipoQuote": q.get("TipoQuote", ""),
-                        "Trecho": q.get("Trecho", ""),
-                        "Página": q.get("Página", "")
-                    })
-            except (yaml.YAMLError, ValueError, KeyError, TypeError) as e:
-                logger.warning(f"Failed to load quotes from {yaml_path.name}: {e}")
-
-        if quotes_rows:
-            df_quotes = pd.DataFrame(quotes_rows)
-            df_quotes.to_excel(writer, sheet_name="Quotes", index=False)
-
-        # Aba: Validação
-        if validation_results:
-            df_validation = pd.DataFrame(validation_results)
-            df_validation.to_excel(writer, sheet_name="Validação", index=False)
-
-        # Aba: Metadata
-        meta_df = pd.DataFrame([{
-            "Campo": "Data Consolidação",
-            "Valor": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        }, {
-            "Campo": "Total Arquivos",
-            "Valor": len(yaml_files)
-        }, {
-            "Campo": "Artigos Consolidados",
-            "Valor": len(df)
-        }, {
-            "Campo": "Artigos com Erro",
-            "Valor": len(errors)
-        }, {
-            "Campo": "Versão Guia",
-            "Valor": "v3.3"
-        }, {
-            "Campo": "Sistema",
-            "Valor": "SAEC v1.0"
-        }])
-        meta_df.to_excel(writer, sheet_name="Metadata", index=False)
+    quotes_rows = _collect_quotes_rows(yaml_files)
+    metadata_df = _build_metadata(
+        total_files=len(yaml_files),
+        consolidated_rows=len(df),
+        error_rows=len(errors),
+    )
+    _write_excel_outputs(
+        output_excel,
+        exported_rows=df_export,
+        quotes_rows=quotes_rows,
+        validation_results=validation_results,
+        metadata_df=metadata_df,
+    )
 
     print(f"[OK] Excel gerado: {output_excel}")
     print(f"     {len(df)} artigos consolidados")
-
-    # Salvar auditoria se solicitado
-    if output_audit:
-        audit_df = pd.DataFrame(validation_results)
-        audit_df.to_csv(output_audit, index=False, encoding="utf-8")
-        print(f"[OK] Auditoria: {output_audit}")
-
+    _write_audit_csv(output_audit, validation_results)
     return df
 
 

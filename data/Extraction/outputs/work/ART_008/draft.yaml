@@ -1,0 +1,85 @@
+---
+ArtigoID: ART_008
+Ano: 2023
+TipoPublicação: Journal
+Referência_Curta: Dixit et al., 2023
+DOI: https://doi.org/10.1038/s41467-023-41701-z
+SegmentoO&G: Cross-segment
+SegmentoO&G_Confiança: Alta
+Ambiente: Híbrido
+Complexidade: Alta
+Complexidade_Justificativa: F1=1 (offshore e onshore incluídos), F2=1 (centenas de campos, terminais, refinarias globalmente), F3=1 (risco ambiental/regulatório crítico - emissões de carbono e políticas climáticas)
+ProcessoSCM_Alvo: Logística/transporte
+TipoRisco_SCRM: Risco ambiental/regulatório
+ObjetoCrítico: Rotas de transporte de petróleo bruto (pipelines e shipping) e intensidade de carbono associada
+ProblemaNegócio_Contexto: 'A cadeia de suprimentos de petróleo bruto é extremamente complexa, envolvendo centenas de blends transportados por milhares de milhas de pipelines e milhões de milhas de rotas marítimas.
+
+  Regulamentações como LCFS, Fuel Quality Directive e CORSIA buscam usar diferenciação por intensidade de carbono como ferramenta política, mas são prejudicadas por lacunas de dados e rastreabilidade inadequada da cadeia de suprimentos.
+
+  Estudos existentes não traduzem estimativas de emissões a nível de campos para blends comercializáveis, limitando políticas que incentivem demanda por petróleo de baixo carbono.'
+ClasseIA: Híbrido
+ClasseIA_Confiança: Alta
+TarefaAnalítica: Otimização
+FamíliaModelo: Metaheurísticas; Clustering; Programação matemática
+TipoDado: Multimodal
+Maturidade: Protótipo
+Maturidade_Confiança: Média
+Intervenção_Descrição: 'Desenvolvimento de algoritmo de otimização multi-objetivo para estimar formação de blends de petróleo (blend estimation algorithm), combinando gradiente descendente com autodifferentiation, inicialização via aprendizado não supervisionado (k-means clustering) e algoritmo genético. O sistema integra rede de supply chain (campos, terminais, refinarias como nós; pipelines e rotas de shipping como arestas) com modelos de emissões bottom-up (OPGEE, COPTEM, estimador de shipping baseado em AIS).
+
+  '
+Dados_Descrição: 'Dados comerciais de Wood Mackenzie, GlobalData, Kpler e S&P Global para localização de campos, terminais, pipelines, refinarias, rotas de comércio e shipping. Dados públicos NASA MODIS (temperatura de superfície) e Shuttle Radar Topography Mission (elevação). Dados AIS (Automatic Identification System) terrestres e satelitais para rastreamento de navios. Cobertura de ~98% da produção global de petróleo bruto em 2015 (~95% petróleo, ~3% condensado).
+
+  '
+CategoriaMecanismo: Integração de dados dispersos
+Mecanismo_Fonte: Misto
+Mecanismo_Declarado: '"Using high-fidelity datasets, optimization algorithms to facilitate supply chain traceability and bottom-up, physics-based emission estimators, we show that the variability in global well-to-refinery-entrance carbon intensities at the level of crude trade pathways is significant." A otimização multi-objetivo permite estimar como campos contribuem para blends considerando distância, conectividade, volume e API, gerando rastreabilidade que não existia previamente.
+
+  '
+Mecanismo_Inferido: 'INFERIDO: A integração de múltiplas fontes de dados dispersos (comerciais, satelitais, geoespaciais) em uma rede unificada permite visibilidade end-to-end da cadeia. INFERIDO: O algoritmo de otimização com clustering reduz incerteza na atribuição campo-blend ao considerar múltiplos objetivos simultaneamente. INFERIDO: A granularidade pathway-level permite identificar oportunidades específicas de intervenção política em vez de abordagens genéricas.
+
+  '
+Mecanismo_Estruturado: Dados multi-fonte (campos, pipelines, shipping, propriedades de crude) → Otimização multi-objetivo + clustering + rede supply chain → Rastreabilidade pathway-level → Intensidade de carbono por rota comercial
+ResultadoTipo: Quantitativo
+Resultados_Quant: 'CI global well-to-refinery: 4.2-214.1 kg-CO2eq/bbl, média ponderada 50.5 kg-CO2eq/bbl (baseline: NR); CI midstream médio: 5.37 kg-CO2eq/bbl (~10% do total); Potencial de economia CO2eq sob cenários 1.5°C: 1.5-6.1 Gt até 2050 (baseline: cenário sem priorização de baixo carbono)'
+Resultados_Qual: 'Demonstração de alta variabilidade inter-blend e intra-blend em intensidade de carbono; identificação de padrões regionais distintos (ex: Rússia com baixa variabilidade vs Canadá/Irã com alta); habilitação de políticas de diferenciação por CI a nível de pathway'
+NívelEvidência: Simulação com dados reais
+Limitações_Artigo: 'Análise estática anualizada não captura variabilidade temporal (condições operacionais, buffers de estoque, padrões dinâmicos de tankers). Exclusão de barcaças, caminhões e transporte ferroviário devido a indisponibilidade de dados. Campos de petróleo representados por coordenadas pontuais em vez de áreas/shapes. Dados não disponíveis para estimativa bottom-up de emissões de infraestrutura de gathering and boosting.
+
+  '
+Observação: 'O estudo foca em estimativa de emissões de carbono na cadeia de suprimentos de petróleo bruto, não em gestão de riscos operacionais típicos de SCM. A aplicação de IA (otimização + clustering) visa rastreabilidade para políticas de descarbonização. Publicado na Nature Communications, alto impacto científico.
+
+  '
+Quotes:
+- QuoteID: Q001
+  TipoQuote: Contexto
+  Trecho: The lack of source crude traceability has led to poor visibility into the 'well-to-refinery-entrance' carbon intensities at the level of granular pathways between producers and destination markets.
+  Página: p.1
+- QuoteID: Q002
+  TipoQuote: Intervenção
+  Trecho: We use bottom-up engineering-based tools, including OPGEE; Crude Oil Pipeline Transportation Emissions Model (COPTEM), a physics-based estimator for pipeline transport emissions; and a shipping emissions estimator based on AIS-tracking data.
+  Página: p.2
+- QuoteID: Q003
+  TipoQuote: Mecanismo
+  Trecho: The network is jointly used with a multi-objective optimization algorithm to estimate crude blending. In conjunction with data on crude demand at refineries, this enables a resolution at the level of individual supply chain pathways.
+  Página: p.2
+- QuoteID: Q004
+  TipoQuote: Intervenção
+  Trecho: The gradient-based technique uses autodifferentiation with the concept of momentum, which is prominent in the training of deep neural networks. The initialization algorithm includes unsupervised learning and a genetic algorithm to overcome issues of local minima traps encountered in gradient descent.
+  Página: p.11
+- QuoteID: Q005
+  TipoQuote: Outcome
+  Trecho: 'The variability in global ''well-to-refinery-entrance'' carbon intensities at the level of crude trade pathways is significant: 4.2–214.1 kg-CO2-equivalent/barrel with a volume-weighted average of 50.5 kg-CO2-equivalent/barrel.'
+  Página: p.1
+- QuoteID: Q006
+  TipoQuote: Outcome
+  Trecho: Under 1.5 °C scenarios up to 2050, this variability translates to additional CO2-equivalent savings of 1.5–6.1 Gigatons that could be realized solely by prioritizing low-carbon supply chain pathways without other capital-intensive mitigation measures.
+  Página: p.1
+- QuoteID: Q007
+  TipoQuote: Limitação
+  Trecho: While we perform a static, annualized life cycle analysis, future work needs to account for the impact of temporal variability in the supply chain. Factors such as changing operating conditions at the field level, inventory buffers, dynamic tanker patterns, etc., could have impacts on both traceability and carbon intensity.
+  Página: p.10
+- QuoteID: Q008
+  TipoQuote: Mecanismo
+  Trecho: All the distributions in the chosen set are asymmetrical and have long tails indicative of the complexity of crude transportation networks; these skewed, irregular patterns emphasize the need to identify specific opportunities for policy intervention instead of applying a blanket approach.
+  Página: p.4
+---

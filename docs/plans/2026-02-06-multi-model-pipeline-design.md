@@ -26,14 +26,14 @@ CAMADA 2: EXTRACAO CIMO (Cloud - qualidade maxima)
   Prioridade:
   1. glm-4.7:cloud   (via Ollama)
   2. kimi-k2.5:cloud (via Ollama)
-  3. Claude API      (Anthropic, fallback pago)
-  4. GPT-4o          (OpenAI, fallback pago)
+  3. Cloud API (provider 1)      (fallback pago)
+  4. Cloud API (provider 2)      (fallback pago)
 
 CAMADA 3: REPAIR / VALIDACAO (Cloud-lite ou Local)
   1. Validacao Python pura (14 regras, zero LLM)
   2. Se falhar -> repair com glm-4.7:cloud
   3. Se falhar -> qwen3-vl:8b local (6.1GB, cabe na GPU)
-  4. Ultimo recurso -> Claude API
+  4. Ultimo recurso -> Cloud API (provider 1)
 
 CAMADA 4: VERIFICACAO DE QUOTES (Local + RAG)
   1. RAG + embeddings local -> localizar trechos exatos
@@ -49,7 +49,7 @@ CAMADA 4: VERIFICACAO DE QUOTES (Local + RAG)
 | Reranking | bge-reranker-v2-m3 | 438MB | GPU local | $0 |
 | Extracao CIMO | glm-4.7:cloud | - | Cloud Zhipu | Gratis/barato |
 | Extracao (fallback 1) | kimi-k2.5:cloud | - | Cloud Moonshot | Gratis/barato |
-| Extracao (fallback 2) | Claude API | - | Cloud Anthropic | ~$0.10/artigo |
+| Extracao (fallback 2) | Cloud API (provider 1) | - | Cloud provider 1 | ~$0.10/artigo |
 | Repair YAML | glm-4.7:cloud | - | Cloud Zhipu | Gratis/barato |
 | Repair (fallback) | qwen3-vl:8b | 6.1GB | GPU local | $0 |
 | Visao local | qwen3-vl:8b | 6.1GB | GPU local | $0 |
@@ -87,6 +87,8 @@ CAMADA 4: VERIFICACAO DE QUOTES (Local + RAG)
 ## Metricas de Sucesso
 
 - Extracao CIMO completa sem timeout
-- Qualidade >= resultado atual com Claude/GPT-4o
+- Qualidade >= resultado atual com provedores cloud configurados
 - Custo por artigo < $0.05 (vs ~$0.10 atual)
 - Tempo por artigo < 60s (vs timeout atual)
+
+

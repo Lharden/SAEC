@@ -1,0 +1,93 @@
+---
+ArtigoID: ART_032
+Ano: 2020
+TipoPublicação: Conference
+Referência_Curta: Al Mhdawi, 2020
+DOI: https://doi.org/10.1007/978-981-15-1910-9_34
+SegmentoO&G: Cross-segment
+SegmentoO&G_Confiança: Alta
+Ambiente: Onshore
+Complexidade: Média
+Complexidade_Justificativa: F1=0 (onshore - campos petrolíferos no Iraque), F2=1 (múltiplos stakeholders e projetos complexos mencionados), F3=1 (ambiente com ameaças de segurança, dificuldades logísticas e riscos operacionais críticos)
+ProcessoSCM_Alvo: Gestão de riscos da cadeia
+TipoRisco_SCRM: Múltiplos
+ObjetoCrítico: Projetos de construção em campos de petróleo e gás no Iraque
+ProblemaNegócio_Contexto: 'Projetos de construção em campos de petróleo e gás no Iraque são complexos e arriscados devido à natureza dinâmica e ambiente com pobres suprimentos, ameaças de segurança, mão de obra não qualificada e dificuldades logísticas.
+
+  As empresas contratantes enfrentam desafios na gestão de eventos de risco, e há falta de metodologia unificada para gestão de projetos e especialmente para gestão de riscos no país.
+
+  A falha em manter o registro de riscos atualizado e reconhecer a interdependência dos eventos de risco compromete o desempenho dos projetos, levando a estouros de custo e atrasos.'
+ClasseIA: Híbrido
+ClasseIA_Confiança: Alta
+TarefaAnalítica: Previsão
+FamíliaModelo: Redes neurais feedforward; Metaheurísticas; MCDM/Decisão
+TipoDado: Tabular/ERP
+Maturidade: Conceito
+Maturidade_Confiança: Alta
+Intervenção_Descrição: 'Metodologia integrada de suporte à decisão para gestão de riscos composta por: (1) modelo de análise de risco multi-critério baseado em teoria de conjuntos fuzzy e Fuzzy AHP para priorização de riscos; (2) redes neurais artificiais (ANN) com backpropagation para predição do efeito de cada fator de risco no custo e duração do projeto; (3) algoritmo de busca gravitacional (GSA) para seleção otimizada de estratégias de resposta ao risco minimizando custos de implementação; (4) plataforma web de suporte à decisão usando MySQL, PHP, HTML5 e CSS.
+
+  '
+Dados_Descrição: 'Dados planejados para coleta incluem: revisão documental de relatórios de empresas de construção em campos de petróleo e gás em Basra (registros de status de risco, soma do projeto, duração, extensões de tempo, ordens de variação, falhas de projeto, causas e ações de resposta); entrevistas com especialistas (gerentes de projeto, contratantes, consultores); dados históricos de projetos de construção concluídos para treinamento e teste do modelo ANN.
+
+  '
+CategoriaMecanismo: Antecipação de risco
+Mecanismo_Fonte: Misto
+Mecanismo_Declarado: '"ANNs will be utilized to determine and predict the duration needed to overcome each risk factor based on the project duration and risk importance obtained from risk analysis phase... it will allow a reasonable logical assessment away from randomization when determining the project schedule activities (duration contingencies) and cost of contingencies." "The optimization model is to construct a mathematical model that considers the interaction between risks and relation between response actions in order to select an effective and efficient response action."
+
+  '
+Mecanismo_Inferido: 'INFERIDO: A lógica fuzzy permite lidar com julgamentos subjetivos e incertezas inerentes à avaliação humana de riscos, transformando dados qualitativos em análises estruturadas. INFERIDO: As redes neurais aprendem padrões de dados históricos de projetos para predizer impactos de risco, substituindo estimativas baseadas em julgamento pessoal por previsões baseadas em dados. INFERIDO: O algoritmo GSA encontra combinações ótimas de ações de resposta considerando interações entre riscos, reduzindo custos totais de mitigação. INFERIDO: A integração das técnicas em plataforma web centraliza conhecimento e padroniza processos de decisão para gestores de projeto.
+
+  '
+Mecanismo_Estruturado: Dados de riscos + entrevistas + documentos → Fuzzy AHP (priorização) + ANN (predição impacto) + GSA (otimização resposta) → Redução de incerteza + trade-off custo-tempo → Decisões de resposta a riscos otimizadas
+ResultadoTipo: Qualitativo
+Resultados_Quant: NR
+Resultados_Qual: 'Framework conceitual que permite: avaliar eventos de risco em projetos de O&G; suportar decisões durante planejamento e implementação; ganhar experiência em gestão de riscos através de bases científicas e documentadas; organizar e documentar informações baseadas em conhecimento para tomadores de decisão'
+NívelEvidência: Proposta teórica/framework
+Limitações_Artigo: 'NR
+
+  '
+Observação: 'Este é um trabalho conceitual/metodológico sem implementação ou validação empírica. O autor indica que a próxima etapa envolverá coleta de dados primários, validação com feedback de especialistas e desenvolvimento dos modelos baseados em estudos de caso reais. O foco principal é gestão de riscos de projeto (PRM), mas há conexão explícita com supply chain através da menção a "sustainable supply chain and processing".
+
+  '
+Quotes:
+- QuoteID: Q001
+  TipoQuote: Contexto
+  Trecho: Projetos de construção em campos de petróleo e gás no Iraque são complexos e arriscados devido à natureza dinâmica e ambiente com pobres suprimentos, ameaças de segurança, mão de obra não qualificada e dificuldades logísticas.
+  Página: ''
+- QuoteID: Q002
+  TipoQuote: Contexto
+  Trecho: As empresas contratantes enfrentam desafios na gestão de eventos de risco, e há falta de metodologia unificada para gestão de projetos e especialmente para gestão de riscos no país.
+  Página: ''
+- QuoteID: Q003
+  TipoQuote: Contexto
+  Trecho: A falha em manter o registro de riscos atualizado e reconhecer a interdependência dos eventos de risco compromete o desempenho dos projetos, levando a estouros de custo e atrasos.
+  Página: ''
+- QuoteID: Q004
+  TipoQuote: Contexto
+  Trecho: Metodologia integrada de suporte à decisão para gestão de riscos composta por: (1) modelo de análise de risco multi-critério baseado em teoria de conjuntos fuzzy e Fuzzy AHP para priorização de riscos; (2) redes neurais artificiais (ANN) com backpropagation para predição do efeito de cada fator de risco no custo e duração do projeto; (3) algoritmo de busca gravitacional (GSA) para seleção otimizada de estratégias de resposta ao risco minimizando custos de implementação; (4) plataforma web de suporte à decisão usando MySQL, PHP, HTML5 e CSS.
+  Página: ''
+- QuoteID: Q005
+  TipoQuote: Contexto
+  Trecho: Dados planejados para coleta incluem: revisão documental de relatórios de empresas de construção em campos de petróleo e gás em Basra (registros de status de risco, soma do projeto, duração, extensões de tempo, ordens de variação, falhas de projeto, causas e ações de resposta); entrevistas com especialistas (gerentes de projeto, contratantes, consultores); dados históricos de projetos de construção concluídos para treinamento e teste do modelo ANN.
+  Página: ''
+- QuoteID: Q006
+  TipoQuote: Contexto
+  Trecho: A lógica fuzzy permite lidar com julgamentos subjetivos e incertezas inerentes à avaliação humana de riscos, transformando dados qualitativos em análises estruturadas.
+  Página: ''
+- QuoteID: Q007
+  TipoQuote: Contexto
+  Trecho: As redes neurais aprendem padrões de dados históricos de projetos para predizer impactos de risco, substituindo estimativas baseadas em julgamento pessoal por previsões baseadas em dados.
+  Página: ''
+- QuoteID: Q008
+  TipoQuote: Contexto
+  Trecho: O algoritmo de busca gravitacional encontra combinações ótimas de ações de resposta considerando interações entre riscos, reduzindo custos totais de mitigação.
+  Página: ''
+- QuoteID: Q009
+  TipoQuote: Contexto
+  Trecho: A integração das técnicas em plataforma web centraliza conhecimento e padroniza processos de decisão para gestores de projeto.
+  Página: ''
+- QuoteID: Q010
+  TipoQuote: Contexto
+  Trecho: Este é um trabalho conceitual/metodológico sem implementação ou validação empírica. O autor indica que a próxima etapa envolverá coleta de dados primários, validação com feedback de especialistas e desenvolvimento dos modelos baseados em estudos de caso reais.
+  Página: ''
+---

@@ -1,0 +1,56 @@
+schema_version: '1.0'
+profile:
+  meta:
+    profile_id: demo_profile
+    version: 1.0.0
+    name: Demo
+    domain: ''
+    framework: CUSTOM
+    language: pt-BR
+    description: ''
+  topics:
+    min_topics: 1
+    max_topics: 50
+    weighting_mode: optional
+    default_weight: 1.0
+  fields:
+  - id: ArtigoID
+    label: ArtigoID
+    section: metadata
+    type: string
+    required: true
+    multiple: false
+    min_length: 0
+    max_length: 0
+    allowed_values: []
+    aliases: []
+    description: ''
+    confidence_field: null
+    extraction_hints: []
+    regex_patterns: []
+  rules: []
+  quotes_policy:
+    enabled: true
+    min_quotes: 0
+    max_quotes: 0
+    required_types: []
+    allowed_types:
+    - Outro
+    quote_schema:
+      id_pattern: ^Q\d{3}$
+      required_fields:
+      - QuoteID
+      - TipoQuote
+      - Trecho
+      - Página
+      trecho_min_length: 10
+  output:
+    format: yaml
+    enforce_field_names: true
+    include_sections: true
+  prompt_contract:
+    return_only_output: true
+    include_self_review: true
+    instructions: []
+  tests:
+    required: []

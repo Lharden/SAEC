@@ -40,9 +40,15 @@ Thumbs.db
 Desktop.ini
 nul
 
+# Build artifacts (PyInstaller)
+system/dist/
+system/build/
+*.spec.bak
+
 # Outputs (regenerable)
 Extraction/outputs/work/
-Extraction/outputs/consolidated/*.xlsx
+Extraction/outputs/yamls/
+Extraction/outputs/consolidated/
 
 # Logs
 *.log
@@ -51,3 +57,4 @@ logs/
 # Temporary files
 *.tmp
 *.temp
+.runtime/

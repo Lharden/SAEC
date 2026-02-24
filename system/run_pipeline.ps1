@@ -17,6 +17,15 @@ param(
 
 $ErrorActionPreference = "Stop"
 
+function Initialize-Runtime {
+  $projectRoot = (Resolve-Path -LiteralPath (Join-Path $PSScriptRoot "..")).Path
+  $bootstrap = Join-Path $PSScriptRoot "scripts\bootstrap_runtime.ps1"
+  if (-not (Test-Path -LiteralPath $bootstrap)) {
+    throw "Bootstrap script nao encontrado: $bootstrap"
+  }
+  & $bootstrap -ProjectRoot $projectRoot
+}
+
 function Ensure-Venv {
   if ($NoActivate) { return }
   $venvPath = Join-Path $PSScriptRoot ".venv"
@@ -131,7 +140,11 @@ print("Config errors:", errs if errs else "none")
 }
 
 function Prompt-YesNo($message, $defaultYes=$true) {
-  $suffix = $defaultYes ? " [Y/n]" : " [y/N]"
+  if ($defaultYes) {
+    $suffix = " [Y/n]"
+  } else {
+    $suffix = " [y/N]"
+  }
   $ans = Read-Host ($message + $suffix)
   if ([string]::IsNullOrWhiteSpace($ans)) { return $defaultYes }
   return ($ans.Trim().ToLower() -in @("y","yes","s","sim"))
@@ -166,6 +179,9 @@ function Start-RunLog {
 function Stop-RunLog {
   if ($Log) { Stop-Transcript | Out-Null }
 }
+
+Set-Location $PSScriptRoot
+Initialize-Runtime
 
 # =========================
 # Modo Interativo
@@ -202,7 +218,12 @@ if ($Interactive) {
   Write-Host "=== RESUMO DA EXECUCAO ==="
   Write-Host ("Modo: {0}" -f $Mode)
   Write-Host ("Step: {0}" -f $Step)
-  Write-Host ("Artigo: {0}" -f ($ArticleId -ne "" ? $ArticleId : "todos"))
+  if ($ArticleId -ne "") {
+    $articleSummary = $ArticleId
+  } else {
+    $articleSummary = "todos"
+  }
+  Write-Host ("Artigo: {0}" -f $articleSummary)
   Write-Host ("DryRun: {0}" -f $DryRun)
   Write-Host ("Force: {0}" -f $Force)
   Write-Host ("RunQA: {0}" -f $RunQA)

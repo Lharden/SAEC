@@ -1,0 +1,92 @@
+---
+ArtigoID: "ART_002"
+Ano: 2020
+TipoPublicação: "Conference"
+Referência_Curta: "Nodeh et al., 2020"
+DOI: "https://doi.org/10.1007/978-3-030-36178-5_19"
+
+SegmentoO&G: "Cross-segment"
+SegmentoO&G_Confiança: "Média"
+Ambiente: "Onshore"
+Complexidade: "Média"
+Complexidade_Justificativa: "F1=0 (aplicação em processo corporativo de procurement, em terra), F2=1 (1430 registros, 1118 após limpeza), F3=1 (efeito direto no ciclo de produção, refino e distribuição)."
+ProcessoSCM_Alvo: "Seleção/qualificação de fornecedores"
+TipoRisco_SCRM: "Risco de fornecimento"
+ObjetoCrítico: "Fornecedores para cadeia de suprimentos de empresas petrolíferas"
+
+ProblemaNegócio_Contexto: |
+  O artigo trata a seleção de fornecedores como decisão crítica para desempenho da cadeia em produção, refino e distribuição.
+  Os autores apontam fragilidades dos métodos tradicionais: subjetividade, regras de avaliação inconsistentes e baixa eficiência decisória.
+  O problema ocorre em ambiente com alto volume de dados e múltiplos atributos de fornecedores.
+  A proposta busca reduzir custo/tempo de seleção e diminuir erro humano com um processo orientado por IA.
+
+ClasseIA: "Híbrido"
+ClasseIA_Confiança: "Alta"
+TarefaAnalítica: "Classificação"
+FamíliaModelo: "CBR/Especialista; Redes neurais feedforward; Clustering; Outro: Árvore de decisão"
+TipoDado: "Tabular/ERP"
+Maturidade: "Piloto"
+Maturidade_Confiança: "Média"
+
+Intervenção_Descrição: |
+  O modelo combina CBR com data mining em três módulos: criação de casos, recuperação/reuso e advisor.
+  Usa árvore de decisão para extrair regras if-then, SOM baseado em K-Prototype para clustering e MLP como expert/advisor.
+  O fluxo integra ponderação por Gain Ratio, recuperação de casos similares e recomendação final de fornecedor.
+
+Dados_Descrição: |
+  Foram coletados 1430 registros, reduzidos para 1118 após limpeza de dados.
+  Cada item tinha 36 atributos iniciais, com 29 atributos selecionados para modelagem.
+  O particionamento foi 70% treino, 20% teste e 10% validação.
+  A implementação do pipeline utilizou SPSS Clementine/Orange e MATLAB em uma base real de empresa petrolífera.
+
+CategoriaMecanismo: "Padronização/consistência"
+Mecanismo_Fonte: "Misto"
+Mecanismo_Declarado: |
+  This model which finally leads to optimal selection and ranking of suppliers, reducing the time and cost in the selection process and also reduced human errors by using data mining techniques and neural networks in the reasoning method cycle based on the case.
+Mecanismo_Inferido: "INFERIDO: A árvore de decisão codifica regras estáveis de seleção e reduz variação subjetiva entre avaliadores. INFERIDO: O clustering SOM/K-Prototype restringe o espaço de busca para casos comparáveis e acelera recuperação. INFERIDO: O CBR com feedback de rede neural reforça consistência entre casos históricos e novas decisões de fornecedor."
+Mecanismo_Estruturado: "Dados históricos de fornecedores → Gain Ratio + árvore de decisão + CBR/SOM/MLP → Regras e casos similares padronizados → Seleção e ranking de fornecedores com menor erro humano"
+
+ResultadoTipo: "Misto"
+Resultados_Quant: "Davies-Bouldin index: 0.3525 para k=3 (vs. baseline: k=2 = 0.5203); Similaridade máxima de recuperação de caso: 79.5% (vs. baseline: NR)"
+Resultados_Qual: "Os autores reportam redução de erro humano, melhoria de acurácia e melhor eficiência geral no processo de supplier selection."
+NívelEvidência: "Experimento com dados reais"
+Limitações_Artigo: |
+  The results achieved in the ﬁrst, showing the 8 decision variables extracted from the model to the experts, they number six variables of the decision were approved.
+  Experts have disagreement among them about the remaining variables in the model proposed code status and role in creating rules.
+Observação: |
+  O artigo não traz seção formal de limitações; a limitação acima foi extraída do relato de validação com especialistas.
+
+Quotes:
+  - QuoteID: Q001
+    TipoQuote: "Contexto"
+    Trecho: "creating and owning a purposeful and intelligent process for evaluation and analysis of suppliers is one of the inevitable needs and concerns of these countries."
+    Página: "p.1"
+  - QuoteID: Q002
+    TipoQuote: "Mecanismo"
+    Trecho: "This model which ﬁnally leads to optimal selection and ranking of suppliers, reducing the time and cost in the selection process and also reduced human errors by using data mining techniques and neural networks in the reasoning method cycle based on the case."
+    Página: "p.1"
+  - QuoteID: Q003
+    TipoQuote: "Método"
+    Trecho: "In this research, 1430 records were collected which after data cleaning was reduced to 1118 records."
+    Página: "p.6"
+  - QuoteID: Q004
+    TipoQuote: "Método"
+    Trecho: "After preparing the data, 36 attributes for each item were obtained and ﬁnally 29 attributes were selected which can be seen in Table 1."
+    Página: "p.6"
+  - QuoteID: Q005
+    TipoQuote: "Mecanismo"
+    Trecho: "In the PDMRRT module, to improve the retrieval performance, nearest to the version of the base case, the SOM-based clustering technique is used K-Prototype."
+    Página: "p.18"
+  - QuoteID: Q006
+    TipoQuote: "Outcome"
+    Trecho: "To select the optimal k, for every k = 2, 3,…, 12 in the MATLAB software, the Davies-Bouldin index is calculated in a function called Davies-Bouldin.m which in Table 3, its results are shown."
+    Página: "p.18"
+  - QuoteID: Q007
+    TipoQuote: "Outcome"
+    Trecho: "Reducing the impact of human error by replacing it with expert system based on neural network is another useful outcome of this study to explore it."
+    Página: "p.24"
+  - QuoteID: Q008
+    TipoQuote: "Limitação"
+    Trecho: "Experts have disagreement among them about the remaining variables in the model proposed code status and role in creating rules."
+    Página: "p.24"
+---

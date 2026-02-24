@@ -13,7 +13,7 @@ from uuid import uuid4
 from job_runner import RunRequest, RunResult
 
 
-QueueStatus = Literal["pending", "running", "success", "failed", "cancelled"]
+QueueStatus = Literal["pending", "running", "success", "failed", "cancelled", "timeout"]
 
 
 @dataclass(frozen=True)
@@ -39,22 +39,57 @@ class QueueItem:
             "request_mode": self.request.mode,
             "request_step": self.request.step,
             "request_article_id": self.request.article_id,
+            "request_dry_run": self.request.dry_run,
+            "request_force": self.request.force,
+            "request_log_level": self.request.log_level,
+            "request_timeout_minutes": self.request.timeout_minutes,
+            "request_workspace_root": (
+                str(self.request.workspace_root) if self.request.workspace_root else ""
+            ),
+            "request_project_root": (
+                str(self.request.project_root) if self.request.project_root else ""
+            ),
         }
 
     @classmethod
     def from_dict(cls, data: dict) -> QueueItem:
+        status = data.get("status", "failed")
+        if status not in ("pending", "running", "success", "failed", "cancelled", "timeout"):
+            status = "failed"
+
+        mode = data.get("request_mode", "all")
+        if mode not in ("all", "step"):
+            mode = "all"
+
+        step_raw = data.get("request_step")
+        try:
+            step = int(step_raw) if step_raw is not None else None
+        except (TypeError, ValueError):
+            step = None
+
         request = RunRequest(
-            mode=data.get("request_mode", "all"),
-            step=data.get("request_step"),
+            mode=mode,
+            step=step,
             article_id=data.get("request_article_id", ""),
-            dry_run=False,
-            force=False,
-            log_level="INFO",
+            dry_run=bool(data.get("request_dry_run", False)),
+            force=bool(data.get("request_force", False)),
+            log_level=data.get("request_log_level", "INFO"),
+            timeout_minutes=float(data.get("request_timeout_minutes", 30.0)),
+            workspace_root=(
+                Path(data["request_workspace_root"])
+                if data.get("request_workspace_root")
+                else None
+            ),
+            project_root=(
+                Path(data["request_project_root"])
+                if data.get("request_project_root")
+                else None
+            ),
         )
         return cls(
             job_id=data["job_id"],
             request=request,
-            status=data.get("status", "failed"),
+            status=status,
             created_at=data.get("created_at", ""),
             started_at=data.get("started_at"),
             finished_at=data.get("finished_at"),
@@ -136,6 +171,8 @@ class RunQueue:
             if running is None:
                 return None
             status: QueueStatus = "success" if result.success else "failed"
+            if result.return_code == -2:
+                status = "timeout"
             return self._replace_item(
                 running.job_id,
                 status=status,
@@ -162,7 +199,7 @@ class RunQueue:
             terminal = [
                 item.to_dict()
                 for item in self._items
-                if item.status in ("success", "failed", "cancelled")
+                if item.status in ("success", "failed", "cancelled", "timeout")
             ]
         # Keep only last 100 entries
         terminal = terminal[-100:]

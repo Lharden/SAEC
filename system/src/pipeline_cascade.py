@@ -2,13 +2,13 @@
 
 from __future__ import annotations
 
+import importlib
 import logging
 import time
-import importlib
 from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
-from typing import TYPE_CHECKING, Literal, cast
+from typing import TYPE_CHECKING, Any, Literal, cast
 
 if __package__:
     from . import config as _config
@@ -132,6 +132,17 @@ class CascadeResult:
             # Estimativa: extração típica usa ~10K tokens de API
             return 10000
         return 0
+
+
+@dataclass
+class LocalAttemptResult:
+    """Resultado agregado das tentativas locais de extração/repair."""
+
+    yaml_content: str = ""
+    validation: ValidationResult | None = None
+    confidence: float = 0.0
+    source: ExtractionSource = ExtractionSource.LOCAL_OLLAMA
+    accepted: bool = False
 
 
 # ============================================================
@@ -296,6 +307,25 @@ Retorne APENAS o YAML corrigido, sem explicações.
 # ============================================================
 
 
+def _build_api_content_blocks(text: str) -> list[dict[str, str]]:
+    """Monta blocos de texto para payload multimodal de extração API."""
+    return [{"type": "text", "text": text[:100000]}]
+
+
+def _extract_yaml_from_response(response: object) -> str:
+    if isinstance(response, str):
+        return _extract_yaml_block(response)
+    if hasattr(response, "content"):
+        return _extract_yaml_block(str(getattr(response, "content")))
+    return _extract_yaml_block(str(response))
+
+
+def _estimate_api_cost(provider: Literal["anthropic", "openai"], tokens: int) -> float:
+    if provider == "anthropic":
+        return tokens * 0.000009
+    return tokens * 0.00001
+
+
 def extract_with_api(
     text: str,
     prompt_template: str,
@@ -303,7 +333,7 @@ def extract_with_api(
     provider: Literal["anthropic", "openai"] = "anthropic",
     images: list[Path] | None = None,
     artigo_id: str = "",
-    client: object | None = None,
+    client: Any | None = None,
 ) -> tuple[str, CascadeMetrics]:
     """
     Extrai CIMO usando API (Anthropic/OpenAI).
@@ -342,9 +372,7 @@ def extract_with_api(
 
         # Montar prompt com texto do artigo embutido
         full_prompt = prompt_template.replace("{TEXT}", text[:100000])
-
-        # Conteúdo do artigo como blocos na mensagem do usuário
-        text_content: list[dict] = [{"type": "text", "text": text[:100000]}]
+        text_content = _build_api_content_blocks(text)
 
         if images:
             try:
@@ -372,28 +400,12 @@ def extract_with_api(
             )
 
         metrics.api_time_ms = (time.time() - start_time) * 1000
-        metrics.api_tokens = (
-            getattr(response, "total_tokens", 0)
-            if hasattr(response, "total_tokens")
-            else 0
-        )
+        metrics.api_tokens = int(getattr(response, "total_tokens", 0))
         metrics.total_time_ms = metrics.api_time_ms
         metrics.attempts = 1
+        metrics.api_cost_estimate = _estimate_api_cost(provider, metrics.api_tokens)
 
-        # Estimar custo
-        if provider == "anthropic":
-            metrics.api_cost_estimate = metrics.api_tokens * 0.000009
-        else:
-            metrics.api_cost_estimate = metrics.api_tokens * 0.00001
-
-        # Extrair YAML do resultado
-        if isinstance(response, str):
-            yaml_content = _extract_yaml_block(response)
-        elif hasattr(response, "content"):
-            yaml_content = _extract_yaml_block(response.content)
-        else:
-            yaml_content = _extract_yaml_block(str(response))
-
+        yaml_content = _extract_yaml_from_response(response)
         return yaml_content, metrics
 
     except ExtractError:
@@ -411,6 +423,175 @@ def extract_with_api(
 # ============================================================
 # Pipeline de Cascata
 # ============================================================
+
+
+def _try_api_only_extraction(
+    artigo_id: str,
+    text: str,
+    prompt_template: str,
+    *,
+    images: list[Path] | None,
+) -> CascadeResult:
+    """Executa caminho API-only com tratamento uniforme de falhas."""
+    api_provider = _resolve_api_provider(_select_cascade_api_provider())
+    api_source = _source_for_api_provider(api_provider)
+    try:
+        yaml_content, metrics = extract_with_api(
+            text,
+            prompt_template,
+            provider=cast(Literal["anthropic", "openai"], api_provider),
+            images=images,
+            artigo_id=artigo_id,
+        )
+        validation = _validate_yaml(yaml_content, artigo_id)
+        confidence = _estimate_confidence(yaml_content, validation)
+        return CascadeResult(
+            yaml_content=yaml_content,
+            source=api_source,
+            confidence=confidence,
+            validation=validation,
+            metrics=metrics,
+        )
+    except Exception as e:
+        return CascadeResult(
+            yaml_content="",
+            source=api_source,
+            confidence=0.0,
+            validation=None,
+            metrics=CascadeMetrics(),
+            success=False,
+            error=str(e),
+        )
+
+
+def _try_local_extraction(
+    artigo_id: str,
+    text: str,
+    prompt_template: str,
+    *,
+    images: list[Path] | None,
+    max_local_retries: int,
+    confidence_threshold: float,
+    total_metrics: CascadeMetrics,
+) -> LocalAttemptResult:
+    """Executa tentativas locais com validação e repair opcional."""
+    result = LocalAttemptResult(
+        source=ExtractionSource.LOCAL_OLLAMA_VISION
+        if images
+        else ExtractionSource.LOCAL_OLLAMA
+    )
+
+    for attempt in range(max_local_retries):
+        try:
+            yaml_content, metrics = extract_with_ollama(
+                text,
+                prompt_template,
+                images=images,
+                artigo_id=artigo_id,
+            )
+            total_metrics.local_time_ms += metrics.local_time_ms
+            total_metrics.local_tokens += metrics.local_tokens
+            total_metrics.attempts += 1
+
+            validation = _validate_yaml(yaml_content, artigo_id)
+            confidence = _estimate_confidence(yaml_content, validation)
+            result.yaml_content = yaml_content
+            result.validation = validation
+            result.confidence = confidence
+
+            logger.info(
+                "Local attempt %d: confidence=%.2f",
+                attempt + 1,
+                confidence,
+                extra={"artigo_id": artigo_id, "action": "confidence", "attempt": attempt + 1},
+            )
+
+            if confidence >= confidence_threshold and validation and validation.is_valid:
+                result.accepted = True
+                return result
+
+            if validation and not validation.is_valid and attempt < max_local_retries - 1:
+                logger.info(
+                    "Attempting local repair",
+                    extra={"artigo_id": artigo_id, "action": "repair_local"},
+                )
+                errors = validation.errors[:5]
+                repaired_yaml, repair_metrics = repair_with_ollama(
+                    yaml_content,
+                    errors,
+                    artigo_id=artigo_id,
+                )
+                total_metrics.local_time_ms += repair_metrics.local_time_ms
+                total_metrics.local_tokens += repair_metrics.local_tokens
+                result.yaml_content = repaired_yaml
+
+        except Exception as e:
+            logger.warning(
+                "Local attempt %d failed: %s",
+                attempt + 1,
+                e,
+                extra={"artigo_id": artigo_id, "action": "extract_local", "attempt": attempt + 1},
+            )
+
+    return result
+
+
+def _select_best_result(
+    local_result: LocalAttemptResult, api_source: ExtractionSource, total_metrics: CascadeMetrics
+) -> ExtractionSource:
+    """Define a source final quando houve fallback local + API."""
+    if total_metrics.local_tokens > 0:
+        return ExtractionSource.HYBRID
+    return api_source
+
+
+def _try_api_extraction(
+    artigo_id: str,
+    text: str,
+    prompt_template: str,
+    *,
+    images: list[Path] | None,
+    total_metrics: CascadeMetrics,
+    start_time: float,
+    local_result: LocalAttemptResult,
+) -> CascadeResult:
+    """Executa fallback de API e retorna o melhor resultado disponível."""
+    api_provider = _resolve_api_provider(_select_cascade_api_provider())
+    api_source = _source_for_api_provider(api_provider)
+    try:
+        yaml_content, api_metrics = extract_with_api(
+            text,
+            prompt_template,
+            provider=cast(Literal["anthropic", "openai"], api_provider),
+            images=images,
+            artigo_id=artigo_id,
+        )
+        total_metrics.api_time_ms = api_metrics.api_time_ms
+        total_metrics.api_tokens = api_metrics.api_tokens
+        total_metrics.api_cost_estimate = api_metrics.api_cost_estimate
+
+        validation = _validate_yaml(yaml_content, artigo_id)
+        confidence = _estimate_confidence(yaml_content, validation)
+        total_metrics.total_time_ms = (time.time() - start_time) * 1000
+
+        return CascadeResult(
+            yaml_content=yaml_content,
+            source=_select_best_result(local_result, api_source, total_metrics),
+            confidence=confidence,
+            validation=validation,
+            metrics=total_metrics,
+        )
+    except Exception as e:
+        total_metrics.total_time_ms = (time.time() - start_time) * 1000
+        return CascadeResult(
+            yaml_content=local_result.yaml_content,
+            source=local_result.source,
+            confidence=local_result.confidence,
+            validation=local_result.validation,
+            metrics=total_metrics,
+            success=False,
+            error=f"API escalation failed: {e}",
+        )
 
 
 def extract_cascade(
@@ -461,185 +642,65 @@ def extract_cascade(
         extra={"artigo_id": artigo_id, "action": "cascade_step", "strategy": strategy},
     )
 
-    # ========================================
-    # Estratégia: API Only
-    # ========================================
     if strategy == "api_only":
-        api_provider = _resolve_api_provider(_select_cascade_api_provider())
-        api_source = _source_for_api_provider(api_provider)
-        try:
-            yaml_content, metrics = extract_with_api(
-                text,
-                prompt_template,
-                provider=cast(Literal["anthropic", "openai"], api_provider),
-                images=images,
-                artigo_id=artigo_id,
-            )
+        return _try_api_only_extraction(
+            artigo_id,
+            text,
+            prompt_template,
+            images=images,
+        )
 
-            validation = _validate_yaml(yaml_content, artigo_id)
-            confidence = _estimate_confidence(yaml_content, validation)
+    local_result = _try_local_extraction(
+        artigo_id,
+        text,
+        prompt_template,
+        images=images,
+        max_local_retries=max_local_retries,
+        confidence_threshold=resolved_confidence_threshold,
+        total_metrics=total_metrics,
+    )
 
-            return CascadeResult(
-                yaml_content=yaml_content,
-                source=api_source,
-                confidence=confidence,
-                validation=validation,
-                metrics=metrics,
-            )
+    if local_result.accepted:
+        total_metrics.total_time_ms = (time.time() - start_time) * 1000
+        return CascadeResult(
+            yaml_content=local_result.yaml_content,
+            source=local_result.source,
+            confidence=local_result.confidence,
+            validation=local_result.validation,
+            metrics=total_metrics,
+        )
 
-        except Exception as e:
-            return CascadeResult(
-                yaml_content="",
-                source=api_source,
-                confidence=0.0,
-                validation=None,
-                metrics=total_metrics,
-                success=False,
-                error=str(e),
-            )
-
-    # ========================================
-    # Estratégia: Local First ou Local Only
-    # ========================================
-    yaml_content = ""
-    validation = None
-    confidence = 0.0
-    source = ExtractionSource.LOCAL_OLLAMA
-
-    for attempt in range(max_local_retries):
-        try:
-            # Tentar extração local
-            if images:
-                source = ExtractionSource.LOCAL_OLLAMA_VISION
-
-            yaml_content, metrics = extract_with_ollama(
-                text,
-                prompt_template,
-                images=images,
-                artigo_id=artigo_id,
-            )
-
-            total_metrics.local_time_ms += metrics.local_time_ms
-            total_metrics.local_tokens += metrics.local_tokens
-            total_metrics.attempts += 1
-
-            # Validar
-            validation = _validate_yaml(yaml_content, artigo_id)
-            confidence = _estimate_confidence(yaml_content, validation)
-
-            logger.info(
-                "Local attempt %d: confidence=%.2f", attempt + 1, confidence,
-                extra={"artigo_id": artigo_id, "action": "confidence", "attempt": attempt + 1},
-            )
-
-            # Aceitar se passar no threshold
-            if (
-                confidence >= resolved_confidence_threshold
-                and validation
-                and validation.is_valid
-            ):
-                total_metrics.total_time_ms = (time.time() - start_time) * 1000
-
-                return CascadeResult(
-                    yaml_content=yaml_content,
-                    source=source,
-                    confidence=confidence,
-                    validation=validation,
-                    metrics=total_metrics,
-                )
-
-            # Tentar repair se tiver erros
-            if (
-                validation
-                and not validation.is_valid
-                and attempt < max_local_retries - 1
-            ):
-                logger.info(
-                    "Attempting local repair",
-                    extra={"artigo_id": artigo_id, "action": "repair_local"},
-                )
-                errors = validation.errors[:5]  # errors já é list[str]
-                yaml_content, repair_metrics = repair_with_ollama(
-                    yaml_content,
-                    errors,
-                    artigo_id=artigo_id,
-                )
-                total_metrics.local_time_ms += repair_metrics.local_time_ms
-                total_metrics.local_tokens += repair_metrics.local_tokens
-
-        except Exception as e:
-            logger.warning(
-                "Local attempt %d failed: %s", attempt + 1, e,
-                extra={"artigo_id": artigo_id, "action": "extract_local", "attempt": attempt + 1},
-            )
-
-    # ========================================
-    # Escalar para API (se local_first)
-    # ========================================
     if strategy == "local_only":
         total_metrics.total_time_ms = (time.time() - start_time) * 1000
 
         return CascadeResult(
-            yaml_content=yaml_content,
-            source=source,
-            confidence=confidence,
-            validation=validation,
+            yaml_content=local_result.yaml_content,
+            source=local_result.source,
+            confidence=local_result.confidence,
+            validation=local_result.validation,
             metrics=total_metrics,
-            success=confidence >= 0.5,  # Aceitar com confiança moderada
+            success=local_result.confidence >= 0.5,
         )
 
-    # Escalar para API
     logger.info(
-        "Escalating to API, confidence=%.2f", confidence,
+        "Escalating to API, confidence=%.2f",
+        local_result.confidence,
         extra={"artigo_id": artigo_id, "action": "fallback"},
     )
     total_metrics.escalated = True
     total_metrics.escalation_reason = (
-        f"Low confidence ({confidence:.2f}) or validation failed"
+        f"Low confidence ({local_result.confidence:.2f}) or validation failed"
     )
 
-    try:
-        api_provider = _resolve_api_provider(_select_cascade_api_provider())
-        api_source = _source_for_api_provider(api_provider)
-        yaml_content, api_metrics = extract_with_api(
-            text,
-            prompt_template,
-            provider=cast(Literal["anthropic", "openai"], api_provider),
-            images=images,
-            artigo_id=artigo_id,
-        )
-
-        total_metrics.api_time_ms = api_metrics.api_time_ms
-        total_metrics.api_tokens = api_metrics.api_tokens
-        total_metrics.api_cost_estimate = api_metrics.api_cost_estimate
-
-        validation = _validate_yaml(yaml_content, artigo_id)
-        confidence = _estimate_confidence(yaml_content, validation)
-
-        total_metrics.total_time_ms = (time.time() - start_time) * 1000
-
-        return CascadeResult(
-            yaml_content=yaml_content,
-            source=ExtractionSource.HYBRID
-            if total_metrics.local_tokens > 0
-            else api_source,
-            confidence=confidence,
-            validation=validation,
-            metrics=total_metrics,
-        )
-
-    except Exception as e:
-        total_metrics.total_time_ms = (time.time() - start_time) * 1000
-
-        return CascadeResult(
-            yaml_content=yaml_content,  # Retorna último YAML local
-            source=source,
-            confidence=confidence,
-            validation=validation,
-            metrics=total_metrics,
-            success=False,
-            error=f"API escalation failed: {e}",
-        )
+    return _try_api_extraction(
+        artigo_id,
+        text,
+        prompt_template,
+        images=images,
+        total_metrics=total_metrics,
+        start_time=start_time,
+        local_result=local_result,
+    )
 
 
 # ============================================================
@@ -681,44 +742,105 @@ def _estimate_confidence(
     yaml_content: str, validation: ValidationResult | None
 ) -> float:
     """
-    Estima confiança da extração.
+    Estima confiança da extração com scoring granular.
 
-    Fatores:
-    - Validação passou/falhou
-    - Número de erros/warnings
-    - Tamanho do YAML
-    - Presença de campos obrigatórios
+    Fatores ponderados:
+    - Validação (0.25): passou/falhou + penalidade proporcional a erros/warnings
+    - Campos obrigatórios (0.25): presença dos campos-chave do schema CIMO
+    - Qualidade de quotes (0.20): quantidade, comprimento, referências de página
+    - Narrativas (0.15): campos multi-linha com conteúdo substancial
+    - Tamanho e formato (0.10): YAML com tamanho razoável e char '→' em Mecanismo
+    - Penalidades: valores "NR" reduzem confiança
     """
     if not yaml_content:
         return 0.0
 
-    confidence = 0.5  # Base
+    score = 0.0
 
-    # Validação
+    # --- 1. Validação (peso 0.25) ---
+    validation_score = 0.5  # base neutra se sem validação
     if validation:
         if validation.is_valid:
-            confidence += 0.3
+            validation_score = 1.0
         else:
-            confidence -= 0.1 * min(len(validation.errors), 5)
+            n_errors = len(validation.errors)
+            # Penalidade regressiva: 1 erro = 0.3, 2 = 0.15, 5+ = 0.0
+            validation_score = max(0.0, 0.5 - 0.1 * min(n_errors, 5))
+        # Warnings reduzem levemente
+        validation_score -= 0.04 * min(len(validation.warnings), 5)
+    score += max(0.0, validation_score) * 0.25
 
-        # Warnings
-        confidence -= 0.05 * min(len(validation.warnings), 5)
-
-    # Tamanho razoável
-    if 500 < len(yaml_content) < 20000:
-        confidence += 0.1
-
-    # Campos obrigatórios do schema CIMO presentes
+    # --- 2. Campos obrigatórios (peso 0.25) ---
     required_fields = [
         "ArtigoID", "ClasseIA", "Mecanismo_Estruturado", "Quotes",
         "ProblemaNegócio_Contexto", "Intervenção_Descrição",
         "ResultadoTipo", "NívelEvidência",
     ]
-    for field in required_fields:
-        if field in yaml_content:
-            confidence += 0.0125
+    fields_found = sum(1 for f in required_fields if f in yaml_content)
+    fields_ratio = fields_found / len(required_fields)
+    score += fields_ratio * 0.25
 
-    return max(0.0, min(1.0, confidence))
+    # --- 3. Qualidade de quotes (peso 0.20) ---
+    quote_score = 0.0
+    quote_count = yaml_content.count("QuoteID:")
+    if quote_count >= 5:
+        quote_score += 0.5
+    elif quote_count >= 3:
+        quote_score += 0.3
+    elif quote_count >= 1:
+        quote_score += 0.1
+
+    # Quotes com referência de página
+    page_refs = yaml_content.count('Página: "p.')
+    if page_refs >= 3:
+        quote_score += 0.3
+    elif page_refs >= 1:
+        quote_score += 0.15
+
+    # Diversidade de tipos de quote
+    quote_types = ["Contexto", "Intervenção", "Mecanismo", "Outcome", "Limitação"]
+    types_found = sum(1 for t in quote_types if f'TipoQuote: "{t}"' in yaml_content)
+    if types_found >= 3:
+        quote_score += 0.2
+    elif types_found >= 2:
+        quote_score += 0.1
+
+    score += min(1.0, quote_score) * 0.20
+
+    # --- 4. Narrativas substanciais (peso 0.15) ---
+    narrative_fields = [
+        "ProblemaNegócio_Contexto", "Intervenção_Descrição",
+        "Dados_Descrição", "Mecanismo_Declarado", "Mecanismo_Inferido",
+    ]
+    narratives_present = sum(1 for f in narrative_fields if f in yaml_content)
+    narrative_ratio = narratives_present / len(narrative_fields)
+    score += narrative_ratio * 0.15
+
+    # --- 5. Tamanho e formato (peso 0.10) ---
+    format_score = 0.0
+    if 1000 < len(yaml_content) < 20000:
+        format_score += 0.5
+    elif 500 < len(yaml_content) <= 1000:
+        format_score += 0.25
+
+    # Mecanismo_Estruturado com cadeia '→'
+    if "→" in yaml_content:
+        format_score += 0.3
+
+    # Prefixo INFERIDO: presente
+    if "INFERIDO:" in yaml_content:
+        format_score += 0.2
+
+    score += min(1.0, format_score) * 0.10
+
+    # --- 6. Penalidades por valores NR ---
+    critical_nr_fields = ["ClasseIA", "ResultadoTipo", "Maturidade", "TarefaAnalítica"]
+    for field in critical_nr_fields:
+        # Detecta padrões como 'ClasseIA: "NR"' ou "ClasseIA: NR"
+        if f'{field}: "NR"' in yaml_content or f"{field}: NR" in yaml_content:
+            score -= 0.03
+
+    return max(0.0, min(1.0, score))
 
 
 # ============================================================
@@ -758,7 +880,7 @@ Return as YAML with fields: Contexto, Intervencao, Mecanismo, Outcome
         print(f"  Time: {result.metrics.total_time_ms:.0f}ms")
 
         if result.yaml_content:
-            print(f"\n  YAML Preview:")
+            print("\n  YAML Preview:")
             print("  " + result.yaml_content[:200].replace("\n", "\n  "))
 
     except Exception as e:

@@ -1,0 +1,87 @@
+---
+ArtigoID: ART_002
+Ano: 2020
+TipoPublicação: Conference
+Referência_Curta: Jafari Nodeh et al., 2020
+DOI: https://doi.org/10.1007/978-3-030-36178-5_19
+SegmentoO&G: Cross-segment
+SegmentoO&G_Confiança: Média
+Ambiente: NR
+Complexidade: Média
+Complexidade_Justificativa: F1=0 (ambiente não especificado), F2=1 (>7000 fornecedores implícito pelo volume de 1430 registros de transações), F3=1 (risco de fornecimento crítico para indústria petrolífera)
+ProcessoSCM_Alvo: Seleção/qualificação de fornecedores
+TipoRisco_SCRM: Risco de fornecimento
+ObjetoCrítico: Fornecedores de equipamentos e materiais para projetos petrolíferos
+ProblemaNegócio_Contexto: 'A seleção de fornecedores em empresas petrolíferas é crítica para otimização do ciclo de produção, refino e distribuição.
+
+  Os métodos tradicionais são limitados por avaliação subjetiva individual, regras de avaliação incorretas e métodos de decisão ineficientes.
+
+  A complexidade do processo com grande volume de dados e múltiplos critérios torna difícil a tomada de decisão eficiente.
+
+  O estudo visa criar um processo inteligente para avaliação e análise de fornecedores, reduzindo tempo, custo e erros humanos no processo de seleção.'
+ClasseIA: Híbrido
+ClasseIA_Confiança: Alta
+TarefaAnalítica: Classificação
+FamíliaModelo: 'Redes neurais feedforward; Clustering; Outro: Árvore de decisão; CBR/Especialista'
+TipoDado: Tabular/ERP
+Maturidade: Protótipo
+Maturidade_Confiança: Alta
+Intervenção_Descrição: 'Modelo híbrido baseado em CBR (Case-Based Reasoning) integrado com data mining e redes neurais. O framework inclui três módulos: (1) CBR Case Development usando árvore de decisão para extrair regras e Gain Ratio para ponderação de atributos; (2) CBR Solution Provider usando SOM baseado em K-Prototype para clustering da base de casos e recuperação de casos similares; (3) CBR Advisor usando MLP neural network como sistema especialista para validação e feedback. O modelo segue o processo CRISP-DM para preparação de dados.
+
+  '
+Dados_Descrição: 'Base de dados de fornecedores de uma empresa petrolífera com 1430 registros originais, reduzidos para 1118 após limpeza. Cada registro contém 36 atributos iniciais, dos quais 29 foram selecionados para o modelo. Os dados foram divididos em 70% para treinamento, 20% para teste e 10% para validação. Os 8 atributos com maior peso foram utilizados como variáveis de decisão, incluindo: status code, delivery location, fulfillment/technical spec compliance, AVL code, entre outros.
+
+  '
+CategoriaMecanismo: Padronização/consistência
+Mecanismo_Fonte: Misto
+Mecanismo_Declarado: '"This model which finally leads to optimal selection and ranking of suppliers, reducing the time and cost in the selection process and also reduced human errors by using data mining techniques and neural networks in the reasoning method cycle based on the case."
+
+  '
+Mecanismo_Inferido: 'INFERIDO: O clustering SOM reduz o espaço de busca ao agrupar fornecedores similares, permitindo recuperação mais eficiente de casos relevantes. INFERIDO: A árvore de decisão extrai regras objetivas que substituem julgamentos subjetivos, padronizando critérios de avaliação. INFERIDO: A rede neural MLP atua como sistema especialista que valida propostas e fornece feedback consistente. INFERIDO: O Gain Ratio pondera objetivamente a importância de cada atributo, eliminando viés na definição de pesos.
+
+  '
+Mecanismo_Estruturado: Dados históricos de fornecedores → CBR + clustering SOM + MLP → Padronização de critérios e recuperação de casos similares → Seleção e ranking otimizado de fornecedores
+ResultadoTipo: Misto
+Resultados_Quant: 'Davies-Bouldin Index: 0.3525 para k=3 clusters (vs. baseline: 0.5203 para k=2); Similaridade máxima de recuperação: 79.5% (baseline: NR)'
+Resultados_Qual: Redução de erros humanos; melhoria de acurácia e eficiência; 6 de 8 variáveis de decisão validadas por especialistas; framework modular com três componentes integrados (desenvolvimento, solução e advisor)
+NívelEvidência: Experimento com dados reais
+Limitações_Artigo: 'NR
+
+  '
+Observação: 'O artigo apresenta implementação em MATLAB e SPSS Clementine. O modelo foi validado com especialistas da indústria petrolífera que aprovaram 6 das 8 variáveis de decisão identificadas pelo modelo.
+
+  '
+Quotes:
+- QuoteID: Q001
+  TipoQuote: Contexto
+  Trecho: supplier selection in a supply chain of oil companies has a direct effect on immunization and optimization of the production cycle, refining and distribution of petroleum, gas and petroleum products
+  Página: p.226
+- QuoteID: Q002
+  TipoQuote: Contexto
+  Trecho: Many of the methods which are currently widely applied in the management of oil companies utilize traditional supplier selection methods which are unfortunately limited to individual and subjective evaluation in weighing decision maker's criteria, incorrect assessment rules, and inefficient decision-making methods
+  Página: p.226
+- QuoteID: Q003
+  TipoQuote: Mecanismo
+  Trecho: This model which finally leads to optimal selection and ranking of suppliers, reducing the time and cost in the selection process and also reduced human errors by using data mining techniques and neural networks in the reasoning method cycle based on the case
+  Página: p.226
+- QuoteID: Q004
+  TipoQuote: Intervenção
+  Trecho: SOM clustering algorithm was used based on the Prototype-K for clustering databases and improve the efficiency of the recovery. After clustering, retrieving the nearest case in search for a cluster that its center has the least distance to the new sample, is enough
+  Página: p.240
+- QuoteID: Q005
+  TipoQuote: Intervenção
+  Trecho: In this paper, Multilayer Perceptron Neural Network (MLP) is used as the expert. For training this network, all features including the training of the decision variables and descriptive variables are used
+  Página: p.237
+- QuoteID: Q006
+  TipoQuote: Outcome
+  Trecho: Results show that using reduced errors, improved accuracy, and efficiency the proposed model has been able to have a good performance in the supplier selection
+  Página: p.226
+- QuoteID: Q007
+  TipoQuote: Método
+  Trecho: In this research, 1430 records were collected which after data cleaning was reduced to 1118 records. After preparing the data, 36 attributes for each item were obtained and finally 29 attributes were selected
+  Página: p.231
+- QuoteID: Q008
+  TipoQuote: Outcome
+  Trecho: The results achieved in the first, showing the 8 decision variables extracted from the model to the experts, they number six variables of the decision were approved
+  Página: p.249
+---

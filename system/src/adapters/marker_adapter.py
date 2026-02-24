@@ -10,9 +10,7 @@ Conversão de PDF para Markdown estruturado com:
 
 from __future__ import annotations
 
-import json
 import logging
-import shutil
 import time
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -98,8 +96,8 @@ class MarkerConfig:
 def is_marker_available() -> bool:
     """Verifica se marker-pdf está instalado e funcional."""
     try:
-        from marker.converters.pdf import PdfConverter
-        return True
+        import marker.converters.pdf as marker_pdf
+        return marker_pdf is not None
     except ImportError:
         return False
 
@@ -136,6 +134,72 @@ def get_marker_info() -> dict:
 # Funções de Conversão
 # ============================================================
 
+def _run_marker_conversion(pdf_path: Path) -> Any:
+    """Executa conversão marker e retorna objeto renderizado."""
+    from marker.converters.pdf import PdfConverter
+    from marker.models import create_model_dict
+
+    gpu_available = is_gpu_available()
+    logger.info(
+        "Loading marker-pdf models (GPU: %s)",
+        gpu_available,
+        extra={"action": "convert", "gpu": gpu_available},
+    )
+    model_dict = create_model_dict()
+    converter = PdfConverter(artifact_dict=model_dict)
+    logger.info("Converting %s", pdf_path.name, extra={"action": "convert", "file": pdf_path.name})
+    return converter(str(pdf_path))
+
+
+def _build_marker_pages(markdown_content: str) -> list[MarkerPage]:
+    """Converte markdown extraído em métricas por página."""
+    page_texts = (
+        markdown_content.split("\n\n---\n\n")
+        if "\n\n---\n\n" in markdown_content
+        else [markdown_content]
+    )
+    pages: list[MarkerPage] = []
+    for page_num, text in enumerate(page_texts, start=1):
+        pages.append(
+            MarkerPage(
+                page_number=page_num,
+                text=text,
+                has_images="![" in text,
+                has_tables="|" in text and "---" in text,
+                word_count=len(text.split()),
+            )
+        )
+    return pages
+
+
+def _save_markdown_output(markdown_content: str, pdf_path: Path, output_dir: Path) -> Path:
+    md_path = output_dir / f"{pdf_path.stem}.md"
+    md_path.write_text(markdown_content, encoding="utf-8")
+    return md_path
+
+
+def _collect_rendered_images(rendered: object, output_dir: Path) -> list[Path]:
+    images: list[Path] = []
+    rendered_images = getattr(rendered, "images", None)
+    if not rendered_images:
+        return images
+    images_dir = output_dir / "images"
+    images_dir.mkdir(exist_ok=True)
+    for img_name, img_data in rendered_images.items():
+        img_path = images_dir / img_name
+        if isinstance(img_data, bytes):
+            img_path.write_bytes(img_data)
+        images.append(img_path)
+    return images
+
+
+def _collect_rendered_tables(rendered: object) -> list[str]:
+    tables = getattr(rendered, "tables", None)
+    if isinstance(tables, list):
+        return tables
+    return []
+
+
 def convert_pdf_to_markdown(
     pdf_path: Path,
     output_dir: Path,
@@ -167,68 +231,14 @@ def convert_pdf_to_markdown(
     try:
         start_time = time.time()
 
-        # Importar marker
-        from marker.converters.pdf import PdfConverter
-        from marker.models import create_model_dict
-
-        # Criar diretório de saída
         output_dir.mkdir(parents=True, exist_ok=True)
-
-        # Configurar modelos
-        logger.info(
-            "Loading marker-pdf models (GPU: %s)", is_gpu_available(),
-            extra={"action": "convert", "gpu": is_gpu_available()},
-        )
-        model_dict = create_model_dict()
-
-        # Criar conversor
-        converter = PdfConverter(
-            artifact_dict=model_dict,
-        )
-
-        # Converter PDF
-        logger.info(
-            "Converting %s", pdf_path.name,
-            extra={"action": "convert", "file": pdf_path.name},
-        )
-        rendered = converter(str(pdf_path))
-
-        # Processar resultado
+        rendered = _run_marker_conversion(pdf_path)
         markdown_content = rendered.markdown
-        metadata = rendered.metadata if hasattr(rendered, 'metadata') else {}
-
-        # Extrair informações por página
-        pages = []
-        page_texts = markdown_content.split("\n\n---\n\n") if "\n\n---\n\n" in markdown_content else [markdown_content]
-
-        for i, text in enumerate(page_texts, 1):
-            pages.append(MarkerPage(
-                page_number=i,
-                text=text,
-                has_images="![" in text,
-                has_tables="|" in text and "---" in text,
-                word_count=len(text.split()),
-            ))
-
-        # Salvar markdown
-        md_path = output_dir / f"{pdf_path.stem}.md"
-        md_path.write_text(markdown_content, encoding="utf-8")
-
-        # Coletar imagens extraídas
-        images = []
-        if hasattr(rendered, 'images') and rendered.images:
-            images_dir = output_dir / "images"
-            images_dir.mkdir(exist_ok=True)
-            for img_name, img_data in rendered.images.items():
-                img_path = images_dir / img_name
-                if isinstance(img_data, bytes):
-                    img_path.write_bytes(img_data)
-                images.append(img_path)
-
-        # Extrair tabelas
-        tables = []
-        if hasattr(rendered, 'tables') and rendered.tables:
-            tables = rendered.tables
+        metadata = rendered.metadata if hasattr(rendered, "metadata") else {}
+        pages = _build_marker_pages(markdown_content)
+        _save_markdown_output(markdown_content, pdf_path, output_dir)
+        images = _collect_rendered_images(rendered, output_dir)
+        tables = _collect_rendered_tables(rendered)
 
         elapsed_ms = (time.time() - start_time) * 1000
 
@@ -366,6 +376,7 @@ def compare_with_pymupdf(pdf_path: Path) -> dict:
         Dict com comparação
     """
     import tempfile
+
     import fitz
 
     # Extrair com PyMuPDF
@@ -383,7 +394,7 @@ def compare_with_pymupdf(pdf_path: Path) -> dict:
             result = convert_pdf_to_markdown(pdf_path, Path(tmpdir))
             marker_words = result.total_words
             marker_time = result.processing_time_ms
-        except Exception as e:  # Broad: PDF libraries raise diverse error types
+        except Exception:  # Broad: PDF libraries raise diverse error types
             marker_words = 0
             marker_time = 0
 

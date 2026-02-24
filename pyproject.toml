@@ -4,16 +4,18 @@ files = ["system"]
 ignore_missing_imports = true
 warn_unused_ignores = true
 warn_redundant_casts = true
+allow_redefinition = true
+disable_error_code = ["no-redef", "unused-ignore"]
 no_implicit_optional = true
 strict_equality = true
-exclude = ["system/test_api.py", "system/src/llm_client.py"]
+exclude = ["system/test_api.py", "system/dist", "system/build"]
 
 [tool.pyright]
 include = ["system"]
 typeCheckingMode = "basic"
 reportMissingImports = false
 reportMissingTypeStubs = false
-exclude = ["system/test_api.py", "system/src/llm_client.py"]
+exclude = ["system/test_api.py"]
 
 [tool.pylint.main]
 ignore = ["Extraction/outputs"]
@@ -61,3 +63,15 @@ disable = [
   "raise-missing-from",
   "logging-fstring-interpolation",
 ]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+src = ["system/src", "system/tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I"]
+ignore = ["E501"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["src"]

@@ -1,0 +1,47 @@
+---
+ArtigoID: ART_017
+Ano: 2025
+TipoPublicação: Journal
+Referência_Curta: Babaei et al., 2025
+DOI: https://doi.org/10.1016/j.esr.2025.101816
+SegmentoO&G: Cross-segment
+SegmentoO&G_Confiança: Alta
+Ambiente: Híbrido
+Complexidade: Alta
+Complexidade_Justificativa: "F1=1 (inclui offshore - BW Offshore, GE O&G Offshore nas empresas), F2=1 (múltiplas empresas no setor norueguês - Aker BP, Equinor, BW Offshore, GE O&G Offshore, Schlumberger, DNV), F3=1 (riscos múltiplos considerados - cenários de alto risco avaliados explicitamente)"
+ProcessoSCM_Alvo: Integração/coordenação
+TipoRisco_SCRM: Múltiplos
+ObjetoCrítico: Estratégias de adoção de blockchain na cadeia de suprimentos de O&G
+ProblemaNegócio_Contexto: "O setor de Oil & Gas enfrenta ineficiências causadas por processos decisórios convencionais baseados em papel em sua cadeia de suprimentos.
+
+  A falta de transparência, segurança e rastreabilidade nos sistemas existentes de gestão da cadeia de suprimentos representa desafios significativos.
+
+  A pesquisa avalia a integração de tecnologia blockchain como solução estratégica, considerando fatores organizacionais, de cadeia de suprimentos, tecnológicos e externos para identificar as estratégias de implantação mais eficazes no setor norueguês de O&G."
+ClasseIA: Híbrido
+ClasseIA_Confiança: Alta
+TarefaAnalítica: Otimização
+FamíliaModelo: "Programação matemática; MCDM/Decisão"
+TipoDado: Tabular/ERP
+Maturidade: Protótipo
+Maturidade_Confiança: Média
+Intervenção_Descrição: "O estudo desenvolve quatro modelos de otimização baseados em Network Data Envelopment Analysis (NDEA): NDEA padrão, Super-Efficiency NDEA (SENDEA), Uncertain NDEA (UNDEA) e Uncertain Super-Efficiency NDEA (UnSENDEA). Os modelos avaliam estratégias de implantação de blockchain considerando estrutura de rede, super-eficiência e incerteza. Adicionalmente, Principal Component Analysis (PCA) é utilizada para transformar dados de avaliação ótimos em estrutura mais interpretável, preservando padrões de variação importantes.
+
+  "
+Dados_Descrição: "Dados coletados via pesquisa web distribuída em quatro empresas norueguesas de O&G: Aker BP (4 respondentes), Equinor (2), BW Offshore (2), GE O&G Offshore, Schlumberger Limited e DNV (2). Período de coleta: abril a outubro de 2020. Total de 10 respondentes com graus de Ph.D. (2), mestrado (5) e bacharelado (3). Dados incluem 9 critérios de entrada (barreiras), 3 critérios intermediários (motivadores/pressões) e 3 critérios de saída (drivers).
+
+  "
+CategoriaMecanismo: Priorização/alocação ótima
+Mecanismo_Fonte: Misto
+Mecanismo_Declarado: '"By analyzing both stochastic and deterministic risk scenarios, and applying models with varying degrees of discrimination such as traditional and super-efficiency models, this work enhances understanding of blockchain strategy outcomes through a more detailed analysis." (p.12) O modelo UnSENDEA incorpora incerteza e aumenta o poder discriminatório na avaliação, introduzindo mudanças aleatórias nos inputs/outputs observados e removendo a DMU observada do conjunto de referência.
+
+  '
+Mecanismo_Inferido: "INFERIDO: A estrutura de rede em dois estágios (barreiras → pressões → drivers) captura as interdependências entre fatores de avaliação, permitindo análise mais realista que modelos black-box. INFERIDO: A super-eficiência aumenta o poder discriminatório ao permitir scores acima de 1.0, diferenciando melhor entre estratégias eficientes. INFERIDO: A incorporação de condições estocásticas via variações aleatórias em inputs/outputs simula incerteza do mundo real, tornando a avaliação mais robusta. INFERIDO: A agregação via modelo CCR de super-eficiência consolida resultados de múltiplos modelos em cenários de risco e não-risco, fornecendo visão integrada para gestores.
+
+  "
+Mecanismo_Estruturado: "Dados de survey (barreiras, pressões, drivers) → Modelos NDEA com estrutura de rede e incerteza → Scores de eficiência agregados por cenários de risco → Ranking de estratégias de blockchain + análise PCA"
+ResultadoTipo: Misto
+Resultados_Quant: "Eficiência single-use SENDEA: 1.451 (vs. baseline NDEA: 1.000); Eficiência substitution SENDEA: 0.949 (vs. baseline NDEA: 0.804); SD SENDEA: ~0.22 vs. NDEA: ~0.08 (maior poder discriminatório); Variância explicada PC1+PC2: 99.7% (estratégias) e 99.98% (métodos)"
+Resultados_Qual: "Single-use strategy é mais efetiva em cenários de baixo risco; Substitution strategy é ótima em cenários de alto risco; SENDEA demonstra maior robustez e poder discriminatório na avaliação; Modelos com incerteza exhibit lower efficiency compared to deterministic ones. This outcome aligns with the observation that uncertainty diminishes efficiency scores."
+Complexidade_Justificativa: "F1=1 (inclui offshore - BW Offshore, GE O&G Offshore nas empresas), F2=1 (múltiplas empresas no setor norueguês - Aker BP, Equinor, BW Offshore, GE O&G Offshore, Schlumberger, DNV), F3=1 (riscos múltiplos considerados - cenários de alto risco avaliados explicitamente)"
+Nenhum campo adicional foi alterado.
+---

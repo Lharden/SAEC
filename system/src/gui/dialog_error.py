@@ -15,7 +15,7 @@ def show_error_dialog(parent: tk.Misc, message: str, details: str = "") -> None:
         details: Full traceback or technical details (shown in expandable area).
     """
     dialog = tk.Toplevel(parent)
-    dialog.title("SAEC-O&G Error")
+    dialog.title("SAEC Error")
     dialog.configure(bg="#C0C0C0")
     dialog.resizable(False, False)
 
@@ -121,3 +121,4 @@ def show_error_dialog(parent: tk.Misc, message: str, details: str = "") -> None:
     dialog.geometry(f"+{x}+{y}")
 
     dialog.wait_window()
+

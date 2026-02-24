@@ -1,0 +1,83 @@
+---
+ArtigoID: ART_001
+Ano: 2026
+TipoPublicação: Journal
+Referência_Curta: GholamAzad & Eydi, 2026
+DOI: https://doi.org/10.1016/j.asej.2025.103871
+SegmentoO&G: Downstream
+SegmentoO&G_Confiança: Alta
+Ambiente: Onshore
+Complexidade: Média
+Complexidade_Justificativa: F1=0 (onshore, empresa petroquímica em Sanandaj, Irã), F2=1 (>7000 fornecedores mencionados), F3=1 (risco de fornecimento crítico para operações petroquímicas)
+ProcessoSCM_Alvo: Seleção/qualificação de fornecedores
+TipoRisco_SCRM: Risco de fornecimento
+ObjetoCrítico: Fornecedores de matérias-primas e componentes para indústria petroquímica
+ProblemaNegócio_Contexto: 'A seleção de fornecedores sustentáveis tornou-se um imperativo estratégico para cadeias de suprimentos resilientes na indústria petroquímica. Métodos tradicionais de avaliação falham em lidar com grandes volumes de dados e métricas dinâmicas de sustentabilidade, resultando em decisões subótimas. A empresa P Petrochemical no Irã trabalha com mais de 7000 fornecedores de diversos setores, incluindo matérias-primas de óleo e gás, materiais de polietileno, equipamentos elétricos e peças de reposição. O processo de identificação e substituição de fornecedores inadequados é demorado e propenso a erros, especialmente na era do big data.
+
+  '
+ClasseIA: Híbrido
+ClasseIA_Confiança: Alta
+TarefaAnalítica: Classificação
+FamíliaModelo: 'Redes neurais feedforward; Outro: Árvore de decisão (CHAID); Outro: Instance-based/KNN'
+TipoDado: Tabular/ERP
+Maturidade: Piloto
+Maturidade_Confiança: Alta
+Intervenção_Descrição: 'Framework híbrido inteligente que integra MPSS-DEA (Most Productive Scale Size Data Envelopment Analysis) com três algoritmos de IA: ANN (Artificial Neural Networks com MLP), KNN (K-Nearest Neighbors) e CHAID (Chi-squared Automatic Interaction Detection). O DEA classifica fornecedores em eficientes (MPSS) e ineficientes (não-MPSS) baseado em scores de eficiência. Os algoritmos de IA são então treinados para classificar novos fornecedores e identificar os critérios mais influentes para sustentabilidade.
+
+  '
+Dados_Descrição: 'Dataset coletado da empresa P Petrochemical no Irã, com 362 fornecedores e 38 critérios de sustentabilidade (subcritérios) organizados em 8 dimensões principais: Qualidade, Capacidade, Custos, Risco, CSR, Entrega, Controle de Cronograma e Serviço. Os dados são qualitativos, obtidos via questionários distribuídos a pessoal de diversas divisões (procurement, gestão geral, importação/exportação, compras e vendas). Dataset particionado em 70% treino e 30% teste.
+
+  '
+CategoriaMecanismo: Padronização/consistência
+Mecanismo_Fonte: Misto
+Mecanismo_Declarado: 'O framework reduz a complexidade computacional do DEA tradicional ao integrar algoritmos de IA, permitindo classificação rápida de fornecedores sem recálculo completo. A integração do MPSS-DEA com IA não apenas melhora a qualidade da tomada de decisão mas também permite substituição de fornecedores em tempo real, avaliação de riscos e planejamento estratégico.
+
+  '
+Mecanismo_Inferido: 'INFERIDO: O DEA estabelece benchmark de eficiência produtiva que padroniza a avaliação de fornecedores em múltiplas dimensões de sustentabilidade. INFERIDO: Os algoritmos de IA aprendem padrões dos labels gerados pelo DEA, permitindo classificação consistente de novos fornecedores sem reprocessamento do modelo matemático completo. INFERIDO: A análise de importância de preditores identifica critérios-chave que mais influenciam a classificação, permitindo foco em variáveis críticas para sustentabilidade.
+
+  '
+Mecanismo_Estruturado: Dados de fornecedores (38 critérios) → MPSS-DEA (classificação eficiente/ineficiente) + ANN/CHAID/KNN (aprendizado supervisionado) → Scores de eficiência + importância de features → Seleção sustentável de fornecedores
+ResultadoTipo: Quantitativo
+Resultados_Quant: 'Acurácia DEA-CHAID: 92.5% (baseline: NR); Acurácia DEANN: 91.9% (baseline: NR); Acurácia DEA-KNN: 91.4% (baseline: NR); ROC AUC DEA-CHAID: 0.96 (baseline: NR); ROC AUC DEANN: 0.95 (baseline: NR); ROC AUC DEA-KNN: 0.94 (baseline: NR); Taxa de misclassificação DEA-CHAID: 7.5% (baseline: NR)'
+Resultados_Qual: 'Framework permite substituição de fornecedores em tempo real, reduz complexidade computacional do DEA, suporta análise de ciclo de vida e promove transparência na seleção de fornecedores. Critérios mais influentes identificados: R2, SE2, QA4, CA6, DE3.'
+NívelEvidência: Estudo de caso real
+Limitações_Artigo: 'Framework testado apenas na indústria petroquímica, limitando generalizabilidade. Algoritmos de IA requerem datasets grandes e de alta qualidade; disponibilidade de dados é restrita em algumas indústrias por confidencialidade. Modelo MPSS-DEA não é adequado para ambientes incertos ou fuzzy. Alguns modelos de IA como ANN carecem de interpretabilidade, reduzindo confiança gerencial. Avaliação inicial do DEA baseada em snapshots estáticos de dados. Treinamento de múltiplos modelos de IA demanda recursos computacionais significativos.
+
+  '
+Observação: 'Artigo publicado em 2026 (data futura), possivelmente erro de publicação ou preprint. O estudo usa SPSS Modeler versão 18.0 e GAMS versão 25.1.2. O termo "petrochemical" indica downstream da cadeia de O&G.
+
+  '
+Quotes:
+- QuoteID: Q001
+  TipoQuote: Contexto
+  Trecho: The data was collected from P Petrochemical Company in Iran. Established in the late 2000 s in western Iran, P Petrochemical produces materials used in the manufacturing of feed for downstream units, polyethylene films, polyethylene foams, wire and cable coverings, and plastic components.
+  Página: p.7
+- QuoteID: Q002
+  TipoQuote: Intervenção
+  Trecho: This study introduces a novel hybrid intelligent framework that integrates Most Productive Scale Size Data Envelopment Analysis (MPSS-DEA) with three Artificial intelligence (AI) algorithms—Artificial Neural Networks (ANNs), K-Nearest Neighbors (KNN), and Chi-squared Automatic Interaction Detection (CHAID)—to enhance both accuracy and scalability in supplier evaluation.
+  Página: p.1
+- QuoteID: Q003
+  TipoQuote: Mecanismo
+  Trecho: The innovation lies in the synergy between DEA's robust efficiency evaluation and the predictive power of AI-ML mrthods, enabling accurate classification of suppliers into efficient and inefficient categories, while significantly reducing computational time.
+  Página: p.2
+- QuoteID: Q004
+  TipoQuote: Mecanismo
+  Trecho: The integration of MPSS-DEA with AI not only improves decision-making quality but also enables real-time supplier replacement, risk assessment, and strategic planning.
+  Página: p.3
+- QuoteID: Q005
+  TipoQuote: Outcome
+  Trecho: Applied to 362 suppliers and 38 sustainability criteria in the petrochemical industry, the proposed framework achieved high classification accuracies of 92.5% (DEA-CHAID), 91.9% (DEANN), and 91.4% (DEA-KNN). The model also demonstrated strong discrimination power, with ROC AUC scores of 0.96, 0.95, and 0.94, respectively.
+  Página: p.1
+- QuoteID: Q006
+  TipoQuote: Outcome
+  Trecho: Predictor importance analysis revealed that some of the features, such as R2, SE2, QA4, CA6, and DE3, were the most influential features across all models.
+  Página: p.1
+- QuoteID: Q007
+  TipoQuote: Limitação
+  Trecho: The framework was tested only in the petrochemical industry, which may limit its generalizability to other sectors. AI algorithms require large, high-quality datasets; however, data availability is restricted in some industries due to confidentiality.
+  Página: p.21
+- QuoteID: Q008
+  TipoQuote: Método
+  Trecho: 'Efficiency rates are used to gauge supplier sustainability: an efficiency rate (eo) of one indicates sustainability, while eo < 1 indicates unsustainability. Based on these results, suppliers are categorized into sustainable and unsustainable groups.'
+  Página: p.6
+---

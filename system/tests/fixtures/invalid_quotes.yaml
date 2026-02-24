@@ -5,8 +5,8 @@ TipoPublicação: "Journal"
 Referência_Curta: "Mendes et al., 2024"
 DOI: "https://doi.org/10.1000/example3"
 
-SegmentoO&G: "Upstream (E&P)"
-SegmentoO&G_Confiança: "Alta"
+SegmentoSetorial: "Operacao Primaria"
+SegmentoSetorial_Confiança: "Alta"
 Ambiente: "Offshore"
 Complexidade: "Alta"
 Complexidade_Justificativa: "F1=1 (offshore), F2=1 (>5 fornecedores), F3=1 (risco crítico)"
@@ -60,3 +60,5 @@ Quotes:
     Trecho: "ESP failures in offshore fields result in production losses exceeding $500k per event"
     Página: "p.2"
 ---
+
+

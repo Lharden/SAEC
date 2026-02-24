@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 
 @dataclass(frozen=True)
@@ -14,6 +14,7 @@ class Preset:
     force: bool
     timeout_minutes: float
     description: str
+    provider_overrides: dict[str, str] = field(default_factory=dict)
 
 
 PRESETS: dict[str, Preset] = {
@@ -41,8 +42,13 @@ PRESETS: dict[str, Preset] = {
         step=None,
         dry_run=False,
         force=False,
-        timeout_minutes=60.0,
-        description="Run full flow preferring local models and local resources.",
+        timeout_minutes=90.0,
+        description="Run full flow using Ollama local models only.",
+        provider_overrides={
+            "PROVIDER_EXTRACT": "ollama",
+            "PROVIDER_REPAIR": "ollama",
+            "PROVIDER_QUOTES": "ollama",
+        },
     ),
     "api_only": Preset(
         name="api_only",
@@ -50,8 +56,12 @@ PRESETS: dict[str, Preset] = {
         step=None,
         dry_run=False,
         force=False,
-        timeout_minutes=60.0,
-        description="Run full flow using API providers only.",
+        timeout_minutes=45.0,
+        description="Run full flow using cloud API providers only.",
+        provider_overrides={
+            "OLLAMA_ENABLED": "false",
+            "USE_CASCADE": "false",
+        },
     ),
 }
 
@@ -61,4 +71,4 @@ def list_presets() -> list[Preset]:
 
 
 def get_preset(name: str) -> Preset:
-    return PRESETS[name]
+    return PRESETS.get(name, PRESETS["pilot"])

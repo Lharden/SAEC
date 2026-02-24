@@ -6,7 +6,18 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python -m mypy --config-file pyproject.toml \"$CLAUDE_FILE_PATH\" 2>nul || exit 0",
+            "command": "python -m ruff check --fix \"$CLAUDE_FILE_PATH\" 2>/dev/null && python -m ruff format \"$CLAUDE_FILE_PATH\" 2>/dev/null || exit 0",
+            "timeout": 15000,
+            "pathGlobs": ["system/**/*.py"]
+          }
+        ]
+      },
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python -m mypy --config-file pyproject.toml \"$CLAUDE_FILE_PATH\" 2>/dev/null || exit 0",
             "timeout": 30000,
             "pathGlobs": ["system/**/*.py"]
           }
@@ -17,9 +28,20 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python -m pytest tests/ -x --tb=line -q --no-header 2>nul || echo '[TESTS] Some tests need attention'",
+            "command": "python -m pytest system/tests/ -x --tb=line -q --no-header 2>/dev/null || echo '[TESTS] Some tests need attention'",
             "timeout": 120000,
-            "pathGlobs": ["system/src/**/*.py", "tests/**/*.py"]
+            "pathGlobs": ["system/src/**/*.py", "system/tests/**/*.py"]
+          }
+        ]
+      },
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '[COST ALERT] Prompt file modified - verify token count impact' && wc -c \"$CLAUDE_FILE_PATH\" | awk '{printf \"File size: %.1f KB\\n\", $1/1024}'",
+            "timeout": 5000,
+            "pathGlobs": ["system/prompts/**/*.md", "**/prompt*.md"]
           }
         ]
       }
@@ -76,6 +98,9 @@
       "Bash(python -m mypy*)",
       "Bash(python -m ruff*)",
       "Bash(git *)",
+      "Bash(gh pr *)",
+      "Bash(gh issue *)",
+      "Bash(gh api *)",
       "Bash(pip list*)",
       "Bash(pip show*)",
       "Bash(pip check*)",

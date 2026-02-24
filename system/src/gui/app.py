@@ -1,43 +1,70 @@
-"""Win98-style desktop shell for SAEC-O&G."""
+"""Win98-style desktop shell for SAEC."""
 
 from __future__ import annotations
 
+import logging
 from pathlib import Path
 import sys
-import time
 import traceback
 import tkinter as tk
-from tkinter import messagebox
+from tkinter import filedialog, messagebox
+from typing import Any, cast
 
+from export_report import export_summary_csv, export_summary_html
+from gui.i18n import t
+from gui.dialog_about import show_about_dialog
 from gui.dialog_error import show_error_dialog
-from gui.dialog_project import prompt_new_project
-from gui.dialog_workspace import choose_workspace
+from gui.dialog_help import show_help_dialog
 from gui.layout_main import MainLayout, build_main_layout
+from gui.toolbar import Toolbar, build_toolbar
+from gui.tooltip import add_tooltip
+from gui.session_manager import SessionManager
+from gui.pipeline_controller import PipelineController
+from gui.project_manager import ProjectManager
+from gui.queue_controller import QueueController
 from gui.win98_theme import apply_win98_theme
-from job_runner import PipelineJobRunner, RunResult, resolve_cli_runner
+from health_check import HealthCheckResult, run_health_checks
+from job_runner import PipelineJobRunner, resolve_cli_runner
+from log_config import setup_logging
+from resource_paths import get_resource_path
 from run_queue import RunQueue
 from settings_store import SettingsStore
-from workspace import create_project, ensure_workspace, list_projects
 
 
 class SAECWin98App(tk.Tk):
     def __init__(self) -> None:
         super().__init__()
 
-        self.title("SAEC-O&G - Win98 Edition")
+        self.title("SAEC")
         self.geometry("1180x760")
         self.minsize(1000, 640)
 
         apply_win98_theme(self)
-
+        self._set_window_icon()
         self.report_callback_exception = self._on_tk_exception
 
         self.workspace_root: Path | None = None
         self.project_root: Path | None = None
+        self._articles_override: Path | None = None
         self._project_name_to_id: dict[str, str] = {}
 
-        self._settings_store = SettingsStore(Path.home() / ".saec-og")
+        self._system_root = Path(__file__).resolve().parents[2]
+        self._env_path = self._system_root / ".env"
+
+        self._settings_store = SettingsStore(Path.home() / ".SAEC")
+        initial_settings = self._settings_store.load()
+        self._notify_var = tk.BooleanVar(
+            value=bool(initial_settings.get("notify_on_completion", True))
+        )
         self._queue = RunQueue()
+        self._queue_history_path: Path | None = None
+
+        self._suppressed_confirmations: set[str] = set()
+        self._running_job_id: str | None = None
+        self._run_started_at: float | None = None
+        self._elapsed_after_id: str | None = None
+        self._clock_after_id: str | None = None
+        self._ollama_available = True
 
         main_script = self._detect_main_script()
         if getattr(sys, "frozen", False):
@@ -56,22 +83,73 @@ class SAECWin98App(tk.Tk):
             main_script=runner_main_script,
         )
 
+        self._session_manager = SessionManager(self)
+        self._pipeline_controller = PipelineController(self)
+        self._project_manager = ProjectManager(self)
+        self._queue_controller = QueueController(self)
+
+        self._build_menu()
+        self._toolbar: Toolbar = build_toolbar(
+            self,
+            on_run=self._on_run,
+            on_cancel=self._on_cancel,
+            on_refresh=self._on_refresh_outputs,
+            on_workspace=self._on_browse_workspace,
+            on_settings=self._open_setup_dialog,
+            on_help=self._show_help,
+            on_new_project=self._on_new_project,
+            on_diagnostics=self._show_diagnostics_tab,
+        )
+        self._toolbar.frame.pack(fill="x", padx=6, pady=(0, 4))
+
         self.layout: MainLayout = build_main_layout(
             self, on_run=self._on_run, on_cancel=self._on_cancel
         )
-        self._wire_events()
-        self._build_menu()
-        self._restore_session()
-        self._refresh_queue_ui()
-        self.protocol("WM_DELETE_WINDOW", self._on_close)
 
-    def _on_tk_exception(self, exc_type, exc_value, exc_tb) -> None:
-        tb_text = "".join(traceback.format_exception(exc_type, exc_value, exc_tb))
-        show_error_dialog(
-            self,
-            message=f"An unexpected error occurred: {exc_value}",
-            details=tb_text,
+        self._wire_events()
+        self._bind_shortcuts()
+        self._bind_tooltips()
+
+        self.layout.queue_panel.set_callbacks(
+            on_view_logs=self._on_view_job_logs,
+            on_cancel_job=self._on_cancel_job,
         )
+        self.layout.diagnostics_panel.set_run_callback(self._run_diagnostics_checks)
+        self.layout.profile_panel.set_configure_callback(self._on_configure_profile)
+
+        self._configure_logging(self._settings_store.base_dir / "logs")
+
+        self._session_manager.restore()
+        self._refresh_queue_ui()
+        self._refresh_enabled_states()
+
+        self.protocol("WM_DELETE_WINDOW", self._on_close)
+        self._tick_clock()
+        self.after(50, self._run_startup_checks)
+        self.after(100, self._ensure_first_run_setup)
+
+    # ------------------------------------------------------------------
+    # Initialization helpers
+    # ------------------------------------------------------------------
+
+    def _configure_logging(self, log_dir: Path) -> None:
+        setup_logging(log_dir=log_dir, gui_callback=self._append_gui_log, level=logging.INFO)
+        self._logger = logging.getLogger("saec.gui")
+
+    def _set_window_icon(self) -> None:
+        icon_path = get_resource_path("src/gui/resources/saec.ico")
+        if not icon_path.exists():
+            return
+        try:
+            self.iconbitmap(str(icon_path))
+        except Exception:
+            return
+
+    def _append_gui_log(self, line: str) -> None:
+        try:
+            self.after(0, lambda: self.layout.logs_panel.append_line(line))
+        except tk.TclError:
+            return
 
     def _detect_main_script(self) -> Path:
         candidate = Path(__file__).resolve().parents[2] / "main.py"
@@ -86,330 +164,446 @@ class SAECWin98App(tk.Tk):
 
     def _wire_events(self) -> None:
         self.layout.browse_workspace_button.configure(command=self._on_browse_workspace)
-        self.layout.workspace_combo.bind(
-            "<<ComboboxSelected>>", self._on_workspace_selected
-        )
-        self.layout.project_combo.bind(
-            "<<ComboboxSelected>>", self._on_project_selected
-        )
+        self.layout.workspace_combo.bind("<<ComboboxSelected>>", self._on_workspace_selected)
+        self.layout.project_combo.bind("<<ComboboxSelected>>", self._on_project_selected)
         self.layout.new_project_button.configure(command=self._on_new_project)
+        self.layout.browse_articles_button.configure(command=self._on_browse_articles)
+        self.layout.clear_articles_button.configure(command=self._on_clear_articles)
+
+    def _bind_shortcuts(self) -> None:
+        self.bind_all("<Control-r>", self._shortcut_run)
+        self.bind_all("<Control-Shift-C>", self._shortcut_cancel)
+        self.bind_all("<Control-Shift-c>", self._shortcut_cancel)
+        self.bind_all("<Control-l>", self._shortcut_clear_logs)
+        self.bind_all("<Control-w>", self._shortcut_workspace)
+        self.bind_all("<F5>", self._shortcut_refresh)
+        self.bind_all("<Control-q>", self._shortcut_quit)
+        self.bind_all("<F1>", self._shortcut_help)
+
+    def _bind_tooltips(self) -> None:
+        add_tooltip(self.layout.workspace_combo, t("tooltip.workspace_combo"))
+        add_tooltip(self.layout.project_combo, t("tooltip.project_combo"))
+        add_tooltip(self.layout.browse_workspace_button, t("tooltip.browse_workspace"))
+        add_tooltip(self.layout.new_project_button, t("tooltip.new_project"))
+        add_tooltip(self.layout.articles_entry, t("tooltip.articles_entry"))
+        add_tooltip(self.layout.browse_articles_button, t("tooltip.browse_articles"))
+        add_tooltip(self.layout.clear_articles_button, t("tooltip.clear_articles"))
+
+        toolbar_tooltips = {
+            "run": t("toolbar.run"),
+            "cancel": t("toolbar.cancel"),
+            "refresh": t("toolbar.refresh"),
+            "workspace": t("toolbar.workspace"),
+            "new": t("toolbar.new"),
+            "diag": t("toolbar.diag"),
+            "settings": t("toolbar.settings"),
+            "help": t("toolbar.help"),
+        }
+        for key, button in self._toolbar.buttons.items():
+            add_tooltip(button, toolbar_tooltips.get(key, key))
 
     def _build_menu(self) -> None:
         menu = tk.Menu(self)
 
         file_menu = tk.Menu(menu, tearoff=False)
-        file_menu.add_command(label="Exit", command=self._on_close)
-        menu.add_cascade(label="File", menu=file_menu)
+        file_menu.add_command(label=t("menu.exit"), command=self._on_close)
+        menu.add_cascade(label=t("menu.file"), menu=file_menu)
 
         workspace_menu = tk.Menu(menu, tearoff=False)
         workspace_menu.add_command(
-            label="Select Workspace...", command=self._on_browse_workspace
+            label=t("menu.select_workspace"),
+            command=self._on_browse_workspace,
         )
-        menu.add_cascade(label="Workspace", menu=workspace_menu)
+        menu.add_cascade(label=t("menu.workspace"), menu=workspace_menu)
 
         project_menu = tk.Menu(menu, tearoff=False)
-        project_menu.add_command(label="New Project...", command=self._on_new_project)
-        menu.add_cascade(label="Project", menu=project_menu)
+        project_menu.add_command(label=t("menu.new_project"), command=self._on_new_project)
+        project_menu.add_command(
+            label=t("menu.configure_profile"),
+            command=self._on_configure_profile,
+        )
+        menu.add_cascade(label=t("menu.project"), menu=project_menu)
 
         pipeline_menu = tk.Menu(menu, tearoff=False)
-        pipeline_menu.add_command(label="Run", command=self._on_run)
-        pipeline_menu.add_command(label="Cancel", command=self._on_cancel)
-        menu.add_cascade(label="Pipeline", menu=pipeline_menu)
+        pipeline_menu.add_command(label=t("menu.run"), command=self._on_run)
+        pipeline_menu.add_command(
+            label=t("menu.cancel"),
+            command=self._on_cancel,
+        )
+        pipeline_menu.add_separator()
+        pipeline_menu.add_command(
+            label=t("menu.export_summary"),
+            command=self._on_export_summary,
+        )
+        menu.add_cascade(label=t("menu.pipeline"), menu=pipeline_menu)
+
+        view_menu = tk.Menu(menu, tearoff=False)
+        view_menu.add_command(
+            label=t("menu.refresh_outputs"),
+            command=self._on_refresh_outputs,
+        )
+        view_menu.add_command(
+            label=t("menu.clear_logs"),
+            command=lambda: self.layout.logs_panel.clear() if hasattr(self, "layout") else None,
+        )
+        view_menu.add_command(label=t("menu.diagnostics"), command=self._show_diagnostics_tab)
+        view_menu.add_command(label=t("menu.profile"), command=self._show_profile_tab)
+        view_menu.add_separator()
+        view_menu.add_checkbutton(
+            label=t("menu.notify_completion"),
+            variable=self._notify_var,
+            command=self._toggle_notify_on_completion,
+        )
+        menu.add_cascade(label=t("menu.view"), menu=view_menu)
 
         help_menu = tk.Menu(menu, tearoff=False)
-        help_menu.add_command(label="About", command=self._show_about)
-        menu.add_cascade(label="Help", menu=help_menu)
+        help_menu.add_command(
+            label=t("menu.help_troubleshooting"),
+            command=self._show_help,
+        )
+        help_menu.add_separator()
+        help_menu.add_command(label=t("menu.about"), command=self._show_about)
+        menu.add_cascade(label=t("menu.help"), menu=help_menu)
 
         self.configure(menu=menu)
 
-    def _on_close(self) -> None:
-        """Handle window close with confirmation if jobs are active."""
-        if self._runner.is_running:
-            confirm = messagebox.askyesno(
-                "Pipeline Running",
-                "A pipeline job is still running.\n"
-                "Cancel the job and quit?",
-                parent=self,
-            )
-            if not confirm:
-                return
-            self._runner.cancel()
-            # Wait briefly for process to terminate
-            deadline = time.monotonic() + 5.0
-            while self._runner.is_running and time.monotonic() < deadline:
-                self.update()
-                time.sleep(0.1)
+    # ------------------------------------------------------------------
+    # Session and lifecycle
+    # ------------------------------------------------------------------
 
-        pending = self._queue.pending_count
-        if pending > 0:
-            confirm = messagebox.askyesno(
-                "Pending Jobs",
-                f"{pending} job(s) still pending in the queue.\n"
-                "Quit anyway?",
-                parent=self,
-            )
-            if not confirm:
-                return
-
-        # Save window state before closing
-        try:
-            self._settings_store.save_window_state(
-                geometry=self.geometry(),
-                active_tab=self.layout.right_notebook.index("current"),
-            )
-        except Exception:
-            pass  # Don't prevent closing on save error
-
-        self.destroy()
-
-    def _show_about(self) -> None:
-        messagebox.showinfo(
-            "About",
-            "SAEC-O&G Win98 Edition\n"
-            "Workspace-aware desktop shell for CIMO extraction.",
-            parent=self,
+    def _on_tk_exception(self, exc_type, exc_value, exc_tb) -> None:
+        tb_text = "".join(traceback.format_exception(exc_type, exc_value, exc_tb))
+        logging.getLogger("saec.gui").exception("Unhandled Tk callback error")
+        show_error_dialog(
+            self,
+            message=f"An unexpected error occurred: {exc_value}",
+            details=tb_text,
         )
 
     def _restore_session(self) -> None:
-        settings = self._settings_store.load()
-        recent = settings.get("recent_workspaces", [])
-        self.layout.workspace_combo.configure(values=recent)
+        self._session_manager.restore()
 
-        last_workspace = settings.get("last_workspace", "")
-        if not last_workspace:
+    def _persist_session_state(self) -> None:
+        self._session_manager.persist()
+
+    def _on_close(self) -> None:
+        self._session_manager.on_close()
+
+    # ------------------------------------------------------------------
+    # Diagnostics and setup
+    # ------------------------------------------------------------------
+
+    def _run_startup_checks(self) -> None:
+        results = self._run_diagnostics_checks()
+        failed = [item for item in results if item.status == "FAIL"]
+        warns = [item for item in results if item.status == "WARN"]
+        if failed:
+            self.layout.status_var.set(t("dialog.startup_checks_failed"))
+        elif warns:
+            self.layout.status_var.set(t("dialog.startup_checks_warnings"))
+
+    def _read_env_values(self) -> dict[str, str]:
+        values: dict[str, str] = {}
+        if not self._env_path.exists():
+            return values
+        for raw in self._env_path.read_text(encoding="utf-8", errors="replace").splitlines():
+            line = raw.strip()
+            if not line or line.startswith("#") or "=" not in line:
+                continue
+            key, value = line.split("=", 1)
+            values[key.strip()] = value.strip().strip('"').strip("'")
+        return values
+
+    def _run_diagnostics_checks(self) -> list[HealthCheckResult]:
+        env_values = self._read_env_values()
+        ollama_url = env_values.get("OLLAMA_BASE_URL", "").strip() or "http://localhost:11434"
+
+        results = run_health_checks(
+            workspace_root=self.workspace_root,
+            system_root=self._system_root,
+            ollama_url=ollama_url,
+        )
+        self.layout.diagnostics_panel.set_results(results)
+
+        ollama = next((item for item in results if item.name == "Ollama"), None)
+        self._ollama_available = bool(ollama and ollama.status == "OK")
+        return results
+
+    def _warn_if_no_provider_ready(self, results: list[HealthCheckResult]) -> None:
+        api_keys = next((item for item in results if item.name == "API keys"), None)
+        ollama = next((item for item in results if item.name == "Ollama"), None)
+        api_ok = bool(api_keys and api_keys.status == "OK")
+        ollama_ok = bool(ollama and ollama.status == "OK")
+        if api_ok or ollama_ok:
             return
+        messagebox.showwarning(
+            t("dialog.provider_setup_title"),
+            t("dialog.provider_setup_msg"),
+            parent=self,
+        )
 
-        workspace_path = Path(last_workspace)
-        if workspace_path.exists():
-            self._set_workspace(workspace_path)
-        self._refresh_queue_ui()
+    def _show_diagnostics_tab(self) -> None:
+        self.layout.right_notebook.select(3)
 
-        # Restore window geometry
-        window_state = self._settings_store.get_window_state()
-        saved_geometry = window_state.get("geometry", "")
-        if saved_geometry:
-            try:
-                self.geometry(saved_geometry)
-            except tk.TclError:
-                pass  # Invalid geometry, use default
+    def _show_profile_tab(self) -> None:
+        self.layout.right_notebook.select(4)
 
-        # Restore active tab
-        active_tab = window_state.get("active_tab", 0)
-        try:
-            self.layout.right_notebook.select(active_tab)
-        except (tk.TclError, IndexError):
-            pass
+    def _ensure_first_run_setup(self) -> None:
+        self._project_manager.ensure_first_run_setup()
+
+    def _create_new_project_with_config(self, name: str) -> None:
+        self._project_manager.create_new_project_with_config(name)
+
+    def _select_project_by_id(self, project_id: str) -> None:
+        self._project_manager.select_project_by_id(project_id)
+
+    def _open_setup_dialog(self) -> None:
+        self._project_manager.open_setup_dialog()
+
+    def _write_env_file(self, values: dict[str, str]) -> None:
+        self._project_manager.write_env_file(values)
+
+    @staticmethod
+    def _write_env_to_path(env_path: Path, values: dict[str, str]) -> None:
+        from gui.project_manager import ProjectManager
+        ProjectManager.write_env_to_path(env_path, values)
+
+    # ------------------------------------------------------------------
+    # Workspace and project selection (delegated to ProjectManager)
+    # ------------------------------------------------------------------
 
     def _on_browse_workspace(self) -> None:
-        initial = self.workspace_root or Path.home()
-        selected = choose_workspace(self, initial_dir=initial)
-        if selected is None:
-            return
-        self._set_workspace(selected)
+        self._project_manager.on_browse_workspace()
 
     def _on_workspace_selected(self, _event=None) -> None:
-        value = self.layout.workspace_combo.get().strip()
-        if not value:
-            return
-        self._set_workspace(Path(value))
+        self._project_manager.on_workspace_selected(_event)
 
     def _set_workspace(self, workspace_root: Path) -> None:
-        cfg = ensure_workspace(workspace_root)
-        self.workspace_root = cfg.root
-
-        settings = self._settings_store.add_recent_workspace(cfg.root)
-        recent = settings.get("recent_workspaces", [])
-        self.layout.workspace_combo.configure(values=recent)
-        self.layout.workspace_combo.set(str(cfg.root))
-
-        self.layout.status_panel.set_workspace(cfg.root)
-        self.layout.status_var.set(f"Workspace selected: {cfg.root}")
-        self._refresh_projects()
+        self._project_manager.set_workspace(workspace_root)
 
     def _refresh_projects(self) -> None:
-        if self.workspace_root is None:
-            self.layout.project_combo.configure(values=[])
-            self.layout.project_combo.set("")
-            self._project_name_to_id = {}
-            return
-
-        projects = list_projects(self.workspace_root)
-        labels: list[str] = []
-        self._project_name_to_id = {}
-        for project in projects:
-            label = f"{project.project_id} | {project.name}"
-            labels.append(label)
-            self._project_name_to_id[label] = project.project_id
-
-        self.layout.project_combo.configure(values=labels)
-
-        if labels:
-            settings = self._settings_store.load()
-            key = str(self.workspace_root)
-            last = settings.get("last_project_by_workspace", {}).get(key, "")
-            selected = next(
-                (label for label in labels if label.startswith(f"{last} |")), labels[0]
-            )
-            self.layout.project_combo.set(selected)
-            self._select_project_from_label(selected)
-        else:
-            self.layout.project_combo.set("")
-            self.project_root = None
-            self.layout.outputs_panel.set_project_root(None)
-            self.layout.status_panel.set_project(None)
+        self._project_manager.refresh_projects()
 
     def _on_project_selected(self, _event=None) -> None:
-        label = self.layout.project_combo.get().strip()
-        if not label:
-            return
-        self._select_project_from_label(label)
+        self._project_manager.on_project_selected(_event)
 
     def _select_project_from_label(self, label: str) -> None:
-        if self.workspace_root is None:
-            return
+        self._project_manager.select_project_from_label(label)
 
-        project_id = self._project_name_to_id.get(label)
-        if project_id is None:
-            if " | " in label:
-                project_id = label.split(" | ", 1)[0]
-            else:
-                project_id = label
+    def _load_project_config(self) -> None:
+        self._project_manager._load_project_config()
 
-        root = self.workspace_root / "projects" / project_id
-        self.project_root = root.resolve()
-        self.layout.outputs_panel.set_project_root(self.project_root)
-        self.layout.status_panel.set_project(self.project_root)
-        self.layout.status_var.set(f"Project selected: {project_id}")
-        self._settings_store.set_last_project(self.workspace_root, project_id)
+    def _ensure_project_profile_configured(self, *, interactive: bool) -> bool:
+        return self._project_manager._ensure_project_profile_configured(interactive=interactive)
+
+    def _on_configure_profile(self) -> None:
+        self._project_manager.on_configure_profile()
 
     def _on_new_project(self) -> None:
-        if self.workspace_root is None:
-            messagebox.showwarning(
-                "Workspace required", "Select a workspace first.", parent=self
-            )
-            return
+        self._project_manager.on_new_project()
 
-        name = prompt_new_project(self)
-        if not name:
-            return
+    # ------------------------------------------------------------------
+    # Articles directory override (delegated to ProjectManager)
+    # ------------------------------------------------------------------
 
-        try:
-            project = create_project(self.workspace_root, name=name)
-        except FileExistsError:
-            messagebox.showerror(
-                "Project exists", "A project with this id already exists.", parent=self
-            )
-            return
+    def _effective_articles_dir(self) -> Path | None:
+        return self._project_manager.effective_articles_dir()
 
-        self._refresh_projects()
-        label = f"{project.project_id} | {project.name}"
-        self.layout.project_combo.set(label)
-        self._select_project_from_label(label)
+    def _on_browse_articles(self) -> None:
+        self._project_manager.on_browse_articles()
+
+    def _on_clear_articles(self) -> None:
+        self._project_manager.on_clear_articles()
+
+    # ------------------------------------------------------------------
+    # Pipeline run/cancel (delegated to PipelineController)
+    # ------------------------------------------------------------------
 
     def _on_run(self) -> None:
+        self._pipeline_controller.on_run()
+
+    def _on_cancel(self) -> None:
+        self._pipeline_controller.on_cancel()
+
+    def _on_cancel_job(self, job_id: str) -> None:
+        self._pipeline_controller.on_cancel_job(job_id)
+
+    def _start_next_if_idle(self) -> None:
+        self._pipeline_controller.start_next_if_idle()
+
+    def _refresh_queue_ui(self) -> None:
+        self._queue_controller.refresh_queue_ui()
+
+    def _save_queue_history(self) -> None:
+        self._queue_controller.save_history()
+
+    def _load_queue_history(self) -> None:
+        self._queue_controller.load_history()
+
+    def _tick_clock(self) -> None:
+        self._queue_controller.tick_clock()
+
+    def _schedule_elapsed_updates(self) -> None:
+        self._queue_controller.schedule_elapsed_updates()
+
+    def _stop_elapsed_updates(self) -> None:
+        self._queue_controller.stop_elapsed_updates()
+
+    def _set_main_sash_position(self, position: int) -> None:
+        try:
+            if hasattr(self.layout.body_paned, "sashpos"):
+                cast(Any, self.layout.body_paned).sashpos(0, int(position))
+            else:
+                self.layout.body_paned.sash_place(0, int(position), 0)
+        except Exception:
+            pass
+
+    def _get_main_sash_position(self) -> int:
+        try:
+            if hasattr(self.layout.body_paned, "sashpos"):
+                return int(cast(Any, self.layout.body_paned).sashpos(0))
+            coord = self.layout.body_paned.sash_coord(0)
+            if isinstance(coord, tuple) and coord:
+                return int(coord[0])
+        except Exception:
+            pass
+        return 320
+
+    # ------------------------------------------------------------------
+    # Menu/toolbar actions
+    # ------------------------------------------------------------------
+
+    def _show_about(self) -> None:
+        show_about_dialog(self)
+
+    def _show_help(self) -> None:
+        show_help_dialog(self)
+
+    def _on_refresh_outputs(self) -> None:
+        self.layout.outputs_panel.refresh()
+        self.layout.status_panel.set_project(
+            self.project_root, articles_dir=self._effective_articles_dir()
+        )
+
+    def _toggle_notify_on_completion(self) -> None:
+        data = self._settings_store.load()
+        data["notify_on_completion"] = bool(self._notify_var.get())
+        self._settings_store.save(data)
+
+    def _on_view_job_logs(self, job_id: str) -> None:
+        self.layout.right_notebook.select(2)
+        self._logger.info("[queue] viewing logs for job=%s", job_id)
+
+    def _on_export_summary(self) -> None:
         if self.project_root is None:
             messagebox.showwarning(
-                "Project required", "Select or create a project first.", parent=self
-            )
-            return
-
-        if (
-            self._runner.main_script is not None
-            and not self._runner.main_script.exists()
-        ):
-            messagebox.showerror(
-                "Runner error",
-                f"Pipeline entrypoint not found: {self._runner.main_script}",
+                t("dialog.project_required"),
+                t("dialog.select_project_first"),
                 parent=self,
             )
             return
 
-        request = self.layout.run_panel.build_request(
-            workspace_root=self.workspace_root,
-            project_root=self.project_root,
-        )
-
-        errors = self.layout.run_panel.validate()
-        if errors:
-            self.layout.run_panel.show_validation_errors(errors)
-            return
-        self.layout.run_panel.show_validation_errors([])  # Clear any previous errors
-
-        item = self._queue.enqueue(request)
-        self.layout.logs_panel.append_line(
-            f"[queue] queued job={item.job_id} mode={item.request.mode} article={item.request.article_id or '-'}"
-        )
-        self._refresh_queue_ui()
-        self._start_next_if_idle()
-
-    def _on_cancel(self) -> None:
-        self._runner.cancel()
-        cancelled = self._queue.cancel_running()
-        if cancelled is not None:
-            self.layout.logs_panel.append_line(
-                f"[queue] cancelled job={cancelled.job_id}"
+        yamls_dir = self.project_root / "outputs" / "yamls"
+        if not yamls_dir.exists():
+            messagebox.showwarning(
+                t("dialog.no_outputs_title"),
+                t("dialog.no_outputs_msg"),
+                parent=self,
             )
-        self.layout.status_var.set("Cancelling...")
-        self.layout.run_panel.set_running(False)
-        self._refresh_queue_ui()
-        self.after(10, self._start_next_if_idle)
-
-    def _on_runner_output(self, line: str) -> None:
-        self.after(0, lambda: self.layout.logs_panel.append_line(line))
-
-    def _on_runner_complete(self, result: RunResult) -> None:
-        def _done() -> None:
-            finished = self._queue.finish_running(result)
-            self.layout.logs_panel.append_line("--- run finished ---")
-            if finished is not None:
-                self.layout.logs_panel.append_line(
-                    f"[queue] finished job={finished.job_id} status={finished.status} code={finished.return_code}"
-                )
-            if result.success:
-                self.layout.status_var.set("Run completed successfully.")
-            else:
-                self.layout.status_var.set(f"Run failed (code={result.return_code}).")
-            self.layout.outputs_panel.refresh()
-            self.layout.status_panel.set_project(self.project_root)
-            self.layout.run_panel.set_running(False)
-            self._refresh_queue_ui()
-            self._start_next_if_idle()
-
-        self.after(0, _done)
-
-    def _start_next_if_idle(self) -> None:
-        if self._runner.is_running:
             return
-        next_item = self._queue.start_next()
-        if next_item is None:
+        if not any(yamls_dir.glob("*.yaml")):
+            messagebox.showwarning(
+                t("dialog.no_yamls_title"),
+                t("dialog.no_yamls_msg"),
+                parent=self,
+            )
             return
 
-        self.layout.run_panel.set_running(True)
-        self.layout.status_var.set(f"Running job {next_item.job_id}...")
-        self.layout.logs_panel.append_line(
-            f"[queue] starting job={next_item.job_id} mode={next_item.request.mode}"
+        default_csv = self.project_root / "outputs" / "consolidated" / "summary_report.csv"
+        target = filedialog.asksaveasfilename(
+            parent=self,
+            title=t("dialog.export_title"),
+            defaultextension=".csv",
+            initialfile=default_csv.name,
+            initialdir=str(default_csv.parent),
+            filetypes=[("CSV files", "*.csv")],
         )
-        self._refresh_queue_ui()
+        if not target:
+            return
 
-        self._runner.run_async(
-            next_item.request,
-            on_output=self._on_runner_output,
-            on_complete=self._on_runner_complete,
-        )
+        csv_path = Path(target)
+        count = export_summary_csv(yamls_dir, csv_path)
+        self._logger.info("Exported summary CSV with %s rows: %s", count, csv_path)
 
-    def _refresh_queue_ui(self) -> None:
-        items = self._queue.snapshot()
-        self.layout.queue_panel.refresh(items)
+        if messagebox.askyesno(
+            t("dialog.export_html_title"),
+            t("dialog.export_html"),
+            parent=self,
+        ):
+            html_path = csv_path.with_suffix(".html")
+            export_summary_html(yamls_dir, html_path)
+            self._logger.info("Exported summary HTML: %s", html_path)
 
-        pending = sum(1 for item in items if item.status == "pending")
-        running = sum(1 for item in items if item.status == "running")
-        success = sum(1 for item in items if item.status == "success")
-        failed = sum(1 for item in items if item.status == "failed")
-        cancelled = sum(1 for item in items if item.status == "cancelled")
-        self.layout.status_panel.update_queue_metrics(
-            pending=pending,
-            running=running,
-            success=success,
-            failed=failed,
-            cancelled=cancelled,
-        )
+        self.layout.status_var.set(t("dialog.summary_exported", filename=csv_path.name))
+
+    def _notify_job_completion(self, *, success: bool) -> None:
+        self._queue_controller.notify_job_completion(success=success)
+
+    # ------------------------------------------------------------------
+    # Shortcuts
+    # ------------------------------------------------------------------
+
+    def _shortcut_run(self, _event=None) -> str:
+        self._on_run()
+        return "break"
+
+    def _shortcut_cancel(self, _event=None) -> str:
+        self._on_cancel()
+        return "break"
+
+    def _shortcut_clear_logs(self, _event=None) -> str:
+        self.layout.logs_panel.clear()
+        return "break"
+
+    def _shortcut_workspace(self, _event=None) -> str:
+        self._on_browse_workspace()
+        return "break"
+
+    def _shortcut_refresh(self, _event=None) -> str:
+        self._on_refresh_outputs()
+        return "break"
+
+    def _shortcut_quit(self, _event=None) -> str:
+        self._on_close()
+        return "break"
+
+    def _shortcut_help(self, _event=None) -> str:
+        self._show_help()
+        return "break"
+
+    # ------------------------------------------------------------------
+    # UI state rules
+    # ------------------------------------------------------------------
+
+    def _refresh_enabled_states(self) -> None:
+        has_workspace = self.workspace_root is not None
+        has_project = self.project_root is not None
+        running = self._runner.is_running
+
+        self.layout.new_project_button.configure(state="normal" if has_workspace else "disabled")
+        self.layout.project_combo.configure(state="readonly" if has_workspace else "disabled")
+
+        articles_state = "normal" if has_project and not running else "disabled"
+        self.layout.browse_articles_button.configure(state=articles_state)
+        self.layout.clear_articles_button.configure(state=articles_state)
+
+        self.layout.run_panel.set_enabled(has_project and not running)
+        self.layout.run_panel.set_running(running)
+
+        # Queue(0) and Logs(2) always enabled. Outputs(1), Diagnostics(3), Profile(4) depend on project.
+        state = "normal" if has_project else "disabled"
+        for tab_index in (1, 3, 4):
+            try:
+                self.layout.right_notebook.tab(tab_index, state=state)
+            except tk.TclError:
+                pass

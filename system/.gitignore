@@ -6,7 +6,19 @@ __pycache__/
 *.pyc
 *.pyo
 .pytest_cache/
+.pytest_tmp/
+tmp_pytest_run/
 *.egg-info/
+
+# Build artifacts
+build/
+dist/
+*.spec.bak
+
+# Logs
+logs/
+*.log
+pip_install.log
 
 # Jupyter
 .ipynb_checkpoints/
@@ -18,6 +30,7 @@ __pycache__/
 # OS
 .DS_Store
 Thumbs.db
+nul
 
 # Outputs grandes (descomente se não quiser versionar)
 # ../Extraction/outputs/work/

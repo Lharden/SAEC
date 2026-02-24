@@ -1,0 +1,9 @@
+{
+  "profile_id": "cimo_rsl_ia_scm_og",
+  "version": "3.3.0-r1",
+  "schema_version": "1.0",
+  "profile_path": "C:\\Users\\Leonardo\\Documents\\Computing\\Projeto_Mestrado\\files\\files\\articles\\00 Dados RSL\\02 T2\\projects\\projects\\teste\\config\\profiles\\cimo_rsl_ia_scm_og\\3.3.0-r1\\profile.yaml",
+  "prompt_path": "C:\\Users\\Leonardo\\Documents\\Computing\\Projeto_Mestrado\\files\\files\\articles\\00 Dados RSL\\02 T2\\projects\\projects\\teste\\config\\profiles\\cimo_rsl_ia_scm_og\\3.3.0-r1\\extract_prompt.md",
+  "source": "xlsx_import",
+  "updated_at": "2026-02-23T21:11:23.265986+00:00"
+}

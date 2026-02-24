@@ -1,0 +1,85 @@
+---
+ArtigoID: ART_035
+Ano: 2025
+TipoPublicação: Journal
+Referência_Curta: McGarvey et al., 2025
+DOI: https://doi.org/10.3390/logistics9010023
+SegmentoO&G: Upstream (E&P)
+SegmentoO&G_Confiança: Média
+Ambiente: Offshore
+Complexidade: Alta
+Complexidade_Justificativa: F1=1 (Arctic offshore, águas do Alasca e Ártico), F2=1 (2048 embarcações participantes, múltiplos stakeholders federais, estaduais e industriais), F3=1 (resposta a derramamento de óleo em ambiente crítico e remoto)
+ProcessoSCM_Alvo: Gestão de riscos da cadeia
+TipoRisco_SCRM: Risco operacional
+ObjetoCrítico: Dados de resposta a emergências e logística de derramamento de óleo no Ártico
+ProblemaNegócio_Contexto: 'A resposta a emergências e logística de derramamento de óleo no Ártico enfrenta desafios críticos de qualidade de dados, incluindo dados desagregados, incompletos e capturados por múltiplos stakeholders usando diferentes plataformas, padrões e definições.
+
+  A falta de infraestrutura de informação, comunicações e transporte, combinada com as enormes distâncias entre vilas esparsamente povoadas e condições climáticas imprevisíveis, complica o acesso à informação e pode atrasar a implantação de recursos críticos.
+
+  Métodos analíticos avançados como machine learning e bancos de dados auto-regenerativos não foram amplamente adotados neste contexto, apesar das chamadas persistentes por melhorias na qualidade e processamento de dados.'
+ClasseIA: ML supervisionado
+ClasseIA_Confiança: Alta
+TarefaAnalítica: Detecção de anomalia
+FamíliaModelo: Redes neurais feedforward
+TipoDado: Tabular/ERP
+Maturidade: Piloto
+Maturidade_Confiança: Alta
+Intervenção_Descrição: 'Desenvolvimento de um algoritmo de machine learning com rede neural para detecção, diagnóstico e correção de anomalias em bancos de dados de logística de resposta a emergências. O modelo neural network utiliza código Python para identificar dados duplicados e incompletos através de codificação por cores, com revisão subsequente por especialista humano. O algoritmo foi treinado com um subconjunto dos dados originais e aplicado ao dataset completo para limpeza automatizada.
+
+  '
+Dados_Descrição: 'Dataset compreendendo 11.568 registros de resposta a derramamento de óleo de 2.048 embarcações em trânsito por águas do Alasca Ocidental e Ártico entre 1 de janeiro e 31 de agosto de 2023. O dataset contém 21 atributos incluindo identificação de embarcação (MMSI), portos de origem e destino, rotas pretendidas, tipos e quantidades de combustível e óleo lubrificante, carga a bordo, informações de contato e status de equipamentos como AIS e scrubbers de exaustão.
+
+  '
+CategoriaMecanismo: Detecção precoce/anomalias
+Mecanismo_Fonte: Misto
+Mecanismo_Declarado: '"The neural net model deployed was able to detect, diagnose, and correct anomalies in the dataset, resulting in several improvements: Improved data quality, as missing, incomplete, and redundant data were identified and resolved using the neural net''s classification algorithm; Improved data analysis processes, particularly with data cleaning tasks; Improved support for real-time data anomaly and inconsistency detection; Improved utilization of scarce human resources."
+
+  '
+Mecanismo_Inferido: 'INFERIDO: A rede neural automatiza a detecção de padrões de duplicidade e incompletude nos dados, reduzindo a dependência de inspeção manual. INFERIDO: A codificação por cores sistemática permite identificação visual rápida de anomalias para validação humana. INFERIDO: O treinamento iterativo do algoritmo com dados rotulados melhora a precisão da classificação de anomalias ao longo do tempo.
+
+  '
+Mecanismo_Estruturado: Dados de logística de emergência (11.568 registros) → Rede neural com classificação de anomalias → Detecção automatizada de duplicatas e dados incompletos → Banco de dados limpo com 78% redução no tempo de limpeza
+ResultadoTipo: Quantitativo
+Resultados_Quant: 'Redução tempo limpeza dados: 78.33% (26h vs. baseline: 120h); Redução tempo total processo: 69.1% (42h vs. baseline: 136h); Registros duplicados identificados: 56.1% do dataset original; Registros incompletos identificados: 1.02% + 24.99% adicional'
+Resultados_Qual: Melhoria na qualidade dos dados com identificação e resolução de dados faltantes, incompletos e redundantes; suporte aprimorado para detecção em tempo real de anomalias e inconsistências; melhor utilização de recursos humanos escassos
+NívelEvidência: Experimento com dados reais
+Limitações_Artigo: 'Os autores identificam várias limitações: (1) algoritmos desenvolvidos com um único dataset de 2048 navios para período de 8 meses em 2023, tempo limitado que deveria ser estendido longitudinalmente; (2) dados não validados contra outro dataset; (3) representação entre diversas empresas de navegação do Ártico não foi universal; (4) problemas históricos de qualidade de dados com datasets incompletos, faltantes ou conflitantes introduzem desafios no desenvolvimento de algoritmos; (5) tamanho do dataset impacta validade e confiabilidade dos resultados de ML; (6) não foram examinadas causas raiz dos problemas de qualidade de dados.
+
+  '
+Observação: 'O artigo foca em logística de resposta a emergências para derramamento de óleo no Ártico, sendo relevante para SCM em O&G no contexto de gestão de riscos operacionais. A aplicação de IA é para manutenção de qualidade de dados críticos para resposta a emergências, não diretamente para operações de E&P, mas o contexto envolve tráfego marítimo relacionado a exploração de petróleo e gás no Ártico.
+
+  '
+Quotes:
+- QuoteID: Q001
+  TipoQuote: Contexto
+  Trecho: Key to effective emergency response logistics are accurate, real-time data about technologies, capabilities, and availabilities; this is particularly important in remote settings, such as in the Arctic, where limited infrastructure, logistics, and technologies occasion the need for careful planning and immediate response
+  Página: p.2
+- QuoteID: Q002
+  TipoQuote: Contexto
+  Trecho: Emergency response logistics data are often disaggregated, incomplete, and captured by multiple stakeholders using different platforms, standards, and data definitions
+  Página: p.2
+- QuoteID: Q003
+  TipoQuote: Intervenção
+  Trecho: A neural network model was created using freely available open-source resources. A preliminary algorithm was developed that used color coding to highlight duplicative and incomplete data. The results were then reviewed by a human subject matter expert
+  Página: p.8
+- QuoteID: Q004
+  TipoQuote: Mecanismo
+  Trecho: 'The neural net model deployed was able to detect, diagnose, and correct anomalies in the dataset, resulting in several improvements: Improved data quality, as missing, incomplete, and redundant data were identified and resolved using the neural net''s classification algorithm'
+  Página: p.9
+- QuoteID: Q005
+  TipoQuote: Outcome
+  Trecho: The differences in time required for data cleaning using the automated anomaly detection scripts and using the neural nets approaches were significant, with a 78.33% reduction in time with the neural nets
+  Página: p.8
+- QuoteID: Q006
+  TipoQuote: Outcome
+  Trecho: The Visual Basic script data cleaning required over three times the cleaning time compared to the use of the neural nets, showing significant process improvements
+  Página: p.8
+- QuoteID: Q007
+  TipoQuote: Limitação
+  Trecho: The self-healing algorithms were developed with a single dataset comprising data from 2048 ships and multiple Arctic shippers for an 8-month period in 2023. The time period covered was limited, and future work should clearly extend the data collection longitudinally
+  Página: p.10
+- QuoteID: Q008
+  TipoQuote: Método
+  Trecho: The data comprised 11,568 oil spill response records from 2048 participating vessels making transits through waters off Western Alaska and the Arctic between 1 January and 31 August 2023
+  Página: p.6
+---

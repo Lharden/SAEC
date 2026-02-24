@@ -1,0 +1,85 @@
+---
+ArtigoID: ART_025
+Ano: 2023
+TipoPublicação: Conference
+Referência_Curta: Eldred et al., 2023
+DOI: https://doi.org/10.2118/214457-MS
+SegmentoO&G: Upstream (E&P)
+SegmentoO&G_Confiança: Alta
+Ambiente: NR
+Complexidade: Média
+Complexidade_Justificativa: F1=0 (ambiente não especificado), F2=1 (cadeia global de OCTG com múltiplos fornecedores/fabricantes), F3=1 (gestão de demanda crítica para operações de perfuração)
+ProcessoSCM_Alvo: Gestão de estoques; Planejamento de demanda
+TipoRisco_SCRM: Risco de demanda; Risco de estoque
+ObjetoCrítico: Oil Country Tubular Goods (OCTG) - produtos tubulares de alto grau para operações de perfuração
+ProblemaNegócio_Contexto: 'A previsão precisa de demanda é uma das estratégias mais subvalorizadas e complexas que pode impactar significativamente os resultados financeiros das organizações.
+
+  A Sumitomo Corporation, fornecedora global de OCTG, enfrenta desafios na gestão de estoques devido à volatilidade do mercado, restrições geopolíticas e complexidade das operações de perfuração.
+
+  A imprecisão nas previsões tradicionais resulta em níveis de estoque subótimos, aumento de custos de capital de giro e emissões associadas ao excesso de materiais.'
+ClasseIA: ML supervisionado
+ClasseIA_Confiança: Alta
+TarefaAnalítica: Previsão
+FamíliaModelo: Ensemble tree-based
+TipoDado: Séries temporais; Tabular/ERP
+Maturidade: Piloto
+Maturidade_Confiança: Alta
+Intervenção_Descrição: 'Múltiplos modelos de machine learning multi-camadas baseados em ensemble de árvores de decisão com boosting foram desenvolvidos para prever demanda de produtos OCTG. Os modelos utilizam design de mapa temporal com seis meses de dados (lags) para prever o próximo valor mensal, com diferentes ponderações nos inputs. Três ciclos iterativos de desenvolvimento foram realizados para otimizar performance e acurácia.
+
+  '
+Dados_Descrição: 'Dados históricos de oito anos (2011-2019) de operações de perfuração e supply chain, incluindo: (a) dados de movimento de produtos (níveis de estoque, previsões históricas, padrões de consumo), (b) dados de especificação de produtos (lead time, grade, função do poço, categoria, centro de trabalho), (c) dados de sequência de perfuração e baskets de requisitos por poço, e (d) fatores externos (preço do petróleo, contagem de sondas, orçamento nacional, metas de produção). Top 17 produtos representando 80% do volume de inventário foram analisados.
+
+  '
+CategoriaMecanismo: Redução de incerteza
+Mecanismo_Fonte: Misto
+Mecanismo_Declarado: 'O modelo AI fornece uma forma de identificar onde a previsão tradicional pode estar incorreta ou enganosa e fornece as informações necessárias para contestá-la junto com especificações de como corrigi-la. A menor faixa de erro do modelo AI (~270 unidades vs ~700 unidades) permite identificar, contestar e corrigir grandes erros nas previsões tradicionais antes que o impacto seja sentido nos níveis de estoque.
+
+  '
+Mecanismo_Inferido: 'INFERIDO: A integração de múltiplas fontes de dados (operacionais, especificações de produto, fatores externos) permite capturar padrões complexos de demanda que métodos tradicionais não detectam. INFERIDO: O design temporal com lags de seis meses permite ao modelo aprender dependências sazonais e tendências históricas para melhorar acurácia preditiva. INFERIDO: A categorização de produtos em fast, mid e slow movers permite calibração específica do modelo para diferentes padrões de consumo.
+
+  '
+Mecanismo_Estruturado: Dados históricos (consumo, estoque, sequência de perfuração, fatores externos) → Modelos ensemble tree-based com mapa temporal → Previsões de demanda com menor erro → Otimização de níveis de estoque e redução de custos
+ResultadoTipo: Quantitativo
+Resultados_Quant: 'Acurácia média: 78% top 10 produtos (vs. baseline: NR); Acurácia média: 73% top 17 produtos (vs. baseline: NR); Acurácia após iterações: 86% top 10 produtos; Acurácia após iterações: 83% top 17 produtos; Erro médio AI: ~270 unidades (vs. tradicional: ~700 unidades); MAPE agregado 4 anos: 2% (vs. baseline: NR)'
+Resultados_Qual: Capacidade de contestar e corrigir previsões tradicionais antes do impacto em inventário; Potencial de manter níveis de estoque mais baixos em ambiente simulado; Redução de consumo de recursos e emissões de carbono incorporado; Geração de dashboards com métricas de incerteza de material e diferenças esperadas entre previsões
+NívelEvidência: Experimento com dados reais
+Limitações_Artigo: 'Simulação de inventário não considerou atrasos de envio. Estudo de emissões envolveu numerosas suposições e seleção de fabricante específico com dados disponíveis. Estratégia mais robusta seria necessária antes que resultados de simulação possam ser replicados com certeza.
+
+  '
+Observação: 'Estudo industrial conduzido em parceria com Sumitomo Corporation''s Tubular Division. O modelo foi validado com dados históricos reais de 2016-2019, demonstrando aplicação comercial. Os autores propõem integração futura com otimização de logística, sequência de perfuração e rastreamento de emissões end-to-end.
+
+  '
+Quotes:
+- QuoteID: Q001
+  TipoQuote: Contexto
+  Trecho: Accurately forecasting demand is one of the most undervalued and complex strategies that can significantly impact organizations bottom line.
+  Página: p.1
+- QuoteID: Q002
+  TipoQuote: Intervenção
+  Trecho: The models follow the base temporal map design with different weighting on model inputs. With a temporal map, a sequence of monthly data values (called lags) is used to predict the next monthly value in the sequence. The lags are rolled so that there are six months of data for the model to predict on. All models also use boosted decision-tree-based ensemble machine learning algorithm.
+  Página: p.1
+- QuoteID: Q003
+  TipoQuote: Mecanismo
+  Trecho: The key outcome is that the AI model provides a way to identify where the traditional forecast might be off or misleading and provides the necessary information to challenge it along with specifying how to correct it.
+  Página: p.9
+- QuoteID: Q004
+  TipoQuote: Outcome
+  Trecho: Across five years of predictions (2016 to 2019), the models were able to predict with 78% average accuracy for the top 10 products by volume which represents 75% of inventory volume. Across the same time-period, they were able to predict with 73% average accuracy on all 17 products which account for 80% percent of inventory volume.
+  Página: p.1
+- QuoteID: Q005
+  TipoQuote: Outcome
+  Trecho: Further iterative updates with additional data led to improvement in results and the model where the model predicted with an improved accuracy of 83% on the top 17 products and an accuracy of 86% on the top 10 products.
+  Página: p.8
+- QuoteID: Q006
+  TipoQuote: Mecanismo
+  Trecho: The lower error range (~270 units vs ~700 units) of the AI forecast allows to identify, challenge, and correct large 'misses' in the traditional forecast.
+  Página: p.9
+- QuoteID: Q007
+  TipoQuote: Limitação
+  Trecho: A more robust strategy that accounted for these assumptions would need to be implemented before the simulation results could be replicated with certainty.
+  Página: p.10
+- QuoteID: Q008
+  TipoQuote: Outcome
+  Trecho: The results generated indicated that, on average, and within a simulated environment (shipping delays where not considered for instance,) that the model can maintain a lower inventory than the current stock levels.
+  Página: p.10
+---

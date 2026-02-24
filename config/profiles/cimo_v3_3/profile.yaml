@@ -1,0 +1,360 @@
+schema_version: "1.0"
+profile:
+  meta:
+    profile_id: "cimo_v3_3"
+    version: "3.3.0"
+    name: "CIMO Universal v3.3"
+    domain: "AI + SCM/SCRM + Multi-dominio"
+    framework: "CIMO"
+    language: "pt-BR"
+    description: "Perfil baseline baseado no Guia de Extração v3.3"
+
+  topics:
+    min_topics: 1
+    max_topics: 30
+    weighting_mode: "optional"
+    default_weight: 1.0
+
+  fields:
+    - id: "ArtigoID"
+      label: "ArtigoID"
+      section: "metadata"
+      type: "string"
+      required: true
+      min_length: 7
+    - id: "Ano"
+      label: "Ano"
+      section: "metadata"
+      type: "int"
+      required: true
+    - id: "TipoPublicação"
+      label: "TipoPublicação"
+      section: "metadata"
+      type: "enum"
+      required: true
+      allowed_values:
+        - "Journal"
+        - "Conference"
+        - "Relatório técnico"
+        - "Tese/Dissertação"
+        - "Outro"
+        - "NR"
+    - id: "Referência_Curta"
+      label: "Referência_Curta"
+      section: "metadata"
+      type: "string"
+      required: true
+      min_length: 5
+    - id: "DOI"
+      label: "DOI"
+      section: "metadata"
+      type: "string"
+      required: false
+
+    - id: "SegmentoSetorial"
+      label: "SegmentoSetorial"
+      section: "context"
+      type: "enum"
+      required: true
+      aliases: ["SegmentoDominio"]
+      allowed_values:
+        - "Operacao Primaria"
+        - "Operacao de Movimentacao"
+        - "Operacao de Processamento"
+        - "Transversal"
+        - "NR"
+      confidence_field: "SegmentoSetorial_Confiança"
+    - id: "SegmentoSetorial_Confiança"
+      label: "SegmentoSetorial_Confiança"
+      section: "context"
+      type: "enum"
+      required: true
+      allowed_values: ["Alta", "Média", "Baixa"]
+    - id: "Ambiente"
+      label: "Ambiente"
+      section: "context"
+      type: "enum"
+      required: true
+      allowed_values: ["Offshore", "Onshore", "Híbrido", "NR"]
+    - id: "Complexidade"
+      label: "Complexidade"
+      section: "context"
+      type: "enum"
+      required: true
+      allowed_values: ["Alta", "Média", "Baixa", "NR"]
+    - id: "Complexidade_Justificativa"
+      label: "Complexidade_Justificativa"
+      section: "context"
+      type: "text"
+      required: true
+      min_length: 8
+    - id: "ProcessoSCM_Alvo"
+      label: "ProcessoSCM_Alvo"
+      section: "context"
+      type: "string"
+      required: true
+    - id: "TipoRisco_SCRM"
+      label: "TipoRisco_SCRM"
+      section: "context"
+      type: "string"
+      required: true
+    - id: "ObjetoCrítico"
+      label: "ObjetoCrítico"
+      section: "context"
+      type: "string"
+      required: false
+    - id: "ProblemaNegócio_Contexto"
+      label: "ProblemaNegócio_Contexto"
+      section: "context"
+      type: "text"
+      required: true
+      min_length: 50
+
+    - id: "ClasseIA"
+      label: "ClasseIA"
+      section: "intervention"
+      type: "enum"
+      required: true
+      allowed_values:
+        - "ML supervisionado"
+        - "ML não supervisionado"
+        - "Deep Learning"
+        - "NLP"
+        - "Visão computacional"
+        - "Otimização/heurísticas"
+        - "Probabilístico/Bayesiano"
+        - "Sistemas especialistas/regras"
+        - "Digital Twin com IA"
+        - "Híbrido"
+        - "Outro"
+        - "NR"
+      confidence_field: "ClasseIA_Confiança"
+    - id: "ClasseIA_Confiança"
+      label: "ClasseIA_Confiança"
+      section: "intervention"
+      type: "enum"
+      required: true
+      allowed_values: ["Alta", "Média", "Baixa"]
+    - id: "TarefaAnalítica"
+      label: "TarefaAnalítica"
+      section: "intervention"
+      type: "string"
+      required: true
+    - id: "FamíliaModelo"
+      label: "FamíliaModelo"
+      section: "intervention"
+      type: "string"
+      required: true
+    - id: "TipoDado"
+      label: "TipoDado"
+      section: "intervention"
+      type: "enum"
+      required: true
+      allowed_values:
+        - "Tabular/ERP"
+        - "Séries temporais"
+        - "Texto"
+        - "Imagem/Vídeo"
+        - "Multimodal"
+        - "NR"
+    - id: "Maturidade"
+      label: "Maturidade"
+      section: "intervention"
+      type: "enum"
+      required: true
+      allowed_values: ["Conceito", "Protótipo", "Piloto", "Produção", "NR"]
+      confidence_field: "Maturidade_Confiança"
+    - id: "Maturidade_Confiança"
+      label: "Maturidade_Confiança"
+      section: "intervention"
+      type: "enum"
+      required: true
+      allowed_values: ["Alta", "Média", "Baixa"]
+    - id: "Intervenção_Descrição"
+      label: "Intervenção_Descrição"
+      section: "intervention"
+      type: "text"
+      required: true
+      min_length: 30
+    - id: "Dados_Descrição"
+      label: "Dados_Descrição"
+      section: "intervention"
+      type: "text"
+      required: true
+      min_length: 30
+
+    - id: "CategoriaMecanismo"
+      label: "CategoriaMecanismo"
+      section: "mechanism"
+      type: "enum"
+      required: true
+      allowed_values:
+        - "Antecipação de risco"
+        - "Detecção precoce/anomalias"
+        - "Redução de incerteza"
+        - "Priorização/alocação ótima"
+        - "Integração de dados dispersos"
+        - "Padronização/consistência"
+        - "Otimização de trade-offs"
+        - "Automação informacional (NLP)"
+        - "Outro"
+        - "NR"
+    - id: "Mecanismo_Fonte"
+      label: "Mecanismo_Fonte"
+      section: "mechanism"
+      type: "enum"
+      required: true
+      allowed_values: ["Declarado", "Inferido", "Misto"]
+    - id: "Mecanismo_Declarado"
+      label: "Mecanismo_Declarado"
+      section: "mechanism"
+      type: "text"
+      required: true
+    - id: "Mecanismo_Inferido"
+      label: "Mecanismo_Inferido"
+      section: "mechanism"
+      type: "text"
+      required: false
+    - id: "Mecanismo_Estruturado"
+      label: "Mecanismo_Estruturado"
+      section: "mechanism"
+      type: "string"
+      required: true
+
+    - id: "ResultadoTipo"
+      label: "ResultadoTipo"
+      section: "outcome"
+      type: "enum"
+      required: true
+      allowed_values: ["Quantitativo", "Qualitativo", "Misto", "NR"]
+    - id: "Resultados_Quant"
+      label: "Resultados_Quant"
+      section: "outcome"
+      type: "text"
+      required: false
+    - id: "Resultados_Qual"
+      label: "Resultados_Qual"
+      section: "outcome"
+      type: "text"
+      required: false
+    - id: "NívelEvidência"
+      label: "NívelEvidência"
+      section: "outcome"
+      type: "enum"
+      required: true
+      allowed_values:
+        - "Estudo de caso real"
+        - "Experimento com dados reais"
+        - "Simulação com dados reais"
+        - "Simulação com dados sintéticos"
+        - "Survey/entrevistas"
+        - "Proposta teórica/framework"
+        - "Revisão conceitual"
+        - "NR"
+    - id: "Limitações_Artigo"
+      label: "Limitações_Artigo"
+      section: "outcome"
+      type: "text"
+      required: true
+    - id: "Observação"
+      label: "Observação"
+      section: "custom"
+      type: "text"
+      required: false
+
+  rules:
+    - id: "R1"
+      severity: "error"
+      when: "ne(get('TipoRisco_SCRM'), 'NR')"
+      assert: "not_empty(get('ObjetoCrítico'))"
+      message: "Se TipoRisco_SCRM != NR, ObjetoCrítico deve estar preenchido."
+    - id: "R2"
+      severity: "error"
+      when: "in_set(get('ResultadoTipo'), ['Quantitativo', 'Misto'])"
+      assert: "not_empty(get('Resultados_Quant'))"
+      message: "Resultado quantitativo/misto exige Resultados_Quant."
+    - id: "R3"
+      severity: "error"
+      when: "eq(get('Maturidade'), 'Produção')"
+      assert: "in_set(get('NívelEvidência'), ['Estudo de caso real', 'Experimento com dados reais'])"
+      message: "Maturidade Produção exige evidência real compatível."
+    - id: "R4"
+      severity: "error"
+      when: "eq(get('ClasseIA'), 'Híbrido')"
+      assert: "contains_any(get('FamíliaModelo'), [';', '+'])"
+      message: "ClasseIA Híbrido deve listar múltiplas técnicas."
+    - id: "R5"
+      severity: "error"
+      when: "not_empty(get('Mecanismo_Inferido'))"
+      assert: "every_sentence_startswith(get('Mecanismo_Inferido'), 'INFERIDO:')"
+      message: "Cada sentença de Mecanismo_Inferido deve iniciar com INFERIDO:."
+    - id: "R6"
+      severity: "error"
+      when: "True"
+      assert: "single_line(get('Mecanismo_Estruturado')) and contains(get('Mecanismo_Estruturado'), '→')"
+      message: "Mecanismo_Estruturado deve ser string única com seta."
+    - id: "R7"
+      severity: "error"
+      when: "True"
+      assert: "regex(get('ArtigoID'), '^ART_[0-9]{3}$')"
+      message: "ArtigoID deve seguir o formato ART_001."
+    - id: "R8"
+      severity: "error"
+      when: "eq(get('NívelEvidência'), 'Simulação com dados sintéticos')"
+      assert: "not in_set(get('Maturidade'), ['Produção', 'Piloto'])"
+      message: "Simulação sintética é incompatível com Piloto/Produção."
+    - id: "R9"
+      severity: "error"
+      when: "True"
+      assert: "contains_all(get('Complexidade_Justificativa'), ['F1=', 'F2=', 'F3='])"
+      message: "Complexidade_Justificativa deve conter F1, F2 e F3."
+    - id: "R10"
+      severity: "warning"
+      when: "True"
+      assert: "True"
+      message: "Ambiente deve refletir onde a IA atua, não onde o ativo final opera."
+    - id: "R11"
+      severity: "warning"
+      when: "eq(lower(get('Limitações_Artigo')), 'nr')"
+      assert: "True"
+      message: "Confirme ausência de limitações declaradas antes de usar NR."
+    - id: "R12"
+      severity: "warning"
+      when: "True"
+      assert: "True"
+      message: "Nomes de campos devem seguir o template do perfil ativo."
+
+  quotes_policy:
+    enabled: true
+    min_quotes: 3
+    max_quotes: 8
+    required_types: ["Mecanismo"]
+    allowed_types: ["Contexto", "Intervenção", "Mecanismo", "Outcome", "Limitação", "Método", "Outro"]
+    quote_schema:
+      id_pattern: "^Q\\d{3}$"
+      required_fields: ["QuoteID", "TipoQuote", "Trecho", "Página"]
+      trecho_min_length: 10
+
+  output:
+    format: "yaml"
+    enforce_field_names: true
+    include_sections: true
+
+  prompt_contract:
+    return_only_output: true
+    include_self_review: true
+    instructions:
+      - "Retorne somente YAML."
+      - "Use campos exatamente como no template."
+      - "Quotes devem ser literais e rastreáveis."
+      - "Aplique as regras declaradas no perfil."
+
+  tests:
+    required:
+      - "schema_valid_example"
+      - "schema_invalid_example"
+      - "rules_positive"
+      - "rules_negative"
+      - "quotes_policy"
+
+

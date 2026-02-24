@@ -85,7 +85,9 @@ _PATTERNS: list[tuple[str, str, str, str]] = [
 
 _EXIT_CODE_MESSAGES: dict[int, ClassifiedError] = {
     0: ClassifiedError("success", "Completed successfully", ""),
+    1: ClassifiedError("pipeline_error", "Pipeline error (see logs)", ""),
     -1: ClassifiedError("cancelled", "Cancelled by user", ""),
+    -15: ClassifiedError("cancelled", "Cancelled by user", ""),
     -2: ClassifiedError("timeout", "Job timed out", "Increase timeout or process fewer articles."),
     -99: ClassifiedError("runner_error", "Job runner failed to start", "Check that Python and dependencies are installed."),
 }

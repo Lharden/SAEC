@@ -1,0 +1,87 @@
+---
+ArtigoID: ART_036
+Ano: 2025
+TipoPublicação: Conference
+Referência_Curta: Al-Farsi & Al Mamari, 2025
+DOI: https://doi.org/10.2118/224715-MS
+SegmentoO&G: Upstream (E&P)
+SegmentoO&G_Confiança: Alta
+Ambiente: NR
+Complexidade: Média
+Complexidade_Justificativa: F1=0 (ambiente NR/misto Omã), F2=1 (múltiplos fornecedores/bidders mencionados), F3=1 (riscos de compliance e perda de informação crítica mencionados)
+ProcessoSCM_Alvo: Procurement/compras
+TipoRisco_SCRM: Risco operacional
+ObjetoCrítico: Processo de avaliação técnica de licitações (technical bid evaluation)
+ProblemaNegócio_Contexto: 'OQEP é uma subsidiária do OQ Group atuando no setor upstream de Oil & Gas em Omã.
+
+  O processo de avaliação técnica de licitações (procurement) é majoritariamente manual e baseado em papel, resultando em ineficiências significativas.
+
+  A preparação de templates consome 5-15 horas, a avaliação manual leva 60-70% mais tempo que métodos automatizados, e há risco de 20-25% de perda de informação crítica.
+
+  O processo completo sofre atrasos de 4-5 semanas, impactando cronogramas de projetos e gerando custos não previstos por alterações de design após a adjudicação.'
+ClasseIA: NLP
+ClasseIA_Confiança: Média
+TarefaAnalítica: Extração de informação (NLP)
+FamíliaModelo: NR
+TipoDado: Texto
+Maturidade: Conceito
+Maturidade_Confiança: Alta
+Intervenção_Descrição: 'Sistema baseado em IA proposto para automatizar o processo de avaliação técnica de licitações em duas etapas: (1) Go-No-Go Stage - filtragem inicial de compliance verificando documentos obrigatórios como Table of Compliance, HSE requirements, ICV plan e certificações de qualidade; (2) Detailed Technical Evaluation - comparação das ofertas técnicas contra requisitos pré-definidos usando machine learning para identificar conformidades e desvios. O sistema gera automaticamente relatórios de compliance, prepara queries técnicas e permite colaboração em tempo real entre stakeholders.
+
+  '
+Dados_Descrição: 'O sistema processará documentos de licitação técnica incluindo: especificações técnicas, Table of Compliance, documentos de qualidade (certificações), requisitos HSE, planos ICV (In-Country Value), e listas de referência de experiência. Não há descrição de volume de dados históricos ou período temporal, pois o sistema ainda está em fase conceitual/proposta.
+
+  '
+CategoriaMecanismo: Automação informacional (NLP)
+Mecanismo_Fonte: Misto
+Mecanismo_Declarado: 'O artigo declara que a automação reduz tempo e erro humano: "By automating the extraction, entering and verification of these key pieces of information, the system reduces the likelihood of human error and significantly speeds up the process." Também menciona que a centralização de dados melhora transparência: "By centralizing this information, the system will provide stakeholders with an access to critical data, improving transparency and decision-making."
+
+  '
+Mecanismo_Inferido: 'INFERIDO: A extração automática de dados de documentos de licitação elimina a necessidade de entrada manual, reduzindo erros de transcrição e tempo de processamento. INFERIDO: A verificação automática de compliance contra critérios pré-definidos padroniza o processo de avaliação, garantindo consistência entre diferentes avaliadores. INFERIDO: A plataforma colaborativa em tempo real elimina fragmentação de comunicação e reduz atrasos causados por email e telefone. INFERIDO: O banco de dados centralizado preserva conhecimento institucional e permite rastreabilidade para auditorias e projetos futuros.
+
+  '
+Mecanismo_Estruturado: Documentos de licitação (texto) → Extração NLP + verificação de compliance → Padronização e automação informacional → Redução de tempo/erro e melhoria de rastreabilidade
+ResultadoTipo: Qualitativo
+Resultados_Quant: NR
+Resultados_Qual: Expectativas de redução de tempo de avaliação (atualmente 60-70% mais longo que métodos automatizados), melhoria de acurácia pela eliminação de erros manuais, comunicação aprimorada via plataforma centralizada, e geração automatizada de documentos e relatórios. Proposta conceitual sem implementação ou métricas de validação.
+NívelEvidência: Proposta teórica/framework
+Limitações_Artigo: 'Os autores reconhecem que o sistema requer fase piloto antes da implementação completa: "The AI based solution shall be tested through a pilot phase before full implementation to ensure the functionality and accuracy of the system to avoid systematic errors which can lead to fail the objective of the digitized solution." Também mencionam que pesquisas e testes adicionais serão necessários: "Further research and testing will be necessary to refine the system."
+
+  '
+Observação: 'O artigo é primariamente uma proposta conceitual de digitalização do processo de procurement na OQEP (Omã). Não há implementação real, dados de teste ou métricas quantitativas de desempenho. O foco é na descrição do problema atual (manual/paper-based) e na arquitetura proposta do sistema de IA. A família de modelo específica (algoritmos de ML) não é detalhada além de menções genéricas a "machine learning algorithms".
+
+  '
+Quotes:
+- QuoteID: Q001
+  TipoQuote: Contexto
+  Trecho: Currently, OQEP's procurement evaluation process for in-house items relies on multiple manuals, paper-based stages, particularly in the technical bid evaluation. This process is time-consuming, involving extensive data collection and review, leading to delays, technical queries, and potential loss of information.
+  Página: p.1
+- QuoteID: Q002
+  TipoQuote: Contexto
+  Trecho: Manual processes in procurement evaluation can cause up to a 20%-25% loss of critical information across multiple stages of evaluation.
+  Página: p.3
+- QuoteID: Q003
+  TipoQuote: Intervenção
+  Trecho: The proposed Artificial Intelligence based system will automate data extraction from bid submissions, evaluate compliance with minimum requirements, and generate reports, significantly improving accuracy and efficiency.
+  Página: p.1
+- QuoteID: Q004
+  TipoQuote: Mecanismo
+  Trecho: By automating the extraction, entering and verification of these key pieces of information, the system reduces the likelihood of human error and significantly speeds up the process.
+  Página: p.4
+- QuoteID: Q005
+  TipoQuote: Mecanismo
+  Trecho: By centralizing this information, the system will provide stakeholders with an access to critical data, improving transparency and decision-making.
+  Página: p.5
+- QuoteID: Q006
+  TipoQuote: Outcome
+  Trecho: By removing these manual steps, the AI system ensures greater consistency and reliability in compliance evaluations, leading to more accurate results.
+  Página: p.6
+- QuoteID: Q007
+  TipoQuote: Limitação
+  Trecho: The AI based solution shall be tested through a pilot phase before full implementation to ensure the functionality and accuracy of the system to avoid systematic errors which can lead to fail the objective of the digitized solution.
+  Página: p.6
+- QuoteID: Q008
+  TipoQuote: Outcome
+  Trecho: Further research and testing will be necessary to refine the system, but the early results indicate that this digital solution has the potential to deliver substantial improvements to OQEP's technical evaluation process and beyond.
+  Página: p.7
+---

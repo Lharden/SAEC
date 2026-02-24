@@ -47,10 +47,12 @@ def apply_win98_theme(root: tk.Tk) -> ttk.Style:
         background=[
             ("pressed", WIN98_COLORS["shadow"]),
             ("active", WIN98_COLORS["highlight"]),
+            ("disabled", WIN98_COLORS["face"]),
         ],
         foreground=[
             ("pressed", WIN98_COLORS["text"]),
             ("active", WIN98_COLORS["text"]),
+            ("disabled", WIN98_COLORS["shadow"]),
         ],
     )
 
@@ -92,4 +94,27 @@ def apply_win98_theme(root: tk.Tk) -> ttk.Style:
         background=WIN98_COLORS["face"],
         foreground=WIN98_COLORS["text"],
     )
+
+    style.configure(
+        "Treeview",
+        background=WIN98_COLORS["highlight"],
+        foreground=WIN98_COLORS["text"],
+        fieldbackground=WIN98_COLORS["highlight"],
+        font=("MS Sans Serif", 8),
+        rowheight=20,
+    )
+    style.configure(
+        "Treeview.Heading",
+        background=WIN98_COLORS["face"],
+        foreground=WIN98_COLORS["text"],
+        font=("MS Sans Serif", 8, "bold"),
+        relief="raised",
+        borderwidth=1,
+    )
+    style.map(
+        "Treeview",
+        background=[("selected", WIN98_COLORS["selection"])],
+        foreground=[("selected", WIN98_COLORS["selection_text"])],
+    )
+
     return style

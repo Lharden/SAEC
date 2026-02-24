@@ -1,0 +1,77 @@
+---
+ArtigoID: ART_007
+Ano: 2023
+TipoPublicação: Conference
+Referência_Curta: Sharma & McDonald, 2023
+DOI: https://doi.org/10.2118/215114-MS
+SegmentoO&G: Cross-segment
+SegmentoO&G_Confiança: Alta
+Ambiente: NR
+Complexidade: Média
+Complexidade_Justificativa: F1=0 (ambiente NR), F2=1 (cadeia complexa com múltiplos fornecedores implícitos), F3=1 (riscos de mercado volátil e disrupções mencionados)
+ProcessoSCM_Alvo: Integração/coordenação
+TipoRisco_SCRM: Múltiplos
+ObjetoCrítico: Processos de source-to-pay, gestão de fornecedores, e operações de payables
+ProblemaNegócio_Contexto: 'A indústria de óleo e gás opera em ambiente complexo com riscos significativos de gestão da cadeia de suprimentos.
+
+  A volatilidade dos preços de energia e a situação macroeconômica criada pela COVID-19 evidenciaram a necessidade
+
+  de práticas de supply chain resilientes e robustas. O setor tem sido lento em reconhecer o valor estratégico do SCM,
+
+  permanecendo em abordagens táticas e reativas, expondo-se a riscos de volatilidade de mercado e crises globais.'
+ClasseIA: Híbrido
+ClasseIA_Confiança: Média
+TarefaAnalítica: Automação (RPA+IA)
+FamíliaModelo: 'Outro: Framework conceitual com AI; ML; IoT e automação'
+TipoDado: Tabular/ERP
+Maturidade: Conceito
+Maturidade_Confiança: Alta
+Intervenção_Descrição: "O artigo propõe um framework conceitual para modernização da cadeia de suprimentos utilizando tecnologias da \nIndústria 4.0, incluindo inteligência artificial, machine learning, robótica, IoT e sistemas automatizados. \nA solução integra spend analytics, cost modeling, automação de payables, digital price books, e um ecossistema \nde \"Digital Brain\" que conecta ferramentas de category management, market intelligence e should-cost modeling.\n"
+Dados_Descrição: "O artigo não utiliza dados empíricos específicos. Apresenta um framework conceitual baseado em melhores práticas \nda indústria. Menciona uso de dados de ERP, invoices, delivery receipts, e market intelligence como inputs \npara o sistema proposto, sem especificar volumes ou períodos.\n"
+CategoriaMecanismo: Integração de dados dispersos
+Mecanismo_Fonte: Misto
+Mecanismo_Declarado: "\"By automating routine tasks, staff can focus more on strategic areas, thereby further driving organizational \ngrowth.\" O modelo manage-by-exception \"optimizes the utilization of resources\" e permite \"rapid response mechanism \nto potential problems, thus reducing their overall impact on operations.\" O Digital Brain ecosystem \"fuels sound \ndecision-making processes\" através de dados limpos e confiáveis.\n"
+Mecanismo_Inferido: 'INFERIDO: A automação de processos rotineiros libera recursos humanos para atividades estratégicas de maior valor. INFERIDO: A integração de dados dispersos em uma plataforma unificada permite visibilidade em tempo real e decisões informadas. INFERIDO: O modelo manage-by-exception concentra atenção humana apenas em anomalias, otimizando eficiência operacional. INFERIDO: A padronização de dados e categorização permite benchmarking e should-cost modeling consistentes.
+
+  '
+Mecanismo_Estruturado: Dados transacionais (invoices, ERP) → Automação + Analytics + AI → Visibilidade integrada e decisão por exceção → Eficiência operacional e redução de custos
+ResultadoTipo: Qualitativo
+Resultados_Quant: NR
+Resultados_Qual: Enhanced operational efficiencies, cost optimization, improved strategic positioning, rapid response to supply chain disruptions, improved service levels, better resource allocation, risk mitigation, and sustainability improvements
+NívelEvidência: Proposta teórica/framework
+Limitações_Artigo: "O artigo reconhece que a implementação do modelo demanda \"substantial investment in technology, data analytics, \nand training, along with a significant shift in organizational culture, underlining trust and employee empowerment.\" \nTambém menciona que \"the path to digital transformation is rife with challenges, from managing change and enhancing \ncommunication to understanding existing systems.\"\n"
+Observação: "Este é um artigo conceitual/prescritivo que propõe melhores práticas e um framework para modernização da cadeia \nde suprimentos, sem implementação ou validação empírica. O foco está em recomendações estratégicas baseadas em \ntecnologias da Indústria 4.0, não em uma solução técnica específica de IA testada.\n"
+Quotes:
+- QuoteID: Q001
+  TipoQuote: Contexto
+  Trecho: The oil and gas industry operates in a complex and challenging environment with significant supply chain management risks.
+  Página: p.1
+- QuoteID: Q002
+  TipoQuote: Intervenção
+  Trecho: The integration of various Industry 4.0 technologies, such as artificial intelligence, robotics, and automated systems, is essential for achieving a resilient and advanced supply chain practice.
+  Página: p.8
+- QuoteID: Q003
+  TipoQuote: Mecanismo
+  Trecho: By automating routine tasks, staff can focus more on strategic areas, thereby further driving organizational growth.
+  Página: p.3
+- QuoteID: Q004
+  TipoQuote: Mecanismo
+  Trecho: The 'Manage-by-Exception' model stands as a cornerstone in modern supply chain management, creating a shift in business operations towards more strategic and value-added activities.
+  Página: p.3
+- QuoteID: Q005
+  TipoQuote: Mecanismo
+  Trecho: Payables automation effort feeds clean, reliable, and properly coded data into the system, comparable to a healthy diet that fuels sound decision-making processes.
+  Página: p.7
+- QuoteID: Q006
+  TipoQuote: Outcome
+  Trecho: The benefits of the 'manage-by-exception' model are numerous, offering a rapid response mechanism to potential problems, thus reducing their overall impact on operations and leading to cost savings.
+  Página: p.3-4
+- QuoteID: Q007
+  TipoQuote: Limitação
+  Trecho: However, this model's implementation isn't without its trials. It demands substantial investment in technology, data analytics, and training, along with a significant shift in organizational culture.
+  Página: p.4
+- QuoteID: Q008
+  TipoQuote: Contexto
+  Trecho: The urgency for a robust, strategic supply chain has become apparent in light of recent market volatility and the global impacts of COVID-19.
+  Página: p.2
+---

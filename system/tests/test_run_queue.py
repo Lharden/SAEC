@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import threading
+from pathlib import Path
 
 from job_runner import RunRequest, RunResult
 from run_queue import RunQueue
@@ -58,6 +59,18 @@ def test_queue_marks_completion_and_records_return_code() -> None:
     assert queue.running_item is None
 
 
+def test_queue_marks_timeout_status_for_timeout_return_code() -> None:
+    queue = RunQueue()
+    queue.enqueue(_request("ART_TIMEOUT"))
+    queue.start_next()
+
+    result = RunResult(success=False, return_code=-2, command=["x"])
+    done = queue.finish_running(result)
+
+    assert done is not None
+    assert done.status == "timeout"
+
+
 def test_queue_cancel_running_marks_cancelled() -> None:
     queue = RunQueue()
     queue.enqueue(_request("ART_099"))
@@ -107,3 +120,21 @@ def test_snapshot_returns_consistent_copy() -> None:
 
     assert len(queue.snapshot()) == 2
     assert queue.pending_count == 2
+
+
+def test_save_and_load_history_roundtrip(tmp_path: Path) -> None:
+    queue = RunQueue()
+    queue.enqueue(_request("ART_001"))
+    queue.start_next()
+    queue.finish_running(RunResult(success=True, return_code=0, command=["x", "--all"]))
+
+    history_file = tmp_path / "queue_history.json"
+    queue.save_history(history_file)
+
+    restored = RunQueue()
+    restored.load_history(history_file)
+    items = restored.snapshot()
+
+    assert len(items) == 1
+    assert items[0].status == "success"
+    assert items[0].request.article_id == "ART_001"

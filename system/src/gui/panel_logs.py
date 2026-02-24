@@ -5,6 +5,8 @@ from __future__ import annotations
 import tkinter as tk
 from tkinter import ttk
 
+from gui.tooltip import add_tooltip
+
 _MAX_LINES = 5000
 _TRIM_LINES = 1000
 
@@ -31,7 +33,10 @@ class LogsPanel(ttk.Frame):
         level_combo.pack(side="left", padx=(0, 8))
         level_combo.bind("<<ComboboxSelected>>", self._on_filter_changed)
 
-        ttk.Button(toolbar, text="Clear", command=self.clear).pack(side="left")
+        clear_button = ttk.Button(toolbar, text="Clear", command=self.clear)
+        clear_button.pack(side="left")
+        add_tooltip(level_combo, "Filter logs by minimum severity")
+        add_tooltip(clear_button, "Clear log display and in-memory scrollback")
 
         body = ttk.Frame(self)
         body.pack(fill="both", expand=True, padx=4, pady=(0, 4))
@@ -73,7 +78,9 @@ class LogsPanel(ttk.Frame):
 
     def _enforce_scrollback(self) -> None:
         if len(self._all_lines) > _MAX_LINES:
-            self._all_lines = self._all_lines[_TRIM_LINES:]
+            trimmed = min(_TRIM_LINES, len(self._all_lines))
+            self._all_lines = self._all_lines[trimmed:]
+            self._all_lines.insert(0, f"[INFO] ... {trimmed} earlier lines trimmed ...")
             self._rebuild_display()
 
     def _passes_filter(self, line: str) -> bool:

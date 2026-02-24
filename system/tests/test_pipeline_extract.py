@@ -4,6 +4,8 @@ import csv
 import json
 from pathlib import Path
 
+import pytest
+
 from pipeline_extract import run_extract
 
 
@@ -47,7 +49,7 @@ def test_run_extract_with_mocked_processor(monkeypatch, tmp_path: Path):
         def process_article(self, *, artigo_id, hybrid_meta, work_dir, provider=None):
             return (
                 "---\nArtigoID: \"ART_001\"\nAno: 2024\nTipoPublicação: \"Journal\"\nReferência_Curta: \"X\"\n"
-                "SegmentoO&G: \"NR\"\nSegmentoO&G_Confiança: \"Alta\"\nAmbiente: \"NR\"\nComplexidade: \"NR\"\n"
+                "SegmentoSetorial: \"NR\"\nSegmentoSetorial_Confiança: \"Alta\"\nAmbiente: \"NR\"\nComplexidade: \"NR\"\n"
                 "Complexidade_Justificativa: \"F1=0 F2=0 F3=0\"\nProcessoSCM_Alvo: \"X\"\n"
                 "TipoRisco_SCRM: \"NR\"\nProblemaNegócio_Contexto: \"AAA\\nBBB\\nCCC\"\nClasseIA: \"NR\"\n"
                 "ClasseIA_Confiança: \"Alta\"\nTarefaAnalítica: \"NR\"\nFamíliaModelo: \"X\"\nTipoDado: \"NR\"\n"
@@ -75,3 +77,71 @@ def test_run_extract_with_mocked_processor(monkeypatch, tmp_path: Path):
     )
 
     assert result["success"] == 1
+
+
+def test_run_extract_reprocesses_existing_yaml_when_force_true(
+    monkeypatch, tmp_path: Path
+) -> None:
+    paths = DummyPaths(tmp_path)
+    paths.WORK.mkdir(parents=True, exist_ok=True)
+    paths.YAMLS.mkdir(parents=True, exist_ok=True)
+    paths.GUIA_PROMPT.write_text("prompt", encoding="utf-8")
+
+    _write_mapping(paths.MAPPING_CSV, "ART_001", "paper.pdf")
+
+    work_dir = paths.WORK / "ART_001"
+    work_dir.mkdir(parents=True, exist_ok=True)
+    (work_dir / "hybrid.json").write_text(json.dumps({"pages_info": []}), encoding="utf-8")
+
+    yaml_path = paths.YAMLS / "ART_001.yaml"
+    yaml_path.write_text("---\nold: true\n---\n", encoding="utf-8")
+
+    class DummyProcessor:
+        def __init__(self, *args, **kwargs):
+            pass
+
+        def process_article(self, *, artigo_id, hybrid_meta, work_dir, provider=None):
+            return ("---\nArtigoID: ART_001\nforce: true\n---\n", type("R", (), {"is_valid": True})())
+
+    import pipeline_extract as mod
+
+    monkeypatch.setattr(mod, "ArticleProcessor", DummyProcessor)
+
+    result = run_extract(
+        paths=paths,
+        client=object(),
+        guia_path=paths.GUIA_PROMPT,
+        output_dir=paths.YAMLS,
+        artigo_id="ART_001",
+        force=True,
+        dry_run=False,
+    )
+
+    assert result["success"] == 1
+    assert "force: true" in yaml_path.read_text(encoding="utf-8")
+
+
+def test_run_extract_article_with_existing_yaml_requires_force(tmp_path: Path) -> None:
+    paths = DummyPaths(tmp_path)
+    paths.WORK.mkdir(parents=True, exist_ok=True)
+    paths.YAMLS.mkdir(parents=True, exist_ok=True)
+    paths.GUIA_PROMPT.write_text("prompt", encoding="utf-8")
+
+    _write_mapping(paths.MAPPING_CSV, "ART_001", "paper.pdf")
+
+    work_dir = paths.WORK / "ART_001"
+    work_dir.mkdir(parents=True, exist_ok=True)
+    (work_dir / "hybrid.json").write_text(json.dumps({"pages_info": []}), encoding="utf-8")
+    (paths.YAMLS / "ART_001.yaml").write_text("---\nold: true\n---\n", encoding="utf-8")
+
+    with pytest.raises(ValueError, match="sem force"):
+        run_extract(
+            paths=paths,
+            client=object(),
+            guia_path=paths.GUIA_PROMPT,
+            output_dir=paths.YAMLS,
+            artigo_id="ART_001",
+            force=False,
+            dry_run=True,
+        )
+

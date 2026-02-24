@@ -1,4 +1,4 @@
-# SAEC-O&G - Dependências
+# SAEC - Dependências
 # Instalar com: pip install -r requirements.txt
 
 # Core
@@ -40,3 +40,4 @@ types-PyYAML>=6.0.12
 # Tests
 pytest>=8.0.0
 pytest-mock>=3.12.0
+

@@ -16,6 +16,7 @@ REQUIRED_RELATIVE_DIRS: tuple[str, ...] = (
     "outputs/consolidated",
     "logs",
     "config",
+    "config/profiles",
 )
 
 
@@ -32,7 +33,9 @@ class ProjectPaths:
     outputs_consolidated: Path
     logs_dir: Path
     config_dir: Path
+    profiles_dir: Path
     project_env: Path
+    profile_active_json: Path
     mapping_csv: Path
     project_json: Path
 
@@ -52,7 +55,9 @@ def collect_project_paths(project_root: Path) -> ProjectPaths:
         outputs_consolidated=outputs_dir / "consolidated",
         logs_dir=root / "logs",
         config_dir=config_dir,
+        profiles_dir=config_dir / "profiles",
         project_env=config_dir / "project.env",
+        profile_active_json=config_dir / "profile_active.json",
         mapping_csv=root / "mapping.csv",
         project_json=root / "project.json",
     )

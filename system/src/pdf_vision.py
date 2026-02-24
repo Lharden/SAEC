@@ -6,6 +6,7 @@ import os
 import re
 from pathlib import Path
 from typing import Any
+
 import fitz  # PyMuPDF
 
 # Configurar logger
@@ -67,7 +68,7 @@ def _get_references_page_from_toc(doc) -> int | None:
 
         for item in toc:
             # item = [level, title, page_number]
-            level, title, page_num = item[0], item[1], item[2]
+            _level, title, page_num = item[0], item[1], item[2]
             title_lower = title.lower().strip()
 
             # Verificar se o título contém keywords de referências
@@ -283,7 +284,7 @@ def analyze_pdf_pages(pdf_path: Path) -> list[dict]:
                         analysis.append({
                             "page_num": page_number,
                             "strategy": "text_partial",
-                            "reason": f"Texto parcial (até referências)",
+                            "reason": "Texto parcial (até referências)",
                             "text_until": refs_start
                         })
                         continue
@@ -300,7 +301,7 @@ def analyze_pdf_pages(pdf_path: Path) -> list[dict]:
                     analysis.append({
                         "page_num": page_number,
                         "strategy": "text_partial",
-                        "reason": f"Texto parcial (até referências)",
+                        "reason": "Texto parcial (até referências)",
                         "text_until": refs_start
                     })
                     continue
@@ -338,6 +339,51 @@ def analyze_pdf_pages(pdf_path: Path) -> list[dict]:
 # FUNÇÕES DE EXTRAÇÃO HÍBRIDA
 # =============================================================================
 
+def _extract_text_payload(page, text_until: int | None = None) -> str:
+    """Extrai texto da página e aplica corte opcional até seção de referências."""
+    text = str(page.get_text())
+    if text_until and text_until < len(text):
+        text = text[:text_until]
+    return text.strip()
+
+
+def _process_hybrid_page(
+    *,
+    page,
+    page_info: dict[str, Any],
+    output_dir: Path,
+    matrix,
+) -> tuple[dict[str, Any] | None, str | None]:
+    """Processa uma página conforme a estratégia decidida na análise."""
+    page_num = page_info["page_num"]
+    strategy = page_info["strategy"]
+
+    if strategy == "skip":
+        return None, "skipped_pages"
+
+    if strategy == "text":
+        return {
+            "page_num": page_num,
+            "type": "text",
+            "content": _extract_text_payload(page),
+        }, "text_pages"
+
+    if strategy == "text_partial":
+        return {
+            "page_num": page_num,
+            "type": "text",
+            "content": _extract_text_payload(page, page_info.get("text_until")),
+        }, "text_pages"
+
+    if strategy == "image":
+        pix = page.get_pixmap(matrix=matrix)
+        image_path = output_dir / f"page_{page_num:03d}.png"
+        pix.save(str(image_path))
+        return {"page_num": page_num, "type": "image", "path": image_path}, "image_pages"
+
+    return None, None
+
+
 def extract_hybrid(
     pdf_path: Path,
     output_dir: Path,
@@ -370,57 +416,28 @@ def extract_hybrid(
     """
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    # Analisar páginas
     analysis = analyze_pdf_pages(pdf_path)
 
     doc = fitz.open(str(pdf_path))
     zoom = dpi / 72
     matrix = fitz.Matrix(zoom, zoom)
 
-    pages = []
+    pages: list[dict[str, Any]] = []
     stats = {"total": len(doc), "text_pages": 0, "image_pages": 0, "skipped_pages": 0}
 
     for page_info in analysis:
         page_num = page_info["page_num"]
-        strategy = page_info["strategy"]
-        page = doc[page_num - 1]  # 0-indexed
-
-        if strategy == "skip":
-            stats["skipped_pages"] += 1
-            continue
-
-        if strategy == "text":
-            text = str(page.get_text())
-            pages.append({
-                "page_num": page_num,
-                "type": "text",
-                "content": text.strip()
-            })
-            stats["text_pages"] += 1
-
-        elif strategy == "text_partial":
-            # Extrair texto apenas até o ponto indicado
-            text = str(page.get_text())
-            text_until = page_info.get("text_until")
-            if text_until and text_until < len(text):
-                text = text[:text_until]
-            pages.append({
-                "page_num": page_num,
-                "type": "text",
-                "content": text.strip()
-            })
-            stats["text_pages"] += 1
-
-        elif strategy == "image":
-            pix = page.get_pixmap(matrix=matrix)
-            image_path = output_dir / f"page_{page_num:03d}.png"
-            pix.save(str(image_path))
-            pages.append({
-                "page_num": page_num,
-                "type": "image",
-                "path": image_path
-            })
-            stats["image_pages"] += 1
+        page = doc[page_num - 1]
+        page_payload, counter_key = _process_hybrid_page(
+            page=page,
+            page_info=page_info,
+            output_dir=output_dir,
+            matrix=matrix,
+        )
+        if counter_key is not None:
+            stats[counter_key] += 1
+        if page_payload is not None:
+            pages.append(page_payload)
 
     doc.close()
 

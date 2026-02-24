@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import os
+import queue
+import re
 import subprocess
 import threading
 import time
@@ -24,6 +26,8 @@ class RunRequest:
     timeout_minutes: float = 30.0
     workspace_root: Path | None = None
     project_root: Path | None = None
+    articles_path: Path | None = None
+    preset_name: str = ""
 
 
 @dataclass(frozen=True)
@@ -35,17 +39,78 @@ class RunResult:
     command: list[str]
 
 
+@dataclass(frozen=True)
+class ProgressUpdate:
+    """Progress snapshot parsed from runner stdout."""
+
+    article_current: int | None = None
+    article_total: int | None = None
+    step_current: int | None = None
+    step_total: int | None = None
+    elapsed_seconds: float | None = None
+
+
+_ARTICLE_PATTERNS = [
+    re.compile(r"\[\s*Article\s+(\d+)\s*/\s*(\d+)\s*\]", re.IGNORECASE),
+    re.compile(r"Processing article\s+(\d+)\s+of\s+(\d+)", re.IGNORECASE),
+]
+_GENERIC_ARTICLE_PATTERN = re.compile(r"\[(\d+)\s*/\s*(\d+)\]")
+_STEP_PATTERNS = [
+    re.compile(r"\[\s*Step\s+(\d+)\s*/\s*(\d+)\s*\]", re.IGNORECASE),
+    re.compile(r"ETAPA\s+(\d+)\b", re.IGNORECASE),
+]
+
+
+def parse_progress_from_line(line: str, *, elapsed_seconds: float) -> ProgressUpdate | None:
+    """Parse stdout lines and return progress update when a known marker is found."""
+    article_current: int | None = None
+    article_total: int | None = None
+    step_current: int | None = None
+    step_total: int | None = None
+
+    for pattern in _ARTICLE_PATTERNS:
+        match = pattern.search(line)
+        if match:
+            article_current = int(match.group(1))
+            article_total = int(match.group(2))
+            break
+
+    if article_current is None and "step" not in line.lower():
+        match = _GENERIC_ARTICLE_PATTERN.search(line)
+        if match:
+            article_current = int(match.group(1))
+            article_total = int(match.group(2))
+
+    for pattern in _STEP_PATTERNS:
+        match = pattern.search(line)
+        if match:
+            step_current = int(match.group(1))
+            step_total = int(match.group(2)) if match.lastindex and match.lastindex >= 2 else 5
+            break
+
+    if all(value is None for value in (article_current, article_total, step_current, step_total)):
+        return None
+
+    return ProgressUpdate(
+        article_current=article_current,
+        article_total=article_total,
+        step_current=step_current,
+        step_total=step_total,
+        elapsed_seconds=elapsed_seconds,
+    )
+
+
 def resolve_cli_runner(
     *, gui_executable: Path, default_main: Path
 ) -> tuple[Path, Path | None]:
     """Resolve runtime target for GUI launched from a packaged executable.
 
     Returns:
-    - (`SAEC-OG-CLI.exe`, None) when sibling CLI executable exists
+    - (`SAEC-CLI.exe`, None) when sibling CLI executable exists
     - (gui_executable, None) fallback, relying on gui_main CLI dispatch
     """
     gui_executable = gui_executable.resolve()
-    sibling_cli = gui_executable.with_name("SAEC-OG-CLI.exe")
+    sibling_cli = gui_executable.with_name("SAEC-CLI.exe")
     if sibling_cli.exists():
         return sibling_cli, None
     return gui_executable, None
@@ -78,13 +143,42 @@ def build_main_command(
 def build_runtime_env(
     *, base_env: dict[str, str], request: RunRequest
 ) -> dict[str, str]:
+    from presets import get_preset
+
     env = dict(base_env)
+
+    runtime_base = request.project_root or Path.cwd()
+    runtime_root = runtime_base / ".runtime"
+    tmp_dir = runtime_root / "tmp"
+    pip_cache_dir = runtime_root / "pip-cache"
+    for path in (tmp_dir, pip_cache_dir):
+        try:
+            path.mkdir(parents=True, exist_ok=True)
+        except OSError:
+            # Keep runner resilient even when runtime dir setup fails.
+            continue
+    env["SAEC_RUNTIME_ROOT"] = str(runtime_root.resolve())
+    env["TEMP"] = str(tmp_dir.resolve())
+    env["TMP"] = str(tmp_dir.resolve())
+    env["PIP_CACHE_DIR"] = str(pip_cache_dir.resolve())
+
     if request.project_root is not None:
         project_root = request.project_root.resolve()
         env["SAEC_EXTRACTION_PATH"] = str(project_root)
-        env["SAEC_ARTICLES_PATH"] = str(
-            (project_root / "inputs" / "articles").resolve()
-        )
+
+        if request.articles_path is not None:
+            env["SAEC_ARTICLES_PATH"] = str(request.articles_path.resolve())
+        else:
+            env["SAEC_ARTICLES_PATH"] = str(
+                (project_root / "inputs" / "articles").resolve()
+            )
+
+    # Inject preset provider overrides into environment
+    if request.preset_name:
+        preset = get_preset(request.preset_name)
+        for key, value in preset.provider_overrides.items():
+            env[key] = value
+
     return env
 
 
@@ -117,6 +211,7 @@ class PipelineJobRunner:
         *,
         on_output: Callable[[str], None],
         on_complete: Callable[[RunResult], None],
+        on_progress: Callable[[ProgressUpdate], None] | None = None,
     ) -> threading.Thread:
         command = build_main_command(
             python_executable=self.python_executable,
@@ -141,34 +236,80 @@ class PipelineJobRunner:
                     encoding="utf-8",
                     errors="replace",
                     env=env,
+                    bufsize=1,
                 )
                 with self._lock:
                     self._active_process = proc
 
+                timeout_seconds = max(request.timeout_minutes * 60.0, 1.0)
                 start_time = time.monotonic()
-                timeout_seconds = request.timeout_minutes * 60
+                done_sentinel = object()
+                line_queue: queue.Queue[str | object] = queue.Queue()
 
-                if proc.stdout is not None:
+                def _reader() -> None:
+                    if proc is None or proc.stdout is None:
+                        line_queue.put(done_sentinel)
+                        return
                     for line in proc.stdout:
-                        on_output(line.rstrip("\n"))
-                        if time.monotonic() - start_time > timeout_seconds:
-                            on_output(
-                                f"[TIMEOUT] Job exceeded {request.timeout_minutes:.0f}"
-                                " minute limit. Terminating..."
-                            )
-                            proc.terminate()
-                            try:
-                                proc.wait(timeout=10)
-                            except subprocess.TimeoutExpired:
-                                proc.kill()
-                            on_complete(
-                                RunResult(
-                                    success=False,
-                                    return_code=-2,
-                                    command=command,
-                                )
-                            )
-                            return
+                        line_queue.put(line.rstrip("\n"))
+                    line_queue.put(done_sentinel)
+
+                reader = threading.Thread(target=_reader, name="saec-job-reader", daemon=True)
+                reader.start()
+
+                timed_out = False
+                reader_done = False
+                while True:
+                    elapsed = time.monotonic() - start_time
+                    if elapsed > timeout_seconds:
+                        timed_out = True
+                        on_output(
+                            f"[TIMEOUT] Job exceeded {request.timeout_minutes:.0f} minute limit. Terminating..."
+                        )
+                        proc.terminate()
+                        try:
+                            proc.wait(timeout=10)
+                        except subprocess.TimeoutExpired:
+                            proc.kill()
+                        break
+
+                    try:
+                        payload = line_queue.get(timeout=0.1)
+                    except queue.Empty:
+                        payload = None
+
+                    if payload is done_sentinel:
+                        reader_done = True
+                    elif isinstance(payload, str):
+                        on_output(payload)
+                        if on_progress is not None:
+                            update = parse_progress_from_line(payload, elapsed_seconds=elapsed)
+                            if update is not None:
+                                on_progress(update)
+
+                    if reader_done and proc.poll() is not None and line_queue.empty():
+                        break
+
+                # Drain remaining lines produced right before process exit.
+                while not line_queue.empty():
+                    payload = line_queue.get_nowait()
+                    if isinstance(payload, str):
+                        elapsed = time.monotonic() - start_time
+                        on_output(payload)
+                        if on_progress is not None:
+                            update = parse_progress_from_line(payload, elapsed_seconds=elapsed)
+                            if update is not None:
+                                on_progress(update)
+
+                if timed_out:
+                    on_complete(
+                        RunResult(
+                            success=False,
+                            return_code=-2,
+                            command=command,
+                        )
+                    )
+                    return
 
                 return_code = proc.wait()
                 on_complete(
@@ -178,13 +319,15 @@ class PipelineJobRunner:
                         command=command,
                     )
                 )
-            except Exception as e:
-                on_output(f"[RUNNER ERROR] {e}")
-                on_complete(
-                    RunResult(
-                        success=False, return_code=-99, command=command
-                    )
-                )
+            except FileNotFoundError as exc:
+                on_output(f"[RUNNER ERROR] Python interpreter not found: {exc}")
+                on_complete(RunResult(success=False, return_code=-99, command=command))
+            except PermissionError as exc:
+                on_output(f"[RUNNER ERROR] Access denied to output folder: {exc}")
+                on_complete(RunResult(success=False, return_code=-99, command=command))
+            except Exception as exc:
+                on_output(f"[RUNNER ERROR] Unexpected error. Check logs for details. {exc}")
+                on_complete(RunResult(success=False, return_code=-99, command=command))
             finally:
                 with self._lock:
                     if self._active_process is proc:
@@ -193,3 +336,4 @@ class PipelineJobRunner:
         thread = threading.Thread(target=_run, name="saec-job-runner", daemon=True)
         thread.start()
         return thread
+

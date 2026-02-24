@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-SAEC-O&G - Script Principal de Execução
+SAEC - Script Principal de Execução
 Executa pipeline completo de extração CIMO sem Jupyter
 
 Uso:
@@ -37,6 +37,11 @@ from pipeline_ingest import run_ingest
 from pipeline_extract import run_extract
 from llm_client import LLMClient
 from exceptions import IngestError, ExtractError
+from profile_engine.project_profiles import (
+    require_project_profile,
+    resolve_profile_prompt_path,
+    snapshot_active_profile_for_run,
+)
 
 # ============================================================================
 # CORES PARA TERMINAL
@@ -218,11 +223,29 @@ def step_2_ingestao(
 # ============================================================================
 def step_3_extracao(
     artigo_id: Optional[str] = None,
+    force: bool = False,
     dry_run: bool = False,
     context=None,
 ) -> bool:
-    """Extração de dados com LLM (Claude/OpenAI)."""
+    """Extração de dados com LLM (providers locais/cloud configurados)."""
     print_header("ETAPA 3: EXTRAÇÃO COM LLM")
+
+    profile_root = paths.EXTRACTION if (paths.EXTRACTION / "project.json").exists() else None
+    prompt_path = paths.GUIA_PROMPT
+    if profile_root is not None:
+        ok, message = require_project_profile(profile_root)
+        if not ok:
+            print_error(message)
+            return False
+        try:
+            prompt_path = resolve_profile_prompt_path(
+                profile_root,
+                fallback=paths.UNIVERSAL_PROFILE_PROMPT,
+            )
+        except Exception as exc:
+            print_error(f"Falha ao resolver prompt do perfil ativo: {exc}")
+            return False
+        print_info(f"Perfil carregado: prompt={prompt_path}")
 
     # Inicializar cliente LLM
     print_info("Inicializando cliente LLM...")
@@ -244,7 +267,7 @@ def step_3_extracao(
         hybrid_file = paths.WORK / aid / "hybrid.json"
         yaml_file = paths.YAMLS / f"{aid}.yaml"
 
-        if hybrid_file.exists() and not yaml_file.exists():
+        if hybrid_file.exists() and (force or not yaml_file.exists()):
             ready.append(article)
 
     print_info(f"Artigos prontos para extração: {len(ready)}")
@@ -252,7 +275,9 @@ def step_3_extracao(
     if artigo_id:
         article = next((a for a in ready if a["ArtigoID"] == artigo_id), None)
         if not article:
-            print_error(f"Artigo {artigo_id} não encontrado ou já processado")
+            print_error(
+                f"Artigo {artigo_id} não encontrado, sem ingestão, ou já processado sem --force"
+            )
             return False
         articles_to_process = [article]
     else:
@@ -272,9 +297,10 @@ def step_3_extracao(
         results = run_extract(
             paths=paths,
             client=client,
-            guia_path=paths.GUIA_PROMPT,
+            guia_path=prompt_path,
             output_dir=paths.YAMLS,
             artigo_id=artigo_id,
+            force=force,
             dry_run=dry_run,
             logger=ctx.logger,
         )
@@ -351,7 +377,7 @@ def step_5_consolidacao() -> bool:
 # ============================================================================
 def show_status():
     """Mostra status do sistema."""
-    print_header("STATUS DO SISTEMA SAEC-O&G")
+    print_header("STATUS DO SISTEMA SAEC")
 
     # Verificar estrutura
     checks = {
@@ -390,7 +416,7 @@ def show_status():
 # ============================================================================
 def main():
     parser = argparse.ArgumentParser(
-        description="SAEC-O&G - Pipeline de Extração CIMO",
+        description="SAEC - Pipeline de Extração CIMO",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Exemplos:
@@ -419,6 +445,36 @@ Exemplos:
         return 0
 
     context = make_context(log_level=args.log_level)
+    project_profile_root = paths.EXTRACTION if (paths.EXTRACTION / "project.json").exists() else None
+    run_id = datetime.now().strftime("%Y%m%d_%H%M%S_%f")
+
+    def _enforce_project_profile_if_needed() -> bool:
+        if project_profile_root is None:
+            return True
+        ok, message = require_project_profile(project_profile_root)
+        if not ok:
+            print_error(message)
+            return False
+        return True
+
+    def _snapshot_profile_if_needed(command: str) -> bool:
+        if project_profile_root is None:
+            return True
+        try:
+            paths.CONSOLIDATED.mkdir(parents=True, exist_ok=True)
+            snapshot = snapshot_active_profile_for_run(
+                project_profile_root,
+                output_root=paths.CONSOLIDATED,
+                run_id=run_id,
+                command=command,
+                force=bool(args.force),
+                dry_run=bool(args.dry_run),
+            )
+            print_info(f"Snapshot de perfil salvo: {snapshot.profile_yaml_path}")
+            return True
+        except Exception as exc:
+            print_error(f"Falha ao salvar snapshot do perfil ativo: {exc}")
+            return False
 
     try:
         if args.status:
@@ -426,6 +482,10 @@ Exemplos:
             return 0
 
         if args.all:
+            if not _enforce_project_profile_if_needed():
+                return 1
+            if not _snapshot_profile_if_needed("--all"):
+                return 1
             # Pipeline completo
             ok1 = step_1_configuracao()
             if not ok1:
@@ -443,6 +503,7 @@ Exemplos:
 
             ok3 = step_3_extracao(
                 artigo_id=args.article,
+                force=args.force,
                 dry_run=args.dry_run,
                 context=context,
             )
@@ -458,6 +519,10 @@ Exemplos:
             return 0 if step_1_configuracao() else 1
 
         elif args.step == 2:
+            if not _enforce_project_profile_if_needed():
+                return 1
+            if not _snapshot_profile_if_needed("--step 2"):
+                return 1
             return 0 if step_2_ingestao(
                 artigo_id=args.article,
                 force=args.force,
@@ -466,13 +531,22 @@ Exemplos:
             ) else 1
 
         elif args.step == 3:
+            if not _enforce_project_profile_if_needed():
+                return 1
+            if not _snapshot_profile_if_needed("--step 3"):
+                return 1
             return 0 if step_3_extracao(
                 artigo_id=args.article,
+                force=args.force,
                 dry_run=args.dry_run,
                 context=context,
             ) else 1
 
         elif args.step == 5:
+            if not _enforce_project_profile_if_needed():
+                return 1
+            if not _snapshot_profile_if_needed("--step 5"):
+                return 1
             return 0 if step_5_consolidacao() else 1
 
         return 0
@@ -488,3 +562,4 @@ Exemplos:
 
 if __name__ == "__main__":
     sys.exit(main())
+

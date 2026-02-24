@@ -1,0 +1,83 @@
+---
+ArtigoID: ART_027
+Ano: 2021
+TipoPublicação: Conference
+Referência_Curta: Abd Rahman et al., 2021
+DOI: https://doi.org/10.1109/ICOTEN52080.2021.9493499
+SegmentoO&G: Upstream (E&P)
+SegmentoO&G_Confiança: Alta
+Ambiente: NR
+Complexidade: Média
+Complexidade_Justificativa: F1=0 (ambiente NR), F2=1 (projetos de capital com múltiplos stakeholders e complexidade mencionada), F3=1 (risco explicitamente mencionado como fator crítico de decisão)
+ProcessoSCM_Alvo: Planejamento de demanda | Gestão de riscos da cadeia
+TipoRisco_SCRM: Múltiplos
+ObjetoCrítico: Projetos de capital upstream, investimentos em exploração e produção
+ProblemaNegócio_Contexto: 'O setor de projetos de capital upstream de óleo e gás na Malásia enfrenta desafios significativos na tomada de decisões estratégicas.
+
+  Os tomadores de decisão não conseguem produzir decisões precisas sem análises detalhadas baseadas em grandes volumes de dados.
+
+  Fatores como economia de projeto, complexidade, risco, termos fiscais, geografia, clima político e preço de hidrocarbonetos influenciam os padrões de decisão.
+
+  A incorporação de ML e big data é proposta como abordagem para acelerar o processo de tomada de decisão, especialmente em contextos de incerteza como novos investimentos e crises econômicas.'
+ClasseIA: Híbrido
+ClasseIA_Confiança: Média
+TarefaAnalítica: Previsão
+FamíliaModelo: Redes neurais feedforward | Regressão linear/logística
+TipoDado: Tabular/ERP | Séries temporais
+Maturidade: Conceito
+Maturidade_Confiança: Alta
+Intervenção_Descrição: 'O estudo propõe um modelo conceitual de algoritmo de ML para análise prescritiva em projetos de capital upstream. O framework combina múltiplas técnicas analíticas: S-Curve Envelope, Financial Pinch Sensitivity, Portfolio, Probabilistic, SWOT, Clustering analysis, e Multivariate imputation based on Chained Equation (MICE). A abordagem utiliza elementos de análise mistos (blended elements) para suporte à decisão, combinando análises desde regressão linear básica até redes neurais artificiais sofisticadas.
+
+  '
+Dados_Descrição: 'O artigo não especifica datasets concretos utilizados. Menciona que os dados provêm de fontes internas e externas das organizações, incluindo dados de inventário de ativos de informação. Os tipos de dados considerados incluem: dados de projeto econômico, complexidade de projeto, dados de risco, termos fiscais, dados geográficos, clima político e preços de hidrocarbonetos. O framework é conceitual sem implementação com dados reais.
+
+  '
+CategoriaMecanismo: Redução de incerteza | Integração de dados dispersos | Antecipação de risco
+Mecanismo_Fonte: Misto
+Mecanismo_Declarado: '"The prescriptive analysis uses statistical models and ML algorithms to define the possibilities and to recommend actions. These models and algorithms can discover patterns in big data that human analysts may overlook."
+
+  '
+Mecanismo_Inferido: 'INFERIDO: A integração de múltiplas técnicas analíticas (S-Curve, Financial Pinch, Clustering, MICE) permite capturar diferentes dimensões do problema de decisão. INFERIDO: A combinação de análise descritiva e prescritiva reduz incerteza ao transformar dados brutos em recomendações acionáveis. INFERIDO: O ML identifica padrões em big data que analistas humanos não conseguem detectar, permitindo decisões mais informadas. INFERIDO: A abordagem blended permite comparação entre métodos e seleção da técnica mais adequada para cada contexto específico.
+
+  '
+Mecanismo_Estruturado: Dados multi-fonte (projeto, risco, fiscal, mercado) → ML + técnicas estatísticas (clustering, regressão, redes neurais) → Identificação de padrões e recomendações → Suporte à decisão estratégica de investimento
+ResultadoTipo: Qualitativo
+Resultados_Quant: NR
+Resultados_Qual: Framework conceitual proposto para melhorar tomada de decisão via ML; identificação de fatores influenciadores de decisão (economia, complexidade, risco, fiscal, geografia, política, preço); proposta de análise mista combinando múltiplas técnicas para suporte decisório
+NívelEvidência: Proposta teórica/framework
+Limitações_Artigo: 'NR
+
+  '
+Observação: 'Artigo conceitual que não apresenta implementação prática ou validação empírica do framework proposto. O foco é identificar tipos de análise ML aplicáveis ao contexto upstream O&G da Malásia, sem demonstração com dados reais. A contribuição é primariamente teórica, mapeando técnicas analíticas para suporte à decisão de investimento em projetos de capital.
+
+  '
+Quotes:
+- QuoteID: Q001
+  TipoQuote: Mecanismo
+  Trecho: The prescriptive analysis uses statistical models and ML algorithms to define the possibilities and to recommend actions. These models and algorithms can discover patterns in big data that human analysts may overlook.
+  Página: p.1
+- QuoteID: Q002
+  TipoQuote: Contexto
+  Trecho: The upstream capital project oil and gas industry is considered a critical sector in Malaysia. Apart from its significant monetary contribution to the country, big data analysis is also applied to the supply chain operation.
+  Página: p.1
+- QuoteID: Q003
+  TipoQuote: Intervenção
+  Trecho: There are various predictive techniques available, ranging from basic linear regression to sophisticated, efficient ones such as artificial neural networks.
+  Página: p.3
+- QuoteID: Q004
+  TipoQuote: Contexto
+  Trecho: Several factors influence decision-making, such as project economics, project complexity, risk, fiscal term, geographical, country political, and hydrocarbon price influence.
+  Página: p.3
+- QuoteID: Q005
+  TipoQuote: Mecanismo
+  Trecho: With the use of an algorithm, the computer will learn how to match the data with certain information and produce the pattern or trend which will be used to arrive at the best decision.
+  Página: p.4
+- QuoteID: Q006
+  TipoQuote: Outcome
+  Trecho: Using a blended or mixed element of analysis can become the better decision support for the company's stakeholder and owner prior arriving at the important decision about the business.
+  Página: p.4
+- QuoteID: Q007
+  TipoQuote: Intervenção
+  Trecho: Multivariate imputation based on Chained Equation (MICE) is used for handling missing data.
+  Página: p.5
+---

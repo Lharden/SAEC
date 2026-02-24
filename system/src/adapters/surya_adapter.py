@@ -16,6 +16,7 @@ from pathlib import Path
 from typing import Union
 
 from PIL import Image
+from PIL.Image import Image as PILImage
 
 try:
     from ..exceptions import IngestError
@@ -28,6 +29,18 @@ logger = logging.getLogger(__name__)
 # ============================================================
 # Data Classes
 # ============================================================
+
+
+def _normalize_text_payload(payload: object) -> str:
+    """Normaliza payload textual dinâmico para string."""
+    if isinstance(payload, str):
+        return payload
+    if isinstance(payload, list):
+        return "\n".join(str(item) for item in payload)
+    if isinstance(payload, dict):
+        return "\n".join(f"{key}: {value}" for key, value in payload.items())
+    return str(payload)
+
 
 @dataclass
 class BoundingBox:
@@ -133,7 +146,7 @@ def _get_predictors():
 
 
 def ocr_image(
-    image: Union[Path, Image.Image],
+    image: Union[Path, PILImage],
     *,
     languages: list[str] | None = None,
     config: SuryaConfig | None = None,
@@ -165,7 +178,7 @@ def ocr_image(
         if isinstance(image, Path):
             if not image.exists():
                 raise IngestError(f"Imagem não encontrada: {image}")
-            img = Image.open(image)
+            img: PILImage = Image.open(image)
         else:
             img = image
 
@@ -289,7 +302,7 @@ def ocr_pdf_pages(
             pix = page.get_pixmap(matrix=mat)
 
             # Converter para PIL Image
-            img = Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
+            img = Image.frombytes("RGB", (pix.width, pix.height), pix.samples)
 
             # Executar OCR
             ocr_result = ocr_image(img, languages=languages)
@@ -366,7 +379,7 @@ def detect_scanned_pdf(
 
         for i in range(pages_to_check):
             page = doc[i]
-            text = page.get_text()
+            text = _normalize_text_payload(page.get_text())
             images = page.get_images()
 
             total_text_chars += len(text.strip())

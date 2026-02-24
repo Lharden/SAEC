@@ -1,0 +1,78 @@
+---
+ArtigoID: ART_019
+Ano: 2023
+TipoPublicação: Conference
+Referência_Curta: Lim & Mirje, 2023
+DOI: NR
+SegmentoO&G: Cross-segment
+SegmentoO&G_Confiança: Média
+Ambiente: NR
+Complexidade: Média
+Complexidade_Justificativa: F1=0 (ambiente NR), F2=1 (múltiplos hubs e fornecedores mencionados), F3=1 (complexidade e incerteza da cadeia O&G citadas)
+ProcessoSCM_Alvo: Planejamento de demanda
+TipoRisco_SCRM: Risco de demanda
+ObjetoCrítico: Volume de transações de ordens de compra (purchase order transaction volume)
+ProblemaNegócio_Contexto: 'A cadeia de suprimentos da indústria de O&G é conhecida por sua complexidade e incerteza.
+
+  O processo atual de previsão de Unit of Activity (UoA), como volume de transações, depende de abordagens manuais e inconsistentes devido à natureza descentralizada dos dados, derivados de múltiplas ferramentas e sistemas.
+
+  Diversos especialistas empregam métodos distintos para medição e estimativa de UoA, resultando em ineficiências e imprecisões que prejudicam o desempenho ótimo da cadeia de suprimentos.'
+ClasseIA: ML supervisionado
+ClasseIA_Confiança: Alta
+TarefaAnalítica: Regressão
+FamíliaModelo: Ensemble tree-based
+TipoDado: Séries temporais
+Maturidade: Piloto
+Maturidade_Confiança: Média
+Intervenção_Descrição: 'Aplicação de predictive analytics combinando métodos estatísticos e modelos de machine learning para prever volume de transações de ordens de compra. O modelo Random Forest foi selecionado após comparação com XGBoost, OLS, Lasso, Ridge, Isolation Forest e KNN. Utiliza rig count, tipo de rig e activity rate como drivers preditivos. Os resultados são visualizados em Power BI para suporte à decisão.
+
+  '
+Dados_Descrição: 'Dados históricos de 3 anos (2019-2021) usados para treinamento e dados de 2022 para teste. Dados incluem rig count, tipo de rig, activity rate e volume de transações. Análise de correlação Spearman mostrou alta correlação entre rig count e volume de transações. Dados provenientes de múltiplas ferramentas e sistemas da cadeia de suprimentos.
+
+  '
+CategoriaMecanismo: Redução de incerteza
+Mecanismo_Fonte: Misto
+Mecanismo_Declarado: '"Accurate transaction volume prediction enables better resource planning, budgeting, and capacity management, leading to enhanced operational performance and strategic decision-making capabilities."
+
+  '
+Mecanismo_Inferido: 'INFERIDO: O Random Forest captura relações não-lineares entre variáveis de entrada e o target, melhorando a acurácia preditiva. INFERIDO: A sistematização do processo de previsão substitui métodos manuais inconsistentes por abordagem auditável e escalável. INFERIDO: A previsão antecipada de volumes permite alocação proativa de recursos entre hubs, minimizando gargalos.
+
+  '
+Mecanismo_Estruturado: Dados históricos (rig count, tipo rig, activity rate) → Random Forest (regressão) → Previsão de volume de transações → Alocação otimizada de recursos e planejamento de capacidade
+ResultadoTipo: Quantitativo
+Resultados_Quant: 'Acurácia: 89% (baseline: NR); R² Score Random Forest: 0.834 (vs. XGBoost: 0.818, KNN: 0.779, Isolation Forest: 0.577, OLS: 0.418)'
+Resultados_Qual: Previsões fornecem insights sobre tendências e flutuações nos níveis de atividade, permitindo tomada de decisão informada e alocação efetiva de recursos entre hubs
+NívelEvidência: Experimento com dados reais
+Limitações_Artigo: 'Os autores indicam que o escopo do estudo foi limitado à previsão de volume de transações, sugerindo extensão futura para outros UoAs como payment audit, shipment processing e vendor invoice management.
+
+  '
+Quotes:
+- QuoteID: Q001
+  TipoQuote: Contexto
+  Trecho: The supply chain of the oil and gas industry is known for its complexity and uncertainty.
+  Página: p.1
+- QuoteID: Q002
+  TipoQuote: Contexto
+  Trecho: the current process of predicting Unit of Activity (UoA) namely transaction volume relies on inconsistent and manual approaches. This inconsistency stems from the decentralized nature of data, which is derived from multiple tools and systems.
+  Página: p.2
+- QuoteID: Q003
+  TipoQuote: Intervenção
+  Trecho: Random Forest demonstrates a high R2 score. It outperforms other models by effectively capturing nonlinear relationships between input variables and the target variable.
+  Página: p.3
+- QuoteID: Q004
+  TipoQuote: Mecanismo
+  Trecho: These predictions provide valuable insights into overall trends and fluctuations in activity levels, enabling informed decision-making and effective resource allocation across various hubs based on the estimated transaction volumes.
+  Página: p.3
+- QuoteID: Q005
+  TipoQuote: Outcome
+  Trecho: The prediction results of transaction volume using Random Forest model achieve an impressive accuracy rate of 89%.
+  Página: p.3
+- QuoteID: Q006
+  TipoQuote: Mecanismo
+  Trecho: Accurate transaction volume prediction enables better resource planning, budgeting, and capacity management, leading to enhanced operational performance and strategic decision-making capabilities.
+  Página: p.4
+- QuoteID: Q007
+  TipoQuote: Limitação
+  Trecho: Future research can be extended to more UoAs such as payment audit, shipment processing, vendor invoice management, etc.
+  Página: p.4
+---

@@ -1,0 +1,83 @@
+---
+ArtigoID: ART_020
+Ano: 2025
+TipoPublicação: Journal
+Referência_Curta: Souames et al., 2025
+DOI: https://doi.org/10.1109/ACCESS.2025.3584886
+SegmentoO&G: Cross-segment
+SegmentoO&G_Confiança: Alta
+Ambiente: Híbrido
+Complexidade: Alta
+Complexidade_Justificativa: F1=1 (operações offshore/onshore mencionadas em regiões remotas), F2=1 (múltiplos fornecedores, customs brokers, transporters envolvidos na cadeia), F3=1 (risco operacional alto - delays in high-value shipments result in significant financial impacts)
+ProcessoSCM_Alvo: Logística/transporte
+TipoRisco_SCRM: Risco de transporte/logística
+ObjetoCrítico: Import lead times para equipamentos especializados
+ProblemaNegócio_Contexto: 'O setor de serviços de óleo e gás opera em cadeias de suprimentos internacionais complexas, onde a entrega pontual de equipamentos críticos é crucial para manter operações.
+
+  Empresas dependem de logística eficiente para transportar maquinário especializado para bases operacionais em locais remotos.
+
+  A complexidade logística, requisitos regulatórios diversos, processos alfandegários e coordenação de múltiplos stakeholders tornam a estimativa precisa de lead times de importação um fator crítico para gestão de custos e confiabilidade operacional.
+
+  Atrasos em embarques de alto valor resultam em impactos financeiros significativos.'
+ClasseIA: Híbrido
+ClasseIA_Confiança: Alta
+TarefaAnalítica: Previsão
+FamíliaModelo: SVM/Kernel; Regressão linear/logística; Redes neurais feedforward
+TipoDado: Tabular/ERP
+Maturidade: Protótipo
+Maturidade_Confiança: Alta
+Intervenção_Descrição: 'O estudo integra Business Intelligence (BI) e Machine Learning (ML) dentro do framework CRISP-DM para prever lead times de importação. Foram testados múltiplos modelos: Linear Regression, Decision Trees, Random Forests, Gradient Boosted Trees, e Support Vector Machines (SVM). Os melhores modelos foram SVM para CFD, Declaration e Transport Lead Time, e Linear Regression para Release Lead Time. Técnicas de data augmentation incluíram simulação baseada em AnyLogic e Tabular Variational Autoencoder (TVAE) para superar escassez de dados.
+
+  '
+Dados_Descrição: 'Dataset original de 180 embarques do Clearance Portal, integrado ao departamento de import-export. Dados incluem detalhes de embarque, tempos de processamento alfandegário e cronogramas de transporte. Cerca de 17% dos dados estavam faltando, com campos de datas críticas (ATA, Declaration Date, Reception Date) com ~17% missing. Data augmentation gerou ~700 registros sintéticos via simulação e ~500 via TVAE, resultando em datasets D2 (880 registros) e D3 (680 registros). Período: 2022.
+
+  '
+CategoriaMecanismo: Redução de incerteza
+Mecanismo_Fonte: Misto
+Mecanismo_Declarado: '"By leveraging predictive models, organizations can better forecast potential delays and optimize shipping routes, resulting in more accurate scheduling and timely deliveries. This ability to predict disruptions in advance enables proactive adjustments, reducing the risk of delays and improving overall operational performance."
+
+  '
+Mecanismo_Inferido: 'INFERIDO: Modelos ML capturam relações não-lineares entre variáveis como modo de transporte, porto de entrada e broker alfandegário que métodos tradicionais baseados em médias não conseguem capturar. INFERIDO: A previsão antecipada de lead times permite alocação proativa de recursos e seleção otimizada de rotas/brokers. INFERIDO: A interface chatbot traduz outputs complexos de ML em insights acionáveis, reduzindo barreiras de adoção e acelerando decisões.
+
+  '
+Mecanismo_Estruturado: Dados de embarques (ERP/Clearance Portal) → Modelos ML (SVM, Linear Regression) + data augmentation (TVAE, simulação) → Previsão de lead times por cenário → Estimativas em tempo real via chatbot para otimização logística
+ResultadoTipo: Quantitativo
+Resultados_Quant: 'MAE reduction: up to 62% improvement over baseline (CFD LT: SVM MAE 1.30 vs baseline 3.01 on D3; Declaration LT: SVM MAE 1.21 vs baseline 3.19 on D3; Release LT: Linear Regression MAE 2.19 vs baseline 4.56 on D3; Transport LT: SVM MAE 0.16 vs baseline 0.42 on D3)'
+Resultados_Qual: Sistema permite comparações de cenários entre modos de transporte, brokers alfandegários e portos de entrada; interface chatbot melhora acessibilidade para especialistas sem expertise técnica; identificação de gargalos como Release lead time (média 7.6 dias) como principal bottleneck
+NívelEvidência: Estudo de caso real
+Limitações_Artigo: 'Dataset restrito ao ano 2022, podendo não capturar variações sazonais ou ano-a-ano. Dados sintéticos TVAE podem não capturar nuances de dados reais, especialmente para custos de desembaraço alfandegário altamente variáveis. Restrições de domínio codificadas manualmente podem limitar escalabilidade para diferentes produtos ou regiões. Preocupações de privacidade e segurança impediram deployment em nuvem em escala completa.
+
+  '
+Observação: 'Estudo publicado em 2025 mas com dados de 2022. Framework CRISP-DM aplicado de forma completa. Chatbot desenvolvido com Streamlit/Python. Modelos serializados em formato Pickle para deployment.
+
+  '
+Quotes:
+- QuoteID: Q001
+  TipoQuote: Contexto
+  Trecho: The global oil and gas services industry operates within a complex network of international supply chains, where timely delivery of critical equipment and resources is crucial for maintaining smooth operations.
+  Página: p.1
+- QuoteID: Q002
+  TipoQuote: Mecanismo
+  Trecho: Unlike traditional forecasting approaches that rely on static averages, machine learning captures non-linear relationships, providing a dynamic solution.
+  Página: p.15
+- QuoteID: Q003
+  TipoQuote: Outcome
+  Trecho: By integrating Support Vector Machines (SVM) and Linear Regression models, we achieved significant reductions in forecasting errors across lead times, with improvements of up to 62% over baseline methods.
+  Página: p.15
+- QuoteID: Q004
+  TipoQuote: Intervenção
+  Trecho: 'The selected best-performing models for each lead time are 3 Support Vector Machine (SVM) models for: CFD, Declaration, Transport Lead Time and Linear Regression model for Release Lead Time.'
+  Página: p.14
+- QuoteID: Q005
+  TipoQuote: Mecanismo
+  Trecho: By leveraging predictive models, organizations can better forecast potential delays and optimize shipping routes, resulting in more accurate scheduling and timely deliveries.
+  Página: p.16
+- QuoteID: Q006
+  TipoQuote: Limitação
+  Trecho: One key limitation is the dataset's time scope, restricted to the year 2022, which may not capture seasonal or year-to-year variations that impact import lead times.
+  Página: p.17
+- QuoteID: Q007
+  TipoQuote: Método
+  Trecho: To address data scarcity, synthesis methods were applied to generate synthetic data based on historical patterns, thus enriching datasets and improving the accuracy of model training.
+  Página: p.7
+---

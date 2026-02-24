@@ -106,7 +106,7 @@ def _split_sentences(text: str) -> List[str]:
 
 
 KEYWORDS = {
-    "Contexto": ["industry", "sector", "supply chain", "context", "background", "challenge", "oil and gas", "o&g", "risk"],
+    "Contexto": ["industry", "sector", "supply chain", "context", "background", "challenge", "risk"],
     "Intervenção": ["we propose", "we develop", "we present", "framework", "approach", "system", "workflow", "model"],
     "Método": ["method", "methodology", "dataset", "data", "experiment", "case study", "survey", "interview", "training"],
     "Outcome": ["results", "we achieved", "improved", "improvement", "reduction", "accuracy", "mae", "rmse", "%", "performance"],
