@@ -1,0 +1,104 @@
+---
+# METADATA
+ArtigoID: "ART_013"
+Ano: 2025
+TipoPublicação: "Conference"
+Referência_Curta: "Rozario, 2025"
+DOI: "https://doi.org/10.2118/224336-MS"
+
+# CONTEXTO (C)
+SegmentoO&G: "Upstream (E&P)"
+SegmentoO&G_Confiança: "Alta"
+Ambiente: "Onshore"
+Complexidade: "Baixa"
+Complexidade_Justificativa: "F1=0, F2=0 (fornecedores não mencionados), F3=1 (\"high-risk\" e risco de erros/downtime citado)"
+ProcessoSCM_Alvo: "Logística/transporte; Manutenção/MRO; Monitoramento/visibilidade"
+TipoRisco_SCRM: "Risco operacional; Risco de transporte/logística; Risco de ativos"
+ObjetoCrítico: "Cronograma/roteiro de tarefas de campo; Entregas de metanol a tanques de consumo; Operabilidade de poços e pipelines (pigging, prevenção de congelamento/entupimento)"
+
+# NARRATIVAS CONTEXTUAIS
+ProblemaNegócio_Contexto: |
+  Operações de campo e logística (roteirização de técnicos e caminhões de líquidos de consumo) envolvem muitas combinações possíveis sob variáveis dinâmicas e restrições de recursos, com alto risco de erros e impacto em segurança e produção.
+  Métodos tradicionais descritos como manuais e modelos estáticos não conseguem lidar com a escala de permutações de tarefas/rotas e com mudanças frequentes (clima extremo, issues ad hoc de produção, variação de demanda).
+  O contexto é um oilfield ativo, com tarefas como inspeções, pigging e monitoramento de produção, além de distribuição de líquidos (ex.: metanol) para assegurar continuidade operacional (ex.: evitar congelamento de pipelines).
+  O objetivo é aumentar eficiência operacional e apoiar decisões em tempo quase real, reduzindo downtime, custos e incidentes/delinquências.
+
+# INTERVENÇÃO (I)
+ClasseIA: "Híbrido"
+ClasseIA_Confiança: "Alta"
+TarefaAnalítica: "Otimização; Previsão; Detecção de anomalia"
+FamíliaModelo: "Metaheurísticas; Clustering; Outro (Reinforcement Learning; Prophet)"
+TipoDado: "Multimodal"
+Maturidade: "Piloto"
+Maturidade_Confiança: "Alta"
+Intervenção_Descrição: |
+  Dois modelos integrados: (1) otimização de operações de campo com priorização de tarefas (Fibonacci prioritization), clustering espacial (K-means), previsão de produção/anomalias (Prophet) e sequenciamento/roteirização (TSP), com refinamento iterativo via reinforcement learning e feedback dos operadores.
+  (2) otimização de trucking de tanques de consumo via OptaPlanner com constraint programming e heurísticas/metaheurísticas (local search, simulated annealing, Tabu search) para roteamento, priorização e alocação de recursos sob restrições (taxas de tanque, agendas de entrega, capacidades).
+  Implementação/implantação citada com Java Spring Boot em AWS para escalabilidade e integração com input de dados em tempo real (ex.: EZOps API/SCADA).
+Dados_Descrição: |
+  Dados operacionais de campo e logística incluindo SCADA (séries horárias de produção), matriz de distâncias entre locais, dados comportamentais e logs de execução de tarefas capturados no EZOPS, e parâmetros em tempo real como tank rates via EZOps API.
+  Testes incluem simulações: três meses simulados para operações de campo e múltiplos cenários logísticos (alta demanda, mudanças de rota, clima extremo, issues ad hoc).
+  Há também avaliação em campo (oilfield ativo) por um mês, comparando desempenho antes e após a adoção do sistema, registrando tarefas realizadas, tempo de execução e métricas operacionais (produção, issues, delinquent items).
+
+# MECANISMO (M)
+CategoriaMecanismo: "Priorização/alocação ótima"
+Mecanismo_Fonte: "Misto"
+Mecanismo_Declarado: |
+  O artigo descreve que o sistema “continuously synthesizes data on all possible actions” e recomenda uma ação proativa a vencer em poucos dias na mesma localização para evitar retornos, otimizando a rota dos operadores.
+  Descreve também integração de forecasting e um sistema de alarmes para identificar outliers de produção e antecipar issues, reduzindo downtime e “lifting” a carga de leitura manual de SCADA charts.
+  Para trucking, o mecanismo declarado é a otimização de rotas/prioridades/alocação via OptaPlanner sob restrições de domínio (tank rates e delivery schedules), melhorando eficiência e custo.
+Mecanismo_Inferido: |
+  INFERIDO: Ao converter múltiplas fontes (SCADA, logs de tarefas, parâmetros de tanques e distâncias) em scores/prioridades e clusters espaciais, o modelo reduz o espaço de busca e torna o problema de roteamento/seqüenciamento computacionalmente tratável em operação.
+  INFERIDO: Ao combinar previsão (Prophet) e alertas com otimização de rotas e prioridades, o sistema antecipa desvios de produção e reordena o plano de ações, reduzindo o tempo até intervenção e, consequentemente, o downtime.
+  INFERIDO: Ao aplicar constraint programming + metaheurísticas no trucking, o sistema encontra soluções viáveis sob múltiplas restrições e melhora utilização de carga/ativos, reduzindo custo por litro e risco de falta de líquidos críticos (ex.: metanol) que afetam continuidade operacional.
+  INFERIDO: O loop de feedback de técnicos e o reforço iterativo ajustam parâmetros/decisões com base em resultados observados, aumentando aderência do plano recomendado às condições reais e sustentando ganhos de eficiência e segurança.
+Mecanismo_Estruturado: "SCADA (produção horária) + logs EZOPS + tank rates (EZOps API) + matriz de distâncias + restrições operacionais → scoring Fibonacci + clustering K-means + forecasting Prophet + otimização (TSP/constraint programming/OptaPlanner com metaheurísticas) + reinforcement learning/feedback → recomendações de prioridades/rotas + alertas de anomalia → menos revisitas e melhor alocação de recursos, intervenção mais cedo em issues e maior aderência a protocolos → aumento de eficiência e uptime, redução de custos/incidentes e melhoria de performance logística"
+
+# OUTCOME (O)
+ResultadoTipo: "Misto"
+Resultados_Quant: "route efficiency (actions completed per hours billed): +31% (vs. baseline: before optimization); delinquent incidents: -61% (vs. baseline: before optimization); downtime: -47% (vs. baseline: before optimization); landed cost per litre: -20% (vs. baseline: before optimization); load utilization: +35% (vs. baseline: before optimization)"
+Resultados_Qual: "Relata melhoria de tomada de decisão e operação mais segura; rotas otimizadas contribuem para menor emissão de GHG; melhoria de consistência de suprimento sob demanda flutuante; redução do ônus de interpretação manual de gráficos SCADA antes do turno."
+NívelEvidência: "Estudo de caso real"
+Limitações_Artigo: |
+  O artigo reconhece desafios de “parameter tuning” e de “managing large datasets through the consolidation of data sources”.
+  Também reconhece desafios de “data integration and computational requirements” e a necessidade de avanços contínuos em escalabilidade (“continuous improvements and advancements in scalability”).
+
+# OPCIONAL
+Observação: |
+  O artigo descreve dois modelos (operações de campo e trucking) no mesmo estudo; as classificações de ProcessoSCM_Alvo e TipoRisco_SCRM foram marcadas como múltiplas para refletir o escopo combinado.
+
+# QUOTES (3-8)
+Quotes:
+  - QuoteID: "Q001"
+    TipoQuote: "Contexto"
+    Trecho: "Field operations and logistics optimization in the oil and gas industry are complex by nature. They involve high-risk dynamic variables and significant resource limitations."
+    Página: "p.1 (Abstract)"
+  - QuoteID: "Q002"
+    TipoQuote: "Intervenção"
+    Trecho: "Key innovations include Fibonacci prioritization for task scoring, K-means clustering for spatial analysis, and creating a Prophet model to predict production trends and anomalies."
+    Página: "p.1 (Abstract)"
+  - QuoteID: "Q003"
+    TipoQuote: "Intervenção"
+    Trecho: "The second model addresses consumption tank trucking optimization using OptaPlanner (Geurts et al. 2020), an open-source framework that uses heuristic algorithms such as local search, simulated annealing, and Tabu search."
+    Página: "p.1 (Abstract)"
+  - QuoteID: "Q004"
+    TipoQuote: "Mecanismo"
+    Trecho: "The optimization, on the other hand, continuously synthesizes data on all possible actions to be completed on a field and recommends a proactive action that would be due in a few days to be completed in the same location, before moving on."
+    Página: "p.4 (Case Study)"
+  - QuoteID: "Q005"
+    TipoQuote: "Mecanismo"
+    Trecho: "The optimization also continuously synthesizes hourly well production data and predicts the outlier behavior of a well that will prevent it from making its expected production for the day. The operators were able to identify production issues sooner and mitigate them faster."
+    Página: "p.4 (Case Study)"
+  - QuoteID: "Q006"
+    TipoQuote: "Outcome"
+    Trecho: "Efficiency: The operator optimization model increased the route efficiency (actions completed per hours billed) by 31%, allowing technicians to dedicate more time to task execution."
+    Página: "p.5 (Field Operations Results)"
+  - QuoteID: "Q007"
+    TipoQuote: "Outcome"
+    Trecho: "Safety: Delinquent incidents are reduced by 61%, attributed to improved task prioritization and adherence to safety protocols."
+    Página: "p.5 (Field Operations Results)"
+  - QuoteID: "Q008"
+    TipoQuote: "Limitação"
+    Trecho: "Challenges such as data integration and computational requirements remain, though continuous improvements and advancements in scalability indicate the broad applicability of the model in a wide range of operating situations."
+    Página: "p.5 (Conclusion)"
+---

@@ -1,0 +1,10 @@
+{
+  "article_id": "ART_001",
+  "model": "gemini-pro",
+  "base_url": "http://localhost:4000",
+  "images_included": 0,
+  "text_only": false,
+  "tokens_input": 25458,
+  "tokens_output": 4325,
+  "tokens_total": 29783
+}

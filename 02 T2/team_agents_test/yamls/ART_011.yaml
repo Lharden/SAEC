@@ -1,0 +1,104 @@
+---
+# METADATA
+ArtigoID: "ART_011"
+Ano: 2020
+TipoPublicação: "Journal"
+Referência_Curta: "Kwon et al., 2020"
+DOI: "https://dx.doi.org/10.1021/acs.iecr.0c01957"
+
+# CONTEXTO (C)
+SegmentoO&G: "Downstream"
+SegmentoO&G_Confiança: "Alta"
+Ambiente: "Onshore"
+Complexidade: "Baixa"
+Complexidade_Justificativa: "F1=0, F2=0 (fornecedores não mencionados), F3=0 (risco/criticidade não descritos como alto/crítico; incerteza de preço é enfatizada)"
+ProcessoSCM_Alvo: "Planejamento de produção; Procurement/compras; Gestão de estoques; Gestão de riscos da cadeia"
+TipoRisco_SCRM: "Risco financeiro; Risco de estoque"
+ObjetoCrítico: "Compra de nafta e níveis de inventário (matéria-prima e produtos finais) sob volatilidade de preços"
+
+# NARRATIVAS CONTEXTUAIS
+ProblemaNegócio_Contexto: |
+  Planejamento de recursos e produção em uma planta petroquímica precisa decidir timing e quantidade de compra de nafta, vendas de produtos e gestão de inventário sob forte incerteza/volatilidade de preços de matérias-primas e produtos.
+  O contexto é uma planta real (naphtha-cracking) com múltiplos produtos finais e capacidade limitada de estocagem, operando em mercado global com variação de preços e necessidade de confiabilidade logística e segurança financeira.
+  Práticas convencionais (BAU) e estratégias fixas de produto (sem ajuste de yield) não capturam adequadamente a dinâmica de preços e os trade-offs entre estoque, compras/vendas e lucro.
+  O estudo propõe integrar previsão de preços, hedge via paper trading e otimização de planejamento para maximizar lucro operacional respeitando restrições de capacidade e inventário.
+
+# INTERVENÇÃO (I)
+ClasseIA: "Híbrido"
+ClasseIA_Confiança: "Média"
+TarefaAnalítica: "Previsão; Otimização; Simulação/what-if"
+FamíliaModelo: "Regressão linear/logística; Redes neurais feedforward; Simulação (System Dynamics); Programação matemática (MILP); Outro (programação não linear para paper trading)"
+TipoDado: "Séries temporais"
+Maturidade: "Piloto"
+Maturidade_Confiança: "Média"
+Intervenção_Descrição: |
+  Framework decisório com três modelos integrados: (1) previsão de preços (system dynamics, multiple linear regression e ANN feed-forward backpropagation), (2) paper trading para mitigar risco financeiro e (3) planejamento de produção/operacional.
+  As previsões de preço (selecionando SD como entrada principal) alimentam modelos de otimização: paper trading formulado por programação não linear e planejamento/estratégia operacional resolvidos por MILP.
+  O output é um conjunto de decisões ótimas (compras/vendas de nafta, política de produção/yield e níveis de inventário) para maximizar lucro operacional sob capacidade de inventário.
+
+Dados_Descrição: |
+  Dados históricos mensais (séries temporais) de maio/2009 a dezembro/2010 para treino dos modelos de previsão, com projeções de janeiro/2011 a dezembro/2011 (inclui previsão de curto prazo para 3 meses à frente).
+  Foram considerados 35 descritores: preços históricos, quantidades de demanda e oferta, perfis de preço de químicos de referência (ex.: crude oil) e estatísticas financeiras (ex.: margin e cash flow).
+  O estudo também usa especificações/limites de capacidade e inventário do sistema (ex.: capacidade anual de 3.6 milhões ton/ano de nafta; limites de tanques) para rodar a otimização (MILP) e estimar resultados vs. BAU.
+
+# MECANISMO (M)
+CategoriaMecanismo: "Otimização de trade-offs"
+Mecanismo_Fonte: "Misto"
+Mecanismo_Declarado: |
+  "We then developed a new optimization model using a mixed integer linear programming technique to establish the optimal operational strategies with a given inventory capacity." (p.1, Abstract)
+  "Paper trading is very important for mitigating the financial risk under fluctuating prices." (p.4, Sec. 3.2)
+  "the production-planning model ... is executed to maximize the operating profit using paper trading with the predicted prices of a raw material (naphtha) and the final products." (p.6, Sec. 4.2)
+Mecanismo_Inferido: |
+  INFERIDO: A previsão de preços (nafta e produtos) reduz a incerteza informacional sobre receitas/custos futuros, permitindo antecipar decisões de compra/venda e operação antes que a volatilidade se materialize no período seguinte.
+  INFERIDO: A integração previsão → paper trading → MILP converte sinais de preço em decisões consistentes (quantidades de compra, vendas, estoques e yields), resolvendo trade-offs entre lucro, capacidade de inventário e risco de excesso/ruptura de estoque.
+  INFERIDO: O paper trading atua como mecanismo de hedge, amortecendo perdas quando a estratégia física (compras/estoque/produção) estaria exposta a variações adversas de preço, elevando o lucro esperado do plano operacional.
+Mecanismo_Estruturado: "Séries temporais de preços/demanda/oferta + capacidades → Previsão (SD/MLR/ANN) + hedge (paper trading) + MILP de planejamento → Conversão de preços previstos em decisões ótimas (compras/vendas/estoques/yields) → Maior lucro e melhores vendas vs. BAU sob restrições de inventário"
+
+# OUTCOME (O)
+ResultadoTipo: "Quantitativo"
+Resultados_Quant: "total sales: +5.50% (vs. baseline: BAU); operating profit: +13.8% (vs. baseline: BAU); naphtha price prediction accuracy: 82.3% (vs. baseline: NR); annual net profit by paper trading: 20,953,299 USD (vs. baseline: NR)"
+Resultados_Qual: "O framework integrado suporta estratégia operacional e financeira (hedge) orientada por previsão de preços, buscando maximizar a lucratividade com decisões coordenadas de compras, inventário, vendas e política de operação."
+NívelEvidência: "Simulação com dados reais"
+Limitações_Artigo: |
+  O artigo reconhece limitações/fragilidades em modelos de previsão e sua aplicação: "However, it has serious disadvantages such as overfitting" (sobre ANN) e que o desempenho do paper trading depende fortemente da acurácia da previsão ("very sensitive to the accuracy of the predicted naphtha price").
+  O escopo de previsão é curto ("short-term prediction for three months in advance") e algumas especificações de planta/inventários são assumidas para a análise do planejamento.
+
+# OPCIONAL
+Observação: |
+  "NLP" no texto refere-se a non-linear programming (programação não linear), não a Natural Language Processing; a classificação ClasseIA foi tratada como Híbrido por combinar previsão (SD/MLR/ANN) e otimização (MILP + programação não linear).
+
+# QUOTES (3-8)
+Quotes:
+  - QuoteID: "Q001"
+    TipoQuote: "Intervenção"
+    Trecho: "The framework consists of three main decision models: price prediction, paper trading, and production planning."
+    Página: "p.1, Abstract"
+  - QuoteID: "Q002"
+    TipoQuote: "Intervenção"
+    Trecho: "We then developed a new optimization model using a mixed integer linear programming technique to establish the optimal operational strategies with a given inventory capacity."
+    Página: "p.1, Abstract"
+  - QuoteID: "Q003"
+    TipoQuote: "Mecanismo"
+    Trecho: "Paper trading is very important for mitigating the financial risk under fluctuating prices."
+    Página: "p.4, Sec. 3.2"
+  - QuoteID: "Q004"
+    TipoQuote: "Método"
+    Trecho: "All the selected factors, which are historical monthly data from May 2009 to December 2010, are used for training the prediction models (MLR, ANN, and SD) to predict future prices from January 2011 to December 2011."
+    Página: "p.6"
+  - QuoteID: "Q005"
+    TipoQuote: "Outcome"
+    Trecho: "the optimal production planning using the proposed model enabled the improvement of the total sales by 5.50% and the operating profit by 13.8% in comparison with the BAU case."
+    Página: "p.1, Abstract"
+  - QuoteID: "Q006"
+    TipoQuote: "Outcome"
+    Trecho: "In this study, the accuracy of naphtha price prediction is approximately 82.3%, as shown in Figure 3."
+    Página: "p.6"
+  - QuoteID: "Q007"
+    TipoQuote: "Outcome"
+    Trecho: "the net profit by paper trading in 2011 is approximately 20 million USD."
+    Página: "p.6"
+  - QuoteID: "Q008"
+    TipoQuote: "Limitação"
+    Trecho: "However, it has serious disadvantages such as overfitting, where prediction data fit well in an observation range but show poor prediction results in other ranges."
+    Página: "p.4, Sec. 3.1.2"
+---

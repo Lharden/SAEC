@@ -1,0 +1,88 @@
+---
+# METADATA
+ArtigoID: "ART_014"
+Ano: 2021
+TipoPublicação: "Conference"
+Referência_Curta: "Belov et al., 2021"
+DOI: "NR"
+
+# CONTEXTO (C)
+SegmentoO&G: "Upstream (E&P)"
+SegmentoO&G_Confiança: "Alta"
+Ambiente: "NR"
+Complexidade: "NR"
+Complexidade_Justificativa: "F1=NR (ambiente onshore/offshore não especificado no trecho), F2=NR (nº de fornecedores não mencionado), F3=1 (falhas descritas como 'very costly drilling failure')"
+ProcessoSCM_Alvo: "Manutenção/MRO; Monitoramento/visibilidade"
+TipoRisco_SCRM: "Risco de ativos"
+ObjetoCrítico: "Mud motor power section (frota de mud motors)"
+
+# NARRATIVAS CONTEXTUAIS
+ProblemaNegócio_Contexto: |
+  Falhas de mud motors (power sections) durante perfuração direcional ocorrem sob condições operacionais “extremely challenging”, gerando manutenção corretiva cara e falhas imprevisíveis com alto custo (NPT).
+  O setor carecia de procedimentos confiáveis para monitorar e manter a saúde dessas seções de potência, levando a over-maintenance e retirements prematuros.
+  O contexto é a operação de drilling (well construction), com necessidade de decisões em tempo real para evitar falhas e ajustar parâmetros operacionais sem sacrificar desempenho (ROP) e confiabilidade.
+
+# INTERVENÇÃO (I)
+ClasseIA: "Híbrido"
+ClasseIA_Confiança: "Alta"
+TarefaAnalítica: "Previsão"
+FamíliaModelo: "Outro (modelo físico de alta fidelidade/physics-based); NR (técnicas de ML não especificadas)"
+TipoDado: "Séries temporais"
+Maturidade: "Piloto"
+Maturidade_Confiança: "Média"
+Intervenção_Descrição: |
+  Solução de PHM orientada a dados para monitoramento de saúde de mud motor power sections enquanto perfura.
+  Usa abordagem híbrida combinando um modelo físico (high-fidelity physics-based) do power section com abordagens data-driven com técnicas de machine learning para aplicação em tempo real.
+  O workflow estima fadiga e RUL, suportando prevenção de falhas e integração com plataforma de drilling (manutenção, planejamento e execução).
+Dados_Descrição: |
+  Dados de campo (“numerous field data”) usados para verificação, provenientes de operações na Arábia Saudita e Argentina; validação por comparação entre fadiga prevista e condições pós-job e falhas observadas.
+  Implantação inicial do workflow em campo na Colômbia para redução de custos de manutenção e avoidance de falhas.
+  Detalhes de volume (nº de corridas/registros/variáveis), janela temporal e pré-processamento não aparecem no trecho fornecido.
+
+# MECANISMO (M)
+CategoriaMecanismo: "Antecipação de risco"
+Mecanismo_Fonte: "Misto"
+Mecanismo_Declarado: |
+  "Recently, we systematically addressed this problem with an industry unique prognostic health management solution, which not only tracks remaining useful life (RUL), but also creates a new failure prevention scheme for operators."
+  "It's based on a high-fidelity model and uses a hybrid approach by combining a high-fidelity physics-based model of a power section and data-driven approaches with machine learning techniques for real-time applications."
+  "Comparison of the predicted mud motor fatigue values with the actual observed post-job conditions and job failures demonstrated high fidelity of the developed models."
+Mecanismo_Inferido: |
+  INFERIDO: Ao combinar modelo físico de alta fidelidade com ML, a solução reduz incerteza sobre degradação/fadiga e estima RUL com antecedência durante a perfuração.
+  INFERIDO: A estimativa de fadiga/RUL viabiliza ações preventivas (ajuste de parâmetros operacionais em tempo real e decisões de manutenção/retirada) antes da ocorrência de falhas, reduzindo NPT e custos.
+  INFERIDO: A padronização do diagnóstico/prognóstico em nível de frota melhora o planejamento de MRO e a gestão logística de equipamentos, evitando over-maintenance e substituições prematuras.
+Mecanismo_Estruturado: "Dados de operação de drilling + condições do mud motor → Modelo físico high-fidelity + ML para estimar fadiga/RUL → Alerta/decisão preventiva (ajuste de parâmetros e manutenção) → Menos falhas/NPT e menores custos de manutenção e logística"
+
+# OUTCOME (O)
+ResultadoTipo: "Quantitativo"
+Resultados_Quant: "maintenance savings: 27% projected yearly (baseline: NR); failure reduction: 10% projected yearly (baseline: NR)"
+Resultados_Qual: "Teste em campo reportado como 'great success' e 'high fidelity' na comparação entre fadiga prevista e condições pós-job/falhas; integração em plataforma de drilling visando otimizar gestão de frota e melhorar confiabilidade."
+NívelEvidência: "Estudo de caso real"
+Limitações_Artigo: |
+  NR
+
+# OPCIONAL
+Observação: |
+  Extração baseada apenas nas páginas 1 e 12 fornecidas; detalhes técnicos de ML (algoritmos), descrição completa dos dados e limitações podem existir no artigo completo, mas não estavam disponíveis no trecho.
+
+# QUOTES (3-8)
+Quotes:
+  - QuoteID: "Q001"
+    TipoQuote: "Contexto"
+    Trecho: "Mud motors are widely used for directional and performance drilling. Due to the extremely challenging operating conditions, they are prone to failures, resulting in unnecessary maintenance repair costs as well as unpredictable and very costly drilling failure."
+    Página: "p.1 (Abstract)"
+  - QuoteID: "Q002"
+    TipoQuote: "Mecanismo"
+    Trecho: "Recently, we systematically addressed this problem with an industry unique prognostic health management solution, which not only tracks remaining useful life (RUL), but also creates a new failure prevention scheme for operators."
+    Página: "p.1 (Abstract)"
+  - QuoteID: "Q003"
+    TipoQuote: "Intervenção"
+    Trecho: "It's based on a high-fidelity model and uses a hybrid approach by combining a high-fidelity physics-based model of a power section and data-driven approaches with machine learning techniques for real-time applications."
+    Página: "p.1 (Abstract)"
+  - QuoteID: "Q004"
+    TipoQuote: "Método"
+    Trecho: "The verification of the created solution was completed based on numerous field data from Saudi Arabia and Argentina. Comparison of the predicted mud motor fatigue values with the actual observed post-job conditions and job failures demonstrated high fidelity of the developed models."
+    Página: "p.1 (Abstract)"
+  - QuoteID: "Q005"
+    TipoQuote: "Outcome"
+    Trecho: "The result was outstanding with the initial deployment bringing about 27% of projected yearly maintenance savings and 10% of projected yearly failure reduction."
+    Página: "p.1 (Abstract) / p.12"

@@ -1,0 +1,79 @@
+---
+# METADATA
+ArtigoID: "ART_002"
+Ano: 2020
+TipoPublicação: "Conference"
+Referência_Curta: "Nodeh et al., 2020"
+DOI: "https://doi.org/10.1007/978-3-030-36178-5_19"
+
+# CONTEXTO (C)
+SegmentoO&G: "Cross-segment"
+SegmentoO&G_Confiança: "Alta"
+Ambiente: "NR"
+Complexidade: "Média"
+Complexidade_Justificativa: "F1=0, F2=1 (banco de dados com 1118 registros de fornecedores), F3=1"
+ProcessoSCM_Alvo: "Seleção/qualificação de fornecedores"
+TipoRisco_SCRM: "Risco de fornecimento"
+ObjetoCrítico: "Fornecedor"
+
+# NARRATIVAS CONTEXTUAIS
+ProblemaNegócio_Contexto: |
+  A seleção de fornecedores em empresas de petróleo é crítica para a segurança nacional e economia, afetando diretamente o ciclo de produção e refino. Métodos tradicionais dependem de avaliações subjetivas, regras incorretas e são ineficientes, resultando em erros humanos e alto custo de tempo. Há a necessidade de um processo inteligente e objetivo para lidar com o alto volume de dados e a complexidade da cadeia de suprimentos do setor.
+
+# INTERVENÇÃO (I)
+ClasseIA: "Híbrido"
+ClasseIA_Confiança: "Alta"
+TarefaAnalítica: "Classificação"
+FamíliaModelo: "CBR/Especialista; Redes neurais feedforward; Clustering"
+TipoDado: "Tabular/ERP"
+Maturidade: "Piloto"
+Maturidade_Confiança: "Alta"
+Intervenção_Descrição: |
+  O modelo híbrido integra Case-Based Reasoning (CBR), Árvores de Decisão, Redes Neurais e Self-Organizing Maps (SOM) com K-Prototype. A árvore de decisão extrai regras (if-then) para criar a base de casos; o SOM clusteriza os dados para recuperação rápida; e a rede neural atua como um sistema especialista para validar e revisar as decisões de seleção de fornecedores.
+Dados_Descrição: |
+  Foram utilizados dados históricos de um banco de dados de uma empresa de petróleo. O dataset inicial continha 1430 registros, que após limpeza resultaram em 1118 registros. Foram extraídos 36 atributos, dos quais 29 foram selecionados (ex: preço, tempo de entrega, flexibilidade), divididos em 70% para treino, 20% para teste e 10% para validação.
+
+# MECANISMO (M)
+CategoriaMecanismo: "Padronização/consistência"
+Mecanismo_Fonte: "Misto"
+Mecanismo_Declarado: |
+  The results of Supplier Selection Based Data Mining represent a repeating pattern of "if … then …" and understanding and interpretation of the rules is very simple. Reducing the impact of human error by replacing it with expert system based on neural network is another useful outcome of this study.
+Mecanismo_Inferido: |
+  INFERIDO: A integração de árvores de decisão com CBR permite extrair regras claras e objetivas de dados históricos. INFERIDO: O uso de redes neurais como sistema especialista reduz a dependência de julgamentos humanos subjetivos. INFERIDO: O clustering (SOM) organiza a base de casos, acelerando a recuperação de fornecedores similares e otimizando o tempo de decisão.
+Mecanismo_Estruturado: "Dados históricos de fornecedores → Árvore de decisão + CBR + SOM + Redes Neurais → Extração de regras e recuperação de casos similares → Seleção e classificação padronizada de fornecedores"
+
+# OUTCOME (O)
+ResultadoTipo: "Misto"
+Resultados_Quant: "Davies-Bouldin index: 0.3525 para k=3 (vs. baseline: k=2 com 0.5203)"
+Resultados_Qual: "O modelo reduziu erros humanos, melhorou a acurácia e a eficiência no processo de seleção de fornecedores, com 6 das 8 variáveis de decisão extraídas sendo validadas por especialistas do setor."
+NívelEvidência: "Experimento com dados reais"
+Limitações_Artigo: |
+  NR
+
+# OPCIONAL
+Observação: |
+  O ambiente foi classificado como NR pois o artigo trata de um banco de dados corporativo geral de uma empresa de petróleo, sem especificar se a atuação da IA se dá em operações onshore ou offshore.
+
+# QUOTES (3-8)
+Quotes:
+  - QuoteID: Q001
+    TipoQuote: "Mecanismo"
+    Trecho: "Reducing the impact of human error by replacing it with expert system based on neural network is another useful outcome of this study to explore it."
+    Página: "p.24"
+  - QuoteID: Q002
+    TipoQuote: "Intervenção"
+    Trecho: "In the PDMRRT module, to improve the retrieval performance, nearest to the version of the base case, the SOM-based clustering technique is used K-Prototype."
+    Página: "p.18"
+  - QuoteID: Q003
+    TipoQuote: "Contexto"
+    Trecho: "Many of the methods which are currently widely applied in the management of oil companies utilize traditional supplier selection methods which are unfortunately limited to individual and subjective evaluation..."
+    Página: "p.1"
+  - QuoteID: Q004
+    TipoQuote: "Outcome"
+    Trecho: "Results show that using reduced errors, improved accuracy, and efficiency the proposed model has been able to have a good performance in the supplier selection."
+    Página: "p.1"
+  - QuoteID: Q005
+    TipoQuote: "Método"
+    Trecho: "In this research, 1430 records were collected which after data cleaning was reduced to 1118 records... 36 attributes for each item were obtained and finally 29 attributes were selected"
+    Página: "p.6"
+---

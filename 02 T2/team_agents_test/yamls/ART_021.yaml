@@ -1,0 +1,73 @@
+ArtigoID: "ART_021"
+Ano: 2023
+TipoPublicação: "Conference"
+Referência_Curta: "Cardona et al., 2023"
+DOI: "10.2118/213140-MS"
+
+SegmentoO&G: "Upstream (E&P)"
+SegmentoO&G_Confiança: "Alta"
+Ambiente: "Onshore"
+Complexidade: "Baixa"
+Complexidade_Justificativa: "F1=0 (Upper Magdalena Valley onshore), F2=0 (suppliers not specified), F3=1 (critical wells with high deferred production impact)"
+ProcessoSCM_Alvo: "Manutenção/MRO"
+TipoRisco_SCRM: "Risco de ativos"
+ObjetoCrítico: "ESP (Electrical Submersible Pump)"
+
+ProblemaNegócio_Contexto: |
+  Falhas em sistemas de bombeio submersível (ESP) em poços de petróleo causam alta produção diferida e custos elevados de manutenção e workover. O contexto é um campo na Bacia do Alto Magdalena (Colômbia) com poços críticos que operam com mais de 50 variáveis monitoradas. Métodos tradicionais de monitoramento manual são insuficientes para prever falhas com antecedência, resultando em reação corretiva em vez de manutenção preventiva. A alta complexidade das falhas (mecânicas, elétricas, de poço) e o desgaste de componentes internos exigem capacidade preditiva que técnicas convencionais não oferecem.
+
+ClasseIA: "Híbrido"
+ClasseIA_Confiança: "Média"
+TarefaAnalítica: "Classificação"
+FamíliaModelo: "PCA; Ensemble tree-based (não especificado)"
+TipoDado: "Séries temporais"
+Maturidade: "Piloto"
+Maturidade_Confiança: "Média"
+Intervenção_Descrição: |
+  Combinação de técnicas de Machine Learning em duas etapas: (1) análise de componentes principais (PCA) para redução de dimensionalidade e identificação de variáveis com maior potencial preditivo entre 50+ sensores; (2) algoritmo de classificação para predição de falhas do downhole pump horas antes do evento. Implementação em Python com tratamento de dados históricos e balanceamento de amostras. O modelo identifica padrões em PC1, PC2 e PC3 que antecedem falhas.
+Dados_Descrição: |
+  Dados históricos de sensores de ESP de poços críticos no campo da Bacia do Alto Magdalena. Conjunto inclui mais de 50 variáveis de operação (sensores de pressão, temperatura, vibração, etc.). Dados coletados de arquivos JSON (com problemas de qualidade/erros identificados). Período não especificado explicitamente. Dados divididos em treinamento e validação (hidden data). Realizado balanceamento de amostras e tratamento em Python.
+
+CategoriaMecanismo: "Antecipação de risco"
+Mecanismo_Fonte: "Misto"
+Mecanismo_Declarado: |
+  A análise de componentes principais (PCA) permite identificar três componentes nos quais a falha da bomba é predita horas antes do evento, permitindo distinguir diferentes zonas de operação e falha. A classificação dos dados em grupos (Group 1-4) permite identificar momentos distintos da operação e falha. O algoritmo entrega aos planejadores de manutenção capacidade de predição com alta acurácia e tempo suficiente para executar manutenção preventiva, reduzindo a produção diferida.
+Mecanismo_Inferido: |
+  INFERIDO: A redução de dimensionalidade via PCA condensa informações de 50+ variáveis correlacionadas em componentes ortogonais que capturam padrões latentes de degradação do equipamento. INFERIDO: A classificação supervisionada aprende fronteiras de decisão no espaço reduzido que separam estados normais de pré-falha, permitindo alertas antecipados. INFERIDO: A antecipação de horas na predição permite planejamento logístico de intervenção (mobilização de equipe/equipamento) antes da parada emergencial.
+Mecanismo_Estruturado: "Dados de sensores ESP (50+ variáveis) → PCA (redução dimensional) + Algoritmo de classificação → Identificação de padrões em componentes principais → Predição de falhas horas antes → Decisão de manutenção preventiva"
+
+ResultadoTipo: "Quantitativo"
+Resultados_Quant: "Performance preditiva: >60% (baseline: NR); Acurácia: alta (não quantificada numericamente além de >60%)"
+Resultados_Qual: "Redução de produção diferida em poços de alto potencial; Melhoria na tomada de decisão operacional para planejadores de manutenção; Capacidade de identificar falhas em tempo real (configurado para implementação)"
+NívelEvidência: "Experimento com dados reais"
+Limitações_Artigo: |
+  Erros nos arquivos JSON de origem podem estar aumentando, tornando informações no data lake inutilizáveis. Necessidade de validação dos processos de armazenamento desde a fonte até o datalake para garantir integridade dos dados. Dependência do envolvimento da área de usuário para correlacionar dados com realidade operacional.
+
+Observação: |
+  O artigo não especifica o algoritmo de classificação exato utilizado (Random Forest, SVM, etc.), apenas menciona "classification algorithm". A localização Upper Magdalena Valley indica ambiente onshore, embora não seja explicitamente declarado como tal no texto.
+
+Quotes:
+  - QuoteID: "Q001"
+    TipoQuote: "Mecanismo"
+    Trecho: "This enhancement is provided by combining Machine Learning techniques for the prediction of downhole pump failures by various agents... delivering to maintenance planners an algorithm capable of predicting pump failures with high accuracy in enough time to perform preventive maintenance, reducing production deferrals of high-potential wells."
+    Página: "Abstract"
+  - QuoteID: "Q002"
+    TipoQuote: "Contexto"
+    Trecho: "One of the most active challenges in the production life cycle is the ability to predict failure to avoid loss of production and increase deferred production. This simple question affects many areas of operation such as maintenance, supply, production, and planning."
+    Página: "Abstract"
+  - QuoteID: "Q003"
+    TipoQuote: "Intervenção"
+    Trecho: "The project was developed by conducting an analysis of the state of the art... historical data is collected... treated with Python... machine learning algorithms are used to determine the variables with the greatest predictive potential, and then a classification algorithm is run to predict with enough time to support decision making (hours before the event)."
+    Página: "Abstract"
+  - QuoteID: "Q004"
+    TipoQuote: "Outcome"
+    Trecho: "This paper discusses the advantages of predicting failures in ESP pumps with performance greater than 60%."
+    Página: "Abstract"
+  - QuoteID: "Q005"
+    TipoQuote: "Limitação"
+    Trecho: "It is recommended to the operating company to review the process of generation and storage of information, because the error of the JSON files may be increasing, leaving the information in the data lake useless."
+    Página: "Conclusions"
+  - QuoteID: "Q006"
+    TipoQuote: "Mecanismo"
+    Trecho: "Given the classification generated with the PCA, it is possible to identify three components in which the pump failure is predicted a few hours in advance and the failure moments are identified."
+    Página: "Conclusions"

@@ -1,0 +1,65 @@
+ArtigoID: "ART_037"
+Ano: 2024
+TipoPublicação: "Conference"
+Referência_Curta: "Almaazmi et al., 2024"
+DOI: "10.2118/222960-MS"
+SegmentoO&G: "Downstream"
+SegmentoO&G_Confiança: "Alta"
+Ambiente: "Onshore"
+Complexidade: "Baixa"
+Complexidade_Justificativa: "F1=0 (ambiente onshore), F2=0 (não menciona fornecedores de materiais, apenas rede logística), F3=0 (não descreve riscos como altos/críticos)"
+ProcessoSCM_Alvo: "Planejamento de demanda; Logística/transporte; Integração/coordenação"
+TipoRisco_SCRM: "NR"
+ObjetoCrítico: "NR"
+ClasseIA: "Digital Twin com IA"
+ClasseIA_Confiança: "Alta"
+TarefaAnalítica: "Otimização; Simulação/what-if"
+FamíliaModelo: "Simulação"
+TipoDado: "Tabular/ERP"
+Maturidade: "Produção"
+Maturidade_Confiança: "Alta"
+ProblemaNegócio_Contexto: |
+  Borouge, empresa líder em soluções de polímeros, necessitava de um gêmeo digital para planejamento de supply chain, especificamente para otimização e simulação da rede logística. O contexto envolve a planta de produção em Al Ruwais (EAU), múltiplos Inventory Holding Points (IHPs) globais e portos de destino. O objetivo era selecionar o ponto ideal de manutenção de inventário (IHP) entre Al Ruwais e o porto de destino para minimizar custos de rede, considerando custos, capacidades e prazos de entrega. Métodos tradicionais de planejamento de rede eram manuais e não permitiam simulação what-if rápida.
+Intervenção_Descrição: |
+  O modelo foi desenvolvido utilizando Supply Chain Guru X e Data Guru, criando um gêmeo digital da rede de supply chain com 4 níveis (echelons): planta (Al Ruwais), IHPs, portos de destino (InPo) e clientes finais. O modelo ingere dados de produção, demanda, custos de transporte, capacidades de embalagem e inventário, e restrições de lead time. Permite criar cenários para otimização de seleção de IHP, modificação de capacidades, ajustes de ratios de transporte, e avaliação what-if de diferentes estratégias de rede.
+Dados_Descrição: |
+  Baseline baseado em 12 meses de plano de produção (M0-M11), previsão de demanda, dados históricos de transporte, posição de inventário de rede e fechamentos planejados de sites. Dados de custos modelados: embalagem ($/ton), manuseio, armazenamento ($/ton/mês), transporte. Restrições incluem capacidade de embalagem (tons/mês por linha), capacidade de lane de transporte, capacidade de inventário e transit times. Dados históricos de movimento de produtos através de todas as lanes foram utilizados para construir o baseline.
+CategoriaMecanismo: "Otimização de trade-offs; Integração de dados dispersos"
+Mecanismo_Fonte: "Declarado"
+Mecanismo_Declarado: |
+  O modelo permite comparação de diferentes cenários baseados em critérios como LVC (Logistics Variable Cost), DIT (Delay in Transit) utilization e ending inventory. O modelo fornece volumes, a nível de material, a serem enviados de Ruwais para IHPs e de IHPs para portos de destino. Os cenários permitem otimizar seleção de IHP, modificar SLA ratios, modificar capacidade de throughput/storage, fechar/abrir IHPs, alterar custos de transporte, e definir volume ratio entre DIT e Warehouse IHPs.
+Mecanismo_Inferido: |
+  INFERIDO: O modelo integra dados dispersos de múltiplas fontes (produção, demanda, transporte, inventário) em uma representação unificada da rede. INFERIDO: A otimização via algoritmos de programação matemática encontra a combinação ótima de IHPs que minimiza custos totais respeitando restrições de capacidade. INFERIDO: A simulação multi-período permite avaliar implicações futuras de decisões atuais e identificar gargalos antecipadamente.
+Mecanismo_Estruturado: "Dados de supply chain (produção, demanda, custos, capacidades) → Modelo de otimização e simulação → Recomendação de IHP e cenários → Decisão de rede otimizada"
+ResultadoTipo: "Quantitativo"
+Resultados_Quant: "Redução potencial de custos de até 9% dos custos logísticos de supply chain comparada ao baseline para o período de 12 meses"
+Resultados_Qual: "O modelo fornece visibilidade de custos por echelon da rede, múltiplos relatórios e visualizações, capacidade de avaliar quantitativamente vantagens e desvantagens de diferentes estratégias de rede, e detecção antecipada de problemas no horizonte de 12 meses."
+NívelEvidência: "Estudo de caso real"
+Limitações_Artigo: "NR"
+Observação: |
+  Artigo apresenta implementação real em produção na Borouge (empresa petroquímica). O foco é otimização de rede logística, não gestão de riscos de supply chain. A complexidade foi classificada como Baixa pois não envolve ambiente offshore, múltiplos fornecedores de materiais, nem riscos críticos explicitados.
+Quotes:
+  - QuoteID: Q001
+    TipoQuote: "Mecanismo"
+    Trecho: "The model outputs enabled comparison of different scenarios based on criteria such as LVC (Logistics Variable Cost), DIT (Delay in Transit) utilization, & ending inventory."
+    Página: "p.2"
+  - QuoteID: Q002
+    TipoQuote: "Intervenção"
+    Trecho: "The primary objective of the Supply Chain Network Optimization & Simulation model was to optimize the Inventory Holding Point (IHP) selection between Al Ruwais and the destination port to minimize network cost."
+    Página: "p.1"
+  - QuoteID: Q003
+    TipoQuote: "Outcome"
+    Trecho: "Model identified potential cost savings of up to 9% of supply chain logistics cost compared to the baseline for the 12-month period."
+    Página: "p.2"
+  - QuoteID: Q004
+    TipoQuote: "Contexto"
+    Trecho: "As a world leader in polymer solutions, we required an established digital twin for its supply chain planning (more specifically logistic network optimization & simulation) and configurable assets."
+    Página: "p.1"
+  - QuoteID: Q005
+    TipoQuote: "Método"
+    Trecho: "The model was developed using: A baseline based on 12 months production plan, demand forecast, historic transport, network inventory position, planned site closures."
+    Página: "p.1"
+  - QuoteID: Q006
+    TipoQuote: "Intervenção"
+    Trecho: "A Network Optimization Model utilizing applications like Supply Chain Guru X & Data Guru was created."
+    Página: "p.2"

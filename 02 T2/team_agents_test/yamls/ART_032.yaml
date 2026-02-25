@@ -1,0 +1,76 @@
+ArtigoID: "ART_032"
+Ano: 2020
+TipoPublicação: "Conference"
+Referência_Curta: "Al Mhdawi, 2020"
+DOI: "https://doi.org/10.1007/978-981-15-1910-9_34"
+
+SegmentoO&G: "Cross-segment"
+SegmentoO&G_Confiança: "Alta"
+Ambiente: "Onshore"
+Complexidade: "Média"
+Complexidade_Justificativa: "F1=0 (projetos de construção em terra), F2=1 (múltiplos stakeholders e empresas contratantes mencionadas), F3=1 (riscos descritos como altos: 'complex and risky', 'security threats')"
+ProcessoSCM_Alvo: "Gestão de riscos da cadeia"
+TipoRisco_SCRM: "Risco de projeto"
+ObjetoCrítico: "Projetos de construção EPC em campos de petróleo"
+
+ProblemaNegócio_Contexto: |
+  Projetos de construção em campos de petróleo e gás no Iraque enfrentam riscos elevados devido à natureza dinâmica e ambiente hostil. O contexto iraquiano apresenta desafios específicos: suprimentos deficientes, ameaças de segurança, força de trabalho não qualificada e dificuldades logísticas. A metodologia tradicional de gestão de riscos é insuficiente para lidar com a complexidade, inter-relação e variabilidade dos fatores de risco em projetos de O&G. Existe falta de metodologia unificada de gestão de projetos e gestão de riscos no setor de construção iraquiano.
+
+ClasseIA: "Híbrido"
+ClasseIA_Confiança: "Alta"
+TarefaAnalítica: "Otimização"
+FamíliaModelo: "Redes neurais; Metaheurísticas; Lógica fuzzy"
+TipoDado: "Tabular/ERP"
+Maturidade: "Conceito"
+Maturidade_Confiança: "Alta"
+Intervenção_Descrição: |
+  A metodologia proposta integra seis fases: (1) planejamento de riscos com documentação e entrevistas com especialistas; (2) identificação de riscos via revisão documental e entrevistas; (3) análise de riscos usando modelo multicritério baseado em teoria de conjuntos fuzzy e AHP fuzzy; (4) previsão de efeitos de riscos em custo e duração usando ANN (back-propagation); (5) seleção de ações de resposta via algoritmo GSA (Gravitational Search Algorithm); (6) plataforma web-based DSS usando MySQL, PHP, HTML5 e CSS.
+
+Dados_Descrição: |
+  Dados qualitativos de revisão documental (relatórios de projetos, registros de riscos, causas de falhas) e entrevistas com especialistas (gerentes de projetos, contratantes, consultores). Dados históricos de projetos de construção realizados em campos de O&G na região de Basra serão utilizados para treinamento da ANN. Questionários surveys para coleta de critérios de análise de risco e estratégias de resposta.
+
+CategoriaMecanismo: "Antecipação de risco"
+Mecanismo_Fonte: "Misto"
+Mecanismo_Declarado: |
+  "The proposed methodology has been developed to support the local and international contracting companies working in Iraqi oil and gas fields when making decisions regarding the risk factors during the project life cycle." (p.407) "The ANN prediction model consists of two sets of groups. The first set is the training data set which used to the development of the model based on the historical data of achieved construction projects." (p.416) "The objective function in the model is to minimize the implementation costs of the response actions by taking into consideration time and cost constrains." (p.417)
+
+Mecanismo_Inferido: |
+  INFERIDO: A lógica fuzzy lida com incertezas e julgamentos subjetivos na avaliação de riscos. INFERIDO: A ANN aprende padrões históricos para prever impactos de riscos em custo e tempo. INFERIDO: O GSA otimiza a seleção de ações de resposta considerando restrições de tempo e custo. INFERIDO: A integração das técnicas permite uma abordagem sistemática do planejamento à resposta de riscos.
+
+Mecanismo_Estruturado: "Dados históricos e inputs de risco → Fuzzy AHP + ANN + GSA → Análise multicritério e otimização → Decisão de resposta a riscos"
+
+ResultadoTipo: "Qualitativo"
+Resultados_Quant: "(baseline: NR)"
+Resultados_Qual: "Metodologia proposta em seis fases para gestão de riscos em projetos de construção de O&G no Iraque; modelo de análise multicritério fuzzy; modelo de predição ANN; modelo de otimização GSA; plataforma DSS web-based"
+NívelEvidência: "Proposta teórica/framework"
+Limitações_Artigo: |
+  O artigo reconhece que a metodologia ainda requer validação: "In order to verify the proposed methodology, the next stage involves the use of documentary reviews, expert interviews and questionnaire survey for primary data collection (system requirement) and risk rating." (p.418) Também reconhece limitações do contexto iraquiano: "Iraqi contracting companies find a big number of challenges to mitigate risk events in an environment with poor supplies, security threats, unskilled workforce and logistics difficulties." (p.411)
+
+Observação: |
+  Artigo é uma proposta teórica de framework metodológico, não havendo implementação ou resultados quantitativos. A classificação de ambiente como Onshore baseia-se no fato de que projetos de construção (construction projects) ocorrem em terra, mesmo que os campos de O&G possam ter operações offshore. Maturidade "Conceito" adequada pois não há implementação real descrita.
+
+Quotes:
+  - QuoteID: Q001
+    TipoQuote: "Contexto"
+    Trecho: "Oil and gas construction projects are complex and risky due to their dynamic nature and environment, as they involve a considerable number of stakeholders."
+    Página: "p.407"
+  - QuoteID: Q002
+    TipoQuote: "Intervenção"
+    Trecho: "The proposed methodology consists of the following phases: risk planning, risk identification using documentation review and expert interviews, risk analysis using a multi-criteria risk analysis model based on fuzzy set theory, risk effect prediction on project time and cost using artificial neural network (ANN), selection of risk response actions using Gravitational Search Algorithm (GSA) optimization technique and finally, designing an integrated web-based risk management decision support platform."
+    Página: "p.407"
+  - QuoteID: Q003
+    TipoQuote: "Mecanismo"
+    Trecho: "Fuzzy logic is an effective management technique for risk management and for dealing with uncertainties in human decision making. It is an appropriate tool to deal with subjective judgement."
+    Página: "p.414"
+  - QuoteID: Q004
+    TipoQuote: "Mecanismo"
+    Trecho: "Artificial neural networks have been shown ability of solving different prediction problems in construction management field."
+    Página: "p.415"
+  - QuoteID: Q005
+    TipoQuote: "Intervenção"
+    Trecho: "The objective function in the model is to minimize the implementation costs of the response actions by taking into consideration time and cost constrains."
+    Página: "p.417"
+  - QuoteID: Q006
+    TipoQuote: "Limitação"
+    Trecho: "In order to verify the proposed methodology, the next stage involves the use of documentary reviews, expert interviews and questionnaire survey for primary data collection."
+    Página: "p.418"

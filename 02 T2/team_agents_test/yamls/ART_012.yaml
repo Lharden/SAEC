@@ -1,0 +1,96 @@
+---
+# METADATA
+ArtigoID: "ART_012"
+Ano: 2022
+TipoPublicação: "Journal"
+Referência_Curta: "Elshaboury et al., 2022"
+DOI: "https://doi.org/10.3390/pr10020400"
+
+# CONTEXTO (C)
+SegmentoO&G: "Midstream"
+SegmentoO&G_Confiança: "Alta"
+Ambiente: "Onshore"
+Complexidade: "Baixa"
+Complexidade_Justificativa: "F1=0, F2=0 (fornecedores não mencionados), F3=1 (falhas descritas como catastróficas com perdas financeiras e consequências ambientais)"
+ProcessoSCM_Alvo: "Manutenção/MRO; Gestão de riscos da cadeia"
+TipoRisco_SCRM: "Risco de ativos; Risco de transporte/logística"
+ObjetoCrítico: "Oleodutos/pipelines de transporte de petróleo (underground/aboveground) e sua integridade"
+
+# NARRATIVAS CONTEXTUAIS
+ProblemaNegócio_Contexto: |
+  Falhas em oleodutos de petróleo podem causar derramamentos, paralisação de produção, perdas financeiras e consequências ambientais, exigindo monitoramento e ações preventivas.
+  Inspeções tradicionais e técnicas de detecção de anomalias são descritas como demoradas e caras, além de haver limitações de subjetividade e de poucos registros em abordagens anteriores.
+  O estudo foca em prever categorias/fontes de falha (especialmente corrosão e atividades de terceiros) usando registros históricos de incidentes e variáveis do ativo/ambiente (diâmetro, idade, serviço, tipo de instalação e uso do solo).
+  O contexto operacional do dataset envolve oleodutos onshore (uso do solo residencial/agrícola/industrial, e instalações underground/aboveground) reportados por um consórcio europeu (CONCAWE).
+
+# INTERVENÇÃO (I)
+ClasseIA: "ML supervisionado"
+ClasseIA_Confiança: "Alta"
+TarefaAnalítica: "Classificação"
+FamíliaModelo: "Redes neurais feedforward; Regressão linear/logística"
+TipoDado: "Tabular/ERP"
+Maturidade: "Piloto"
+Maturidade_Confiança: "Média"
+Intervenção_Descrição: |
+  Desenvolve e compara três modelos supervisionados para classificar a fonte/categoria de falha em oleodutos: rede neural MLP, rede neural RBF e regressão logística multinomial (MNL).
+  As variáveis de entrada (diâmetro, serviço, tipo de instalação, idade e uso do solo) são codificadas/normalizadas; o output é o tipo de falha (no dataset final, corrosão vs. third-party).
+  Os modelos são treinados e validados com divisão aleatória 70%/30% e avaliados por AVP/AIP (duas abordagens) e métricas adicionais (AUC/ROC para redes neurais; -2 log-likelihood e pseudo-R² para MNL).
+
+Dados_Descrição: |
+  Base histórica CONCAWE (2019), com 49 anos de dados de derramamentos desde 1971 e registros anuais de ~35,691 km de oleodutos na Europa.
+  O banco contém 586 registros para cinco causas de falha; 232 registros com dados faltantes são removidos, restando 354 incidentes com dados completos.
+  Para modelagem, é usado um subconjunto com 253 acidentes por corrosão e atividades de terceiros; variáveis: diâmetro (classes), serviço (5 categorias), facility (underground/aboveground/pump station), idade (classes) e uso do solo (7 categorias).
+  Pré-processamento: conversão de fatores qualitativos para valores numéricos e normalização; split 70% treino e 30% validação; implementação no SPSS 28.
+
+# MECANISMO (M)
+CategoriaMecanismo: "Antecipação de risco"
+Mecanismo_Fonte: "Misto"
+Mecanismo_Declarado: |
+  O artigo declara que o modelo "anticipates sources of failure in oil pipelines" a partir de fatores como diâmetro, idade, serviço, tipo de instalação e uso do solo, para reduzir ineficiências de inspeções caras e demoradas.
+  Também declara que os modelos ajudam operadores a "detect different failure sources in pipelines and prioritize the required maintenance and replacement actions."
+Mecanismo_Inferido: |
+  INFERIDO: Ao aprender relações (inclusive não lineares, no caso de MLP/RBF) entre atributos do oleoduto e histórico de incidentes, os modelos estimam a classe de falha mais provável antes do evento.
+  INFERIDO: A identificação antecipada da fonte provável (corrosão vs. third-party) direciona inspeções e intervenções (manutenção/substituição) para trechos/condições de maior risco, reduzindo inspeções indiscriminadas e o tempo/custo de decisão.
+  INFERIDO: A saída probabilística/likelihood do MNL aumenta a interpretabilidade e suporta priorização baseada em risco ao evidenciar qual fonte é mais crítica dado o perfil do ativo e do ambiente.
+Mecanismo_Estruturado: "Registros históricos CONCAWE + atributos do oleoduto (diâmetro, idade, serviço, facility, uso do solo) → Treinamento de classificadores supervisionados (MLP/RBF/MNL) com codificação/normalização → Estimativa da classe/probabilidade de falha (corrosão vs. third-party) → Priorização de inspeção, manutenção e substituição para mitigação de falhas/derrames"
+ 
+# OUTCOME (O)
+ResultadoTipo: "Quantitativo"
+Resultados_Quant: "AVP (overall, 1st approach): 0.84 (MLP), 0.85 (RBF), 0.81 (MNL) (vs. baseline: 0.728 em Zakikhani et al. [17]); AUC/ROC: 0.8 para corrosão e 0.8 para third-party (RBF) (baseline: NR); -2 log Likelihood (MNL): 293.395 final vs. 305.642 intercept-only (baseline: intercept-only)"
+Resultados_Qual: "Os autores afirmam que o modelo pode apoiar operadores na detecção de diferentes fontes de falha e na priorização de ações de manutenção e substituição para evitar desastres e perdas."
+NívelEvidência: "Experimento com dados reais"
+Limitações_Artigo: |
+  Os autores indicam que "the prediction accuracy of models could have been compromised due to the non-availability of some important factors (e.g., thickness, operating pressure, and yield strength)".
+  Também observam restrições de acesso: "due to confidentiality concerns, access to a significant number of failure records in the oil and gas industry is often difficult."
+
+# OPCIONAL
+Observação: |
+  O estudo usa dados europeus CONCAWE e foca o dataset final em duas classes (corrosão e third-party), excluindo outras causas por baixa ocorrência; Ambiente classificado como Onshore pois as variáveis incluem uso do solo e facility underground/aboveground.
+
+# QUOTES (3-8)
+Quotes:
+  - QuoteID: "Q001"
+    TipoQuote: "Contexto"
+    Trecho: "Pipeline safety is ensured using a variety of inspection techniques, despite being time-consuming and expensive."
+    Página: "p.1 (Abstract)"
+  - QuoteID: "Q002"
+    TipoQuote: "Intervenção"
+    Trecho: "this study develops a model that anticipates sources of failure in oil pipelines based on specific factors related to pipe diameter and age, service (transported product), facility type, and land use."
+    Página: "p.1 (Abstract)"
+  - QuoteID: "Q003"
+    TipoQuote: "Mecanismo"
+    Trecho: "The developed model can help pipeline operators and decision makers detect different failure sources in pipelines and prioritize the required maintenance and replacement actions."
+    Página: "p.1 (Abstract)"
+  - QuoteID: "Q004"
+    TipoQuote: "Método"
+    Trecho: "Failure records provided by CONCAWE in 2019 are used to develop the failure prediction models [21]."
+    Página: "p.7 (Section 4. Data Collection)"
+  - QuoteID: "Q005"
+    TipoQuote: "Outcome"
+    Trecho: "For the training and validation phases, the MLP, RBF, and MNL models predict failure causes with AVP values of 0.84, 0.85, and 0.81, respectively."
+    Página: "p.12 (Section 7. Results and Discussion)"
+  - QuoteID: "Q006"
+    TipoQuote: "Limitação"
+    Trecho: "the prediction accuracy of models could have been compromised due to the non-availability of some important factors (e.g., thickness, operating pressure, and yield strength) that contribute to oil and gas pipeline failure."
+    Página: "p.12 (Section 7. Results and Discussion)"
+---

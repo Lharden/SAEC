@@ -1,0 +1,79 @@
+---
+# METADATA
+ArtigoID: "ART_003"
+Ano: 2025
+TipoPublicação: "Conference"
+Referência_Curta: "Chirici et al., 2025"
+DOI: "https://doi.org/10.1007/978-981-96-2625-0_41"
+
+# CONTEXTO (C)
+SegmentoO&G: "Midstream"
+SegmentoO&G_Confiança: "Alta"
+Ambiente: "Onshore"
+Complexidade: "Média"
+Complexidade_Justificativa: "F1=0 (produção do navio ocorre em estaleiro onshore), F2=1 (dataset com 15.000 empresas), F3=1 (pressões regulatórias e complexidade de dependências na WBS)"
+ProcessoSCM_Alvo: "Planejamento de produção; Seleção/qualificação de fornecedores"
+TipoRisco_SCRM: "Risco ambiental/regulatório; Risco de projeto"
+ObjetoCrítico: "Cronograma de produção do navio (WBS)"
+
+# NARRATIVAS CONTEXTUAIS
+ProblemaNegócio_Contexto: |
+  A produção de navios petroleiros enfrenta pressões severas para equilibrar a sustentabilidade ambiental (redução de CO2) com a eficiência operacional. O processo de fabricação envolve uma complexa Estrutura de Desdobramento de Trabalho (WBS) com múltiplas dependências de componentes e fornecedores. Métodos tradicionais têm dificuldade em otimizar simultaneamente as emissões de carbono, os prazos de entrega e os custos em uma rede de suprimentos tão vasta e interdependente.
+
+# INTERVENÇÃO (I)
+ClasseIA: "Híbrido"
+ClasseIA_Confiança: "Alta"
+TarefaAnalítica: "Otimização"
+FamíliaModelo: "Transformers/Attention; Simulação"
+TipoDado: "Tabular/ERP"
+Maturidade: "Protótipo"
+Maturidade_Confiança: "Alta"
+Intervenção_Descrição: |
+  A solução integra Graph Attention Networks (GAT) e simulações de Monte Carlo Markov Chain (MCMC). A WBS do navio é modelada como um grafo direcionado acíclico (DAG). A GAT atribui pesos de atenção dinâmicos aos nós (componentes/processos) mais críticos, enquanto o MCMC simula cenários probabilísticos para lidar com incertezas, otimizando a configuração da WBS.
+Dados_Descrição: |
+  O estudo utilizou um dataset sintético gerado para representar 15.000 empresas envolvidas na produção de navios petroleiros na Europa. Os dados incluem identificadores únicos, atividades e métricas associadas, como emissões de CO2, tempo de entrega (lead time), economia de custos e saúde financeira.
+
+# MECANISMO (M)
+CategoriaMecanismo: "Otimização de trade-offs"
+Mecanismo_Fonte: "Misto"
+Mecanismo_Declarado: |
+  A GAT atribui pesos de atenção dinâmicos aos nós do grafo da WBS, priorizando aqueles com maior impacto na cadeia de suprimentos. Esses outputs alimentam simulações MCMC que avaliam múltiplos cenários sob incerteza, identificando a configuração da WBS que minimiza emissões de CO2, prazos de entrega e custos.
+Mecanismo_Inferido: |
+  INFERIDO: A representação em grafo permite capturar as dependências hierárquicas complexas da produção do navio. INFERIDO: A combinação de atenção dinâmica com simulação probabilística permite explorar o espaço de soluções de forma eficiente, equilibrando múltiplos objetivos conflitantes de sustentabilidade e eficiência.
+Mecanismo_Estruturado: "Dados sintéticos de fornecedores e WBS → GAT para priorização de nós + MCMC para simulação de cenários → Otimização de rotas e alocação sob incerteza → Redução de CO2, custos e lead time"
+
+# OUTCOME (O)
+ResultadoTipo: "Quantitativo"
+Resultados_Quant: "emissões de CO2: 390 metric tons (vs. baseline: 500 metric tons); lead time: 20.2 months (vs. baseline: 24 months); cost savings: $5 million per vessel (baseline: NR); financial health score: 7.85 (vs. baseline: 7.2)"
+Resultados_Qual: "O modelo demonstrou capacidade robusta de alcançar otimização multidimensional, traduzindo melhorias de eficiência operacional em melhor desempenho financeiro e sustentabilidade."
+NívelEvidência: "Simulação com dados sintéticos"
+Limitações_Artigo: |
+  "This combination has shown potential in supply chain optimization but requires rigorous testing to confirm its effectiveness in real-world applications."
+
+# OPCIONAL
+Observação: |
+  O artigo foca na produção de navios (vessels) para transporte de óleo cru. Como o ativo final é para transporte, o segmento foi classificado como Midstream, mas o ambiente da intervenção é Onshore (estaleiro/fabricação).
+
+# QUOTES (3-8)
+Quotes:
+  - QuoteID: Q001
+    TipoQuote: "Mecanismo"
+    Trecho: "The GAT assigns dynamic attention weights to these nodes, prioritizing those with the most significant impact on the overall supply chain."
+    Página: "p.334"
+  - QuoteID: Q002
+    TipoQuote: "Mecanismo"
+    Trecho: "The varied GAT outputs are fed into the MCMC simulations to generate a distribution of possible outcomes. The goal is to identify WBS configurations that minimize CO2 emissions, lead time, and costs."
+    Página: "p.334"
+  - QuoteID: Q003
+    TipoQuote: "Contexto"
+    Trecho: "Representing the Crude Oil vessel taxonomy as a Directed Acyclic Graph (DAG) is crucial for accurately modelling the hierarchical and interdependent relationships between various components and processes involved in vessel production."
+    Página: "p.331"
+  - QuoteID: Q004
+    TipoQuote: "Outcome"
+    Trecho: "The model achieved a 22% reduction in CO2 emissions, lowering emissions from 500 metric tons to 390 metric tons per vessel..."
+    Página: "p.335"
+  - QuoteID: Q005
+    TipoQuote: "Limitação"
+    Trecho: "This combination has shown potential in supply chain optimization but requires rigorous testing to confirm its effectiveness in real-world applications."
+    Página: "p.333"
+---

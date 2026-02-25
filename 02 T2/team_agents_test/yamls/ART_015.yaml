@@ -1,0 +1,102 @@
+---
+# METADATA
+ArtigoID: "ART_015"
+Ano: 2021
+TipoPublicação: "Journal"
+Referência_Curta: "Tarei et al., 2021"
+DOI: "https://doi.org/10.1108/JMTM-02-2020-0035"
+
+# CONTEXTO (C)
+SegmentoO&G: "Cross-segment"
+SegmentoO&G_Confiança: "Média"
+Ambiente: "Onshore"
+Complexidade: "Baixa"
+Complexidade_Justificativa: "F1=0, F2=0 (nº de fornecedores não explicitado), F3=0 (risco não descrito explicitamente como alto/crítico)"
+ProcessoSCM_Alvo: "Gestão de riscos da cadeia"
+TipoRisco_SCRM: "Múltiplos (Risco de transporte/logística; Risco operacional; Risco de fornecimento; Risco de demanda; Risco ambiental/regulatório; Risco geopolítico/externo)"
+ObjetoCrítico: "Continuidade do suprimento e entrega de petróleo e derivados (crude supply, qualidade e delivery system)"
+
+# NARRATIVAS CONTEXTUAIS
+ProblemaNegócio_Contexto: |
+  Cadeias de suprimento modernas estão mais vulneráveis a riscos, e a etapa de mitigação (seleção da estratégia de resposta e implementação de enablers) é menos coberta na literatura do que identificação e avaliação de riscos.
+  No contexto da cadeia de petróleo na Índia, há múltiplos drivers (ex.: transporte/entrega, qualidade do produto, suprimento de crude, pedidos de clientes e regulações), exigindo decisões rápidas sob incerteza.
+  Há confusão conceitual entre “estratégias” de mitigação e “enablers” operacionais, e falta um relacionamento estabelecido entre ambos para apoiar a execução.
+  O trabalho busca apoiar gestores de SCRM a selecionar uma estratégia (RMS) e priorizar enablers (RMEs), reduzindo subjetividade e acelerando a decisão.
+
+# INTERVENÇÃO (I)
+ClasseIA: "Híbrido"
+ClasseIA_Confiança: "Média"
+TarefaAnalítica: "Recomendação"
+FamíliaModelo: "Correspondence analysis; CBR/Especialista (Fuzzy Inference System Mamdani rule-based)"
+TipoDado: "Tabular/ERP"
+Maturidade: "Protótipo"
+Maturidade_Confiança: "Média"
+Intervenção_Descrição: |
+  DSS construído integrando (i) revisão sistemática para listar RMEs/RMSs, (ii) Correspondence Analysis (CA) para mapear RMEs→RMSs e derivar dimensões latentes, e (iii) sistema fuzzy rule-based (FIS Mamdani) para recomendar a RMS a partir de inputs (risk score, recursos, horizonte de implementação).
+  O DSS (MATLAB) retorna a estratégia recomendada e lista/ranqueia os RMEs associados, ordenando-os pela proximidade ao “cluster center” (RMS) no mapa perceptual.
+Dados_Descrição: |
+  Dados principais vêm de entrevistas com painel de especialistas: (a) seleção/validação de itens resultando em 62 RMEs e 6 RMSs; (b) para o caso IPSC, redução para 28 RMEs relevantes e coleta de mapeamento RMEs→RMSs via escores binários (1/0) agregados de seis experts.
+  Variáveis de entrada do FIS modeladas como linguísticas com funções de pertinência triangulares: risk score (aceitável/inaceitável), resource availability (low/medium/high) e time period (short/long).
+  Demonstração usa um risk score base de 34% e dois cenários simulados variando tempo e recursos.
+
+# MECANISMO (M)
+CategoriaMecanismo: "Priorização/alocação ótima"
+Mecanismo_Fonte: "Misto"
+Mecanismo_Declarado: |
+  "The DSS considers various critical parameters such as risk score, the time period to implement the RMEs and resource availability as the input variables and recommends the suitable RMS and corresponding RMEs and the order of their implementation." (p.524, Section 5)
+  "The RMEs against each RMSs are stored in local database. The RMEs list is displayed upon suitable selection of the corresponding RMS. Further, the DSS provides the order of implementation of the RMEs based on their distance from the cluster center, i.e. RMS." (p.515, Section 3)
+Mecanismo_Inferido: |
+  INFERIDO: O CA estrutura a relação RMS–RME em um espaço dimensional, reduzindo ambiguidade ao associar cada enabler ao cluster (estratégia) mais próximo por distância, o que padroniza o mapeamento estratégia→práticas.
+  INFERIDO: O FIS (regras if-then + membership functions) transforma inputs subjetivos (criticidade do risco, recursos e horizonte) em uma recomendação consistente de estratégia, reduzindo incerteza e variabilidade entre decisores.
+  INFERIDO: Ao ranquear RMEs pela proximidade ao centro do cluster RMS, o DSS produz uma sequência de implementação que operacionaliza a estratégia escolhida, acelerando execução e evitando escolhas ad hoc.
+Mecanismo_Estruturado: "Inputs (risk score, recursos, horizonte) + mapeamento expert RMEs↔RMSs → CA (clusters/distâncias) + FIS Mamdani (regras + defuzzificação) → seleção de RMS + ranking de RMEs → mitigação mais rápida e consistente via priorização de enablers alinhados à estratégia"
+
+# OUTCOME (O)
+ResultadoTipo: "Misto"
+Resultados_Quant: "explained variance (dimension 1): 37% (vs. baseline: NR); explained variance (dimension 2): 29% (vs. baseline: NR); explained variance (dimension 3): 22% (vs. baseline: NR); variance explained (dimensions 1+2): 66% (vs. baseline: NR)"
+Resultados_Qual: "O DSS recomenda estratégias (ex.: ‘Risk Mitigate’ no Cenário 1 e ‘Risk Transfer’ no Cenário 2) e lista/ranqueia RMEs associados (ex.: incentivos de suprimento, logística flexível, strategic stocking; e múltiplo sourcing, asset sharing, PPP) para orientar implementação."
+NívelEvidência: "Simulação com dados reais"
+Limitações_Artigo: |
+  "This study explicitly focuses on one step of SCRM process, i.e. “Risk Mitigation”. The SC managers and stakeholders shall not underestimate the dynamic nature of risk. “Risk Monitoring” which is a subsequent step of “Risk Mitigation”, along with consideration of dynamic nature of risk can be extended as future research work." (p.21, Section 6)
+  "Hence, although the proposed framework is replicable, scope of generalization of the results is limited." (p.21, Section 6)
+  "The proposed DSS has the limitation of recommending the RM strategizes and practices for familiar risk events only. The assessment and mitigation of sudden and disruption risk, such as COVID-19 outbreak, are complicated and beyond the scope of the present research." (p.21, Section 6)
+
+# OPCIONAL
+Observação: |
+  O artigo denomina “embedded intelligence/intelligent tools”, mas a intervenção efetiva é um DSS com CA + FIS rule-based; por isso ClasseIA foi tratada como Híbrido (ML não supervisionado/estatística multivariada + sistema especialista fuzzy) com confiança média.
+
+# QUOTES (3-8)
+Quotes:
+  - QuoteID: Q001
+    TipoQuote: "Contexto"
+    Trecho: "The ever-growing global competition and enormously uncertain business environment are causing a modern supply chain (SC) to become vulnerable and hence more susceptible to risk."
+    Página: "p.507, Section 1"
+  - QuoteID: Q002
+    TipoQuote: "Intervenção"
+    Trecho: "The DSS is built by integrating heterogeneous techniques."
+    Página: "p.506, Abstract"
+  - QuoteID: Q003
+    TipoQuote: "Intervenção"
+    Trecho: "A rule-based fuzzy inference system (FIS) is utilized to counteract the uncertainty involved in the decision variables."
+    Página: "p.506, Abstract"
+  - QuoteID: Q004
+    TipoQuote: "Mecanismo"
+    Trecho: "The RMEs against each RMSs are stored in local database. The RMEs list is displayed upon suitable selection of the corresponding RMS."
+    Página: "p.515, Section 3"
+  - QuoteID: Q005
+    TipoQuote: "Mecanismo"
+    Trecho: "Further, the DSS provides the order of implementation of the RMEs based on their distance from the cluster center, i.e. RMS."
+    Página: "p.515, Section 3"
+  - QuoteID: Q006
+    TipoQuote: "Outcome"
+    Trecho: "The results reveal three primary underlying factors between the risk mitigation strategies viz. SC managers’ preparedness to face risk, organization’s resource capability to deal with risk and the sophistication of the implementation of the RM enablers; with explained variances of 37%, 29% and 22%, respectively."
+    Página: "p.506, Abstract"
+  - QuoteID: Q007
+    TipoQuote: "Outcome"
+    Trecho: "In the first scenario, we have considered various input parameters viz. risk score, time period and allocated resources as 34%, 8 months and 7 units (out of 10), respectively. The DSS recommends “Risk Mitigate” as the proper RMS under the given conditions."
+    Página: "p.520, Section 4.3.1"
+  - QuoteID: Q008
+    TipoQuote: "Limitação"
+    Trecho: "The proposed DSS has the limitation of recommending the RM strategizes and practices for familiar risk events only."
+    Página: "p.21, Section 6"
+---

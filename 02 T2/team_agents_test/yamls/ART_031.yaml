@@ -1,0 +1,68 @@
+ArtigoID: "ART_031"
+Ano: 2024
+TipoPublicação: "Conference"
+Referência_Curta: "Zhang et al., 2024"
+DOI: "https://doi.org/10.2118/221969-MS"
+SegmentoO&G: "Upstream (E&P)"
+SegmentoO&G_Confiança: "Alta"
+Ambiente: "Offshore"
+Complexidade: "Alta"
+Complexidade_Justificativa: "F1=1 (harsh natural environment, West Africa oilfield), F2=0 (NR), F3=1 (high risk of violence and terrorism mentioned)"
+ProcessoSCM_Alvo: "Manutenção/MRO"
+TipoRisco_SCRM: "Risco de ativos"
+ObjetoCrítico: "Compressores alternativos; equipamentos de produção; bombas mecânicas críticas"
+ClasseIA: "Digital Twin com IA"
+ClasseIA_Confiança: "Alta"
+TarefaAnalítica: "Detecção de anomalia"
+FamíliaModelo: "Deep Learning; Ensemble tree-based"
+TipoDado: "Séries temporais; Multimodal"
+Maturidade: "Produção"
+Maturidade_Confiança: "Alta"
+Intervenção_Descrição: |
+  Plataforma de Digital Twin baseada em tecnologia Meta-Universe que constrói ambiente de realidade virtual para instalações de produção e escritório. Integra dados estáticos de engenharia (design, procurement, construção, comissionamento) com dados dinâmicos de IoT de produção, vendas e procurement. Inclui: (1) Modelagem de compressores alternativos com alta fidelidade e simulação multi-caso; (2) Modelo de diagnóstico de falhas baseado em machine learning e deep learning; (3) Algoritmo de redução de dimensionalidade adaptativa PCA para dados de animação 3D; (4) Algoritmos FEC e ARQ melhorados para transmissão adaptativa; (5) Modelo "protagonist aura" para amostragem ativa adaptativa.
+Dados_Descrição: |
+  Dados IoT de produção coletados em tempo real via interface OPC (SCADA). Dados dinâmicos de vendas, procurement e gestão operacional via interação humano-computador. Dados de vibração de compressores alternativos para diagnóstico de falhas. Dados de animação 3D de alta dimensionalidade para transmissão em rede restrita.
+CategoriaMecanismo: "Detecção precoce/anomalias"
+Mecanismo_Fonte: "Misto"
+Mecanismo_Declarado: |
+  "By training fault diagnosis models, automatic identification and early warning of equipment faults can be realized. For example, in the oil and gas field, feature extraction and classification of vibration signals using deep learning algorithms can accurately identify the fault types of reciprocating compressors. This data-driven fault diagnosis method not only improves the accuracy and efficiency of fault identification, but also mitigates reliance on manual expertise and experience."
+Mecanismo_Inferido: |
+  INFERIDO: A modelagem de alta fidelidade e simulação multi-caso permite representar comportamentos complexos de compressores em diferentes condições operacionais. INFERIDO: O modelo de ML/DL extrai padrões de falha a partir de sinais de vibração, permitindo classificação automática de tipos de falha. INFERIDO: A redução de dimensionalidade PCA comprime dados 3D de animação sem perder informação crítica, aliviando carga de rede. INFERIDO: O modelo "protagonist aura" prioriza dados relevantes para o usuário, garantindo transmissão de alta qualidade para conteúdo prioritário.
+Mecanismo_Estruturado: "Dados de vibração de compressores → Extração de features + Classificação Deep Learning → Diagnóstico de falha → Alerta precoce e identificação de tipo de falha"
+ResultadoTipo: "Misto"
+Resultados_Quant: "Fault identification accuracy: 95%; Early warning accuracy: 90%; Labor and operation cost reduction: 37%; Fault disposal efficiency improvement: 75%; Production emergencies reduction: >30%"
+Resultados_Qual: |
+  Transformação do modo de trabalho de "labor-intensive, stationed on duty, regular inspection" para "fewer or unmanned, centralized monitoring, on-demand inspection". Mudança do modo de gestão de "manual judgment + experience analysis" para "automatic warning + intelligent analysis". Transformação do modo de tratamento de anomalias de "real-time alarm and post-disposal" para "pre-warning and mid-control". Melhora na capacidade de governança de dados, otimização de processos de operação e gestão, melhoria na eficiência de operação de produção.
+NívelEvidência: "Estudo de caso real"
+Limitações_Artigo: "NR"
+Observação: |
+  Artigo apresenta aplicação real em campo de petróleo na África Ocidental. A classificação de Ambiente como Offshore considera o contexto de campo remoto com condições adversas. O artigo não especifica explicitamente se o campo é offshore ou onshore, mas menciona "harsh natural environments", "low social dependence", "high risk" e "production base" - características típicas de operações remotas de O&G. A plataforma abrange todo o ciclo de vida desde construção até operação.
+Quotes:
+  - QuoteID: Q001
+    TipoQuote: "Mecanismo"
+    Trecho: "By training fault diagnosis models, automatic identification and early warning of equipment faults can be realized."
+    Página: "p.3"
+  - QuoteID: Q002
+    TipoQuote: "Mecanismo"
+    Trecho: "feature extraction and classification of vibration signals using deep learning algorithms can accurately identify the fault types of reciprocating compressors"
+    Página: "p.3"
+  - QuoteID: Q003
+    TipoQuote: "Outcome"
+    Trecho: "with a fault identification accuracy rate of up to 95% and an early warning accuracy rate of up to 90%"
+    Página: "p.1"
+  - QuoteID: Q004
+    TipoQuote: "Outcome"
+    Trecho: "directly reduces the labor cost and operation cost by about 37%, improves the efficiency of production operation fault disposal to 75%, reduces the number of production emergencies by more than 30%"
+    Página: "p.2"
+  - QuoteID: Q005
+    TipoQuote: "Intervenção"
+    Trecho: "This paper adopts high-fidelity modeling and multi-case simulation technology to realize the modeling and simulation of reciprocating compressors, and establishes a fault diagnosis model based on machine learning and deep learning"
+    Página: "p.1"
+  - QuoteID: Q006
+    TipoQuote: "Mecanismo"
+    Trecho: "PCA as a statistical technique extracts the most important features from multidimensional data and reduces the data dimensionality without losing key information."
+    Página: "p.7"
+  - QuoteID: Q007
+    TipoQuote: "Contexto"
+    Trecho: "Oil and gas fields are often characterized by wide distribution of facilities and equipment, harsh natural environments, difficulties in engineering construction and production operation and maintenance management, and increasingly severe risks of violence and terrorism."
+    Página: "p.1"

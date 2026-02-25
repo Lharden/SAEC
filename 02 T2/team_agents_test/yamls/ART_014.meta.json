@@ -1,0 +1,10 @@
+{
+  "article_id": "ART_014",
+  "model": "gpt-5",
+  "base_url": "http://localhost:4000",
+  "images_included": 0,
+  "text_only": false,
+  "tokens_input": 8760,
+  "tokens_output": 2703,
+  "tokens_total": 11463
+}

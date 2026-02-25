@@ -1,0 +1,10 @@
+{
+  "article_id": "ART_035",
+  "model": "minimax-m2.5",
+  "base_url": "http://localhost:4000",
+  "images_included": 0,
+  "text_only": true,
+  "tokens_input": 17655,
+  "tokens_output": 3451,
+  "tokens_total": 21106
+}

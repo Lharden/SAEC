@@ -1,0 +1,71 @@
+ArtigoID: "ART_033"
+Ano: 2025
+TipoPublicação: "Journal"
+Referência_Curta: "Zheng et al., 2025"
+DOI: "https://doi.org/10.3390/systems13100874"
+SegmentoO&G: "Cross-segment"
+SegmentoO&G_Confiança: "Alta"
+Ambiente: "NR"
+Complexidade: "Média"
+Complexidade_Justificativa: "F1=0 (NR), F2=1 (32 empresas), F3=1 (tail risk/spillover effects)"
+ProcessoSCM_Alvo: "Gestão de riscos da cadeia"
+TipoRisco_SCRM: "Risco financeiro"
+ObjetoCrítico: "32 empresas da cadeia de suprimentos de petróleo chinesa (ações listadas em bolsas A-share)"
+ClasseIA: "Deep Learning"
+ClasseIA_Confiança: "Alta"
+TarefaAnalítica: "Detecção de anomalia"
+FamíliaModelo: "RQLNet (quantile regression + neural network + path-following Lasso)"
+TipoDado: "Séries temporais"
+Maturidade: "Produção"
+Maturidade_Confiança: "Alta"
+ProblemaNegócio_Contexto: |
+  A cadeia de suprimentos de petróleo enfrenta riscos de cauda (tail risk) que podem se propagar entre empresas, causando choques sistêmicos. Métodos tradicionais (VAR, GARCH, CoVaR com Lasso) apresentam viés de estimação e overfitting em configurações de alta dimensionalidade, além de penalização excessiva dos pesos de spillover. A medição precisa dos spillovers de risco de cauda é crucial para compreender a transmissão de risco nos mercados de energia e salvaguardar a estabilidade industrial e segurança do sistema financeiro.
+Intervenção_Descrição: |
+  O modelo RQLNet (Regularized Quantile Learning Network) é uma arquitetura neural de múltiplas camadas que integra regressão quantílica com regularização Lasso de path-following. A arquitetura contém 4 camadas ocultas: Camada 1 combina regressão quantílica com seleção inicial de variáveis via Lasso; Camada 2 transforma resultados lineares em não-lineares; Camada 3 executa regressão kernel com pesos derivados da Camada 1; Camada 4 otimiza via regressão Lasso com pesos de kernel. O modelo estima CoVaR (Conditional Value-at-Risk) e constrói rede de spillover de risco de cauda.
+Dados_Descrição: |
+  Dados de 32 empresas de cadeia de suprimentos de petróleo listadas na bolsa A-share da China, classificadas em quatro segmentos: upstream (exploração/produção), midstream (transporte/armazenamento), downstream (refino/vendas), e end (petroquímicos). Período: 3 de julho de 2015 a 31 de março de 2023. Variáveis micro: total assets (SIZE), market-to-book ratio (MTB), leverage (LEV), maturity mismatch (MM). Variáveis macro: CIMV, OIL, GPR, WI, YS, LS, CR, CS, EPU. Fonte: RESSET, WIND, iFinD.
+CategoriaMecanismo: "Detecção precoce/anomalias"
+Mecanismo_Fonte: "Declarado"
+Mecanismo_Declarado: |
+  "The proposed model improves the accuracy of tail risk measurement while addressing the issue of excessive penalization in spillover weights, offering enhanced interpretability and structural stability and making it particularly suitable for high-dimensional tail risk estimation." (p.2)
+Mecanismo_Inferido: |
+  INFERIDO: A regressão quantílica permite estimar conditional value-at-risk (CoVaR) em níveis de cauda (τ). INFERIDO: A arquitetura multi-camada mitiga a penalização excessiva encontrada em métodos tradicionais de machine learning. INFERIDO: O path-following Lasso otimiza a seleção de variáveis e pesos de spillover simultaneamente. INFERIDO: A rede de spillover é construída via matriz de adjacência onde elementos representam o gradiente marginal do CoVaR.
+Mecanismo_Estruturado: "Retornos log de empresas → Regressão quantílica com regularização → CoVaR estimado → Gradiente (spillover) → Rede de risco de cauda"
+ResultadoTipo: "Misto"
+Resultados_Quant: "Mean pinball loss: lowest among 5 modelos comparados (vs. QVAR, Lasso-QR, GBM-QR, ML); Christoffersen conditional-coverage test: passed; Pearson correlation with quantile perturbations: extremely high (p-value < 0.001)"
+Resultados_Qual: |
+  (1) Spillovers propagam de upstream/midstream para downstream e end enterprises. (2) Upstream/midstream são fontes principais; downstream/end são receptores principais. (3) Sensibilidades a CIMV e LS são mais elevadas. (4) Rede evolui por estágios: fricções comerciais (aceleração), eventos de saúde pública (coesão intra-comunidade), recuperação (links cruzados restaurados), conflitos geopolíticos (dominância de core nodes).
+NívelEvidência: "Experimento com dados reais"
+Limitações_Artigo: |
+  "This study faces limitations due to the reliance on cross-sectional data, which is commonly used in most econometric analyses of financial data, such as log-returns at specific time points. While some research has adopted interval econometrics to enhance the representativeness of the data over time, these approaches still exhibit limitations." (p.21)
+Observação: |
+  Artigo foca em risco financeiro de cauda (tail risk), não em riscos operacionais de supply chain. O ambiente éNR pois a intervenção é análise de dados financeiros, não operação física em local específico.
+Quotes:
+  - QuoteID: Q001
+    TipoQuote: "Mecanismo"
+    Trecho: "The proposed model improves the accuracy of tail risk measurement while addressing the issue of excessive penalization in spillover weights, offering enhanced interpretability and structural stability and making it particularly suitable for high-dimensional tail risk estimation."
+    Página: "p.2"
+  - QuoteID: Q002
+    TipoQuote: "Contexto"
+    Trecho: "Tail risk spillovers propagate from up- and midstream to downstream and ultimately to end enterprises. Structurally, the up- and midstream are the main sources, whereas the downstream and end enterprises are the primary recipients."
+    Página: "p.2"
+  - QuoteID: Q003
+    TipoQuote: "Contexto"
+    Trecho: "The tail risk sensitivities of Chinese petroleum supply chain enterprises exhibit significant differences across macroeconomic factors and across types of enterprises. Overall, the sensitivities to CIMV and LS are higher."
+    Página: "p.2"
+  - QuoteID: Q004
+    TipoQuote: "Intervenção"
+    Trecho: "Layer 1 combines quantile regression and path-following Lasso regularization to perform initial quantile estimation and variable selection... Layer 2 transforms the linear quantile regression results from Layer 1 into nonlinear quantile regression... Layer 3 performs kernel regression... Layer 4 further optimizes the model by using a path-following Lasso regularization regression with kernel weights."
+    Página: "p.5"
+  - QuoteID: Q005
+    TipoQuote: "Outcome"
+    Trecho: "The results show the following: (1) The proposed model improves the accuracy of tail risk measurement... (2) Tail risk spillovers propagate from up- and midstream to downstream and ultimately to end enterprises... (3) The tail risk sensitivities... exhibit significant differences across macroeconomic factors... (4) The network evolves in stages..."
+    Página: "p.2"
+  - QuoteID: Q006
+    TipoQuote: "Método"
+    Trecho: "The sample includes Chinese petroleum supply chain enterprises publicly traded in China's A-share market... The sample period spans 3 July 2015 to 31 March 2023."
+    Página: "p.6"
+  - QuoteID: Q007
+    TipoQuote: "Limitação"
+    Trecho: "This study faces limitations due to the reliance on cross-sectional data... Future research can expand upon this work by incorporating the latest artificial intelligence algorithms to capture more comprehensive interval data."
+    Página: "p.21"

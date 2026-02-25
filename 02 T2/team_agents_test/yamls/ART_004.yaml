@@ -1,0 +1,79 @@
+---
+# METADATA
+ArtigoID: "ART_004"
+Ano: 2025
+TipoPublicação: "Journal"
+Referência_Curta: "Babaei et al., 2025"
+DOI: "https://doi.org/10.1109/TEM.2025.3626659"
+
+# CONTEXTO (C)
+SegmentoO&G: "Cross-segment"
+SegmentoO&G_Confiança: "Alta"
+Ambiente: "Híbrido"
+Complexidade: "Média"
+Complexidade_Justificativa: "F1=1 (menção a plataformas de petróleo e refinarias), F2=0 (não especifica >=5 fornecedores explicitamente), F3=1 (riscos de fraude, erros e ataques cibernéticos destacados)"
+ProcessoSCM_Alvo: "Integração/coordenação; Gestão de riscos da cadeia"
+TipoRisco_SCRM: "Risco operacional; Risco de segurança (security)"
+ObjetoCrítico: "Rede de suprimentos e dados de transação"
+
+# NARRATIVAS CONTEXTUAIS
+ProblemaNegócio_Contexto: |
+  A adoção de blockchain na cadeia de suprimentos de O&G é complexa devido à multiplicidade de stakeholders, dados sensíveis e altos riscos operacionais e cibernéticos. Os gestores enfrentam dificuldades para avaliar e selecionar a estratégia de adoção mais adequada (single-use, localization, substitution, transformation) em meio a incertezas e resultados conflitantes gerados por diferentes métodos de avaliação tradicionais.
+
+# INTERVENÇÃO (I)
+ClasseIA: "Híbrido"
+ClasseIA_Confiança: "Alta"
+TarefaAnalítica: "Clustering"
+FamíliaModelo: "Clustering; MCDM/Decisão; Programação matemática"
+TipoDado: "Tabular/ERP"
+Maturidade: "Piloto"
+Maturidade_Confiança: "Alta"
+Intervenção_Descrição: |
+  Um framework híbrido que integra cinco técnicas de tomada de decisão (SAW, EM, TOPSIS, SEDEA, NDEA) com um modelo de otimização de consenso baseado em cenários e riscos. Adicionalmente, aplica Machine Learning (K-means e clustering hierárquico) para análise de similaridade e agrupamento de dupla perspectiva das estratégias e métodos de avaliação.
+Dados_Descrição: |
+  Dados de avaliação de quatro estratégias de adoção de blockchain aplicadas ao setor de O&G da Noruega. Os dados tabulares incluem pontuações baseadas em critérios como pressão de mercado, colaboração com parceiros da cadeia, infraestrutura de TI e custos operacionais.
+
+# MECANISMO (M)
+CategoriaMecanismo: "Otimização de trade-offs"
+Mecanismo_Fonte: "Misto"
+Mecanismo_Declarado: |
+  O framework permite uma avaliação sistemática e ajustada ao risco, onde a otimização de consenso resolve conflitos entre diferentes filosofias de avaliação. O clustering de dupla perspectiva (ML) esclarece as similaridades entre as alternativas e os modelos de avaliação, apoiando a diferenciação informada e a priorização de estratégias.
+Mecanismo_Inferido: |
+  INFERIDO: A integração de múltiplos modelos MCDM reduz o viés inerente a um único método de avaliação. INFERIDO: A otimização de consenso pondera diferentes cenários de risco, garantindo uma seleção estratégica mais robusta sob incerteza. INFERIDO: O clustering visualiza relações complexas entre as estratégias, facilitando a interpretação e a tomada de decisão gerencial.
+Mecanismo_Estruturado: "Critérios e pontuações de estratégias → MCDM + Otimização de consenso + Clustering → Reconciliação de divergências e identificação de similaridades → Seleção otimizada de estratégia de adoção de blockchain"
+
+# OUTCOME (O)
+ResultadoTipo: "Misto"
+Resultados_Quant: "R-squared: valores próximos a 1 indicando forte relação preditiva (vs. baseline: resultados de Munim et al.)"
+Resultados_Qual: "Estratégias 'single-use' e 'localization' apresentam melhor desempenho na maioria dos modelos; estratégias de transformação são ideais para ambientes equilibrados e de menor aversão ao risco."
+NívelEvidência: "Estudo de caso real"
+Limitações_Artigo: |
+  The study primarily focused on the Norwegian O&G sector... the findings may not be directly applicable to other industries without further investigation. Another limitation was the static nature of the analysis. It did not account for the dynamic nature of SCs.
+
+# OPCIONAL
+Observação: |
+  A métrica quantitativa exata de R-squared não foi detalhada no trecho fornecido, mas o artigo relata a comparação estatística (R2 e adjusted R2) com o baseline da literatura (Munim et al., 2020).
+
+# QUOTES (3-8)
+Quotes:
+  - QuoteID: Q001
+    TipoQuote: "Intervenção"
+    Trecho: "It integrates five decision-making techniques; i.e., simple additive weighted (SAW), entropy method (EM), technique for order of preference by similarity to ideal solution (TOPSIS), super-efficiency data envelopment analysis (SEDEA), and network data envelopment analysis (NDEA)..."
+    Página: "p. 4308"
+  - QuoteID: Q002
+    TipoQuote: "Mecanismo"
+    Trecho: "The consensus-making approach resolves conflicts across evaluation philosophies, supporting stakeholder alignment and confident strategic choices."
+    Página: "p. 4312"
+  - QuoteID: Q003
+    TipoQuote: "Contexto"
+    Trecho: "The O&G industry faces significant challenges, including extensive paperwork and reconciliation processes that escalate both monetary and time expenditures associated with transactions."
+    Página: "p. 4309"
+  - QuoteID: Q004
+    TipoQuote: "Outcome"
+    Trecho: "Findings show that a focused, single-purpose blockchain use, especially under high-risk conditions and transformational strategies, is most effective."
+    Página: "p. 4308"
+  - QuoteID: Q005
+    TipoQuote: "Limitação"
+    Trecho: "The study primarily focused on the Norwegian O&G sector. While this industry presents a conducive environment for blockchain applications due to its complexity and scale, the findings may not be directly applicable to other industries without further investigation."
+    Página: "p. 4318"
+---

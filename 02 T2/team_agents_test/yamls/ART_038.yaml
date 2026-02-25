@@ -1,0 +1,66 @@
+ArtigoID: "ART_038"
+Ano: 2021
+TipoPublicação: "Journal"
+Referência_Curta: "Serova e Shklyaev, 2021"
+DOI: "NR"
+SegmentoO&G: "Cross-segment"
+SegmentoO&G_Confiança: "Alta"
+Ambiente: "Híbrido"
+Complexidade: "Média"
+Complexidade_Justificativa: "F1=1 (navios petroleiros no Ártico, condições de gelo), F2=0 (fornecedores não especificados), F3=1 (condições de gelo difíceis descritas como complicando navegação)"
+ProcessoSCM_Alvo: "Logística/transporte"
+TipoRisco_SCRM: "NR"
+ObjetoCrítico: "NR"
+ProblemaNegócio_Contexto: |
+  A logística de transporte de petróleo e produtos petrolíferos envolve múltiplos participantes com comportamentos únicos (navios, terminais, caminhões). O contexto operacional russo inclui condições climáticas extremas (gelo no Ártico com mais de 2 metros de espessura) que complicam a navegação. Métodos tradicionais de modelagem (System Dynamics)抽象am de objetos individuais e usam abordagem agregada, sendo insuficientes para capturar a complexidade das interações entre agentes. A necessidade de tomar múltiplas decisões interdependentes em tempo real exige ferramentas mais sofisticadas.
+ClasseIA: "Sistemas especialistas/regras"
+ClasseIA_Confiança: "Alta"
+TarefaAnalítica: "Simulação/what-if"
+FamíliaModelo: "Simulação"
+TipoDado: "Multimodal"
+Maturidade: "Piloto"
+Maturidade_Confiança: "Média"
+Intervenção_Descrição: |
+  O estudo implementa modelagem baseada em agentes (Agent-Based Modeling - ABM) no software AnyLogic para simular processos de transporte, carregamento e descarregamento de produtos petrolíferos. Os navios são modelados como agentes autônomos que interagem entre si e com o ambiente. O modelo considera princípios de interação entre petroleiros e quebra-gelos, lógica de escolha de velocidade dependendo da plenitude do terminal, severidade das condições de gelo, posição de outras embarcações, temperatura do ar e outros fatores. O modelo integra módulos de GIS, cálculos shipbuilding e simulação logística.
+Dados_Descrição: |
+  O modelo foi desenvolvido pelo Krylov State Scientific Centre para o campo Novoportovskoye da PJSC Gazprom Neft. Dados incluem: características de navios (petroleiros, quebra-gelos), condições ambientais (gelo, temperatura), lógica de operações de terminal, rotas de exportação (100km de oleoduto até terminal marítimo no Cabo Kamenny, depois transporte por petroleiros árticos). O modelo permite experimentação com diferentes parâmetros para análise what-if.
+CategoriaMecanismo: "Integração de dados dispersos"
+Mecanismo_Fonte: "Declarado"
+Mecanismo_Declarado: |
+  "MAS as systems of distributed AI have the following benefit: They speed up task fulfilment by parallelism and save the volume of data transmitted bypassing high-level partial solutions to other agents. They are flexible by using agents of various capacities to carry out a task dynamically in cooperation. They are reliable by-passing functions from agents unable to carry out a task to other ones." (p.109)
+Mecanismo_Inferido: |
+  INFERIDO: A modelagem baseada em agentes permite representar o comportamento individual de cada participante da cadeia logística. INFERIDO: Cada agente possui autonomia e objetivos próprios, adaptando seu comportamento conforme as interações. INFERIDO: O modelo integra múltiplas fontes de dados (GIS, shipbuilding, condições ambientais) em uma plataforma unificada. INFERIDO: A simulação permite testar cenários what-if para suporte à decisão estratégica.
+Mecanismo_Estruturado: "Dados denavios, ambiente e operações → Modelagem de comportamento de agentes → Simulação de interações → Recomendação de rotas e capacidade"
+ResultadoTipo: "Qualitativo"
+Resultados_Quant: "(baseline: NR)"
+Resultados_Qual: "Experimento 1: Aumentar volume de tanques de 30m3 para 500m3 resulta em caminhão de combustível não chegar ao posto por muito mais tempo. Experimento 2: Diminuir volume para 4m3 resulta em déficit de combustível no posto. Experimento 3: Aumentar taxa de descarga de 25l/s para 150l/s reduz significativamente a probabilidade de déficit."
+NívelEvidência: "Simulação com dados reais"
+Limitações_Artigo: |
+  "The main disadvantage of agent modelling compared to SD is that it is often difficult to develop a detailed agent model that takes into account all the cause and effect relationships that affect the agent's decision." (p.109)
+Observação: |
+  O artigo é uma revisão teórica e análise comparativa de metodologias de simulação (System Dynamics vs Agent-Based), com exemplo ilustrativo de implementação. A classificação de maturidade como "Piloto" reflete que o modelo foi desenvolvido para caso real (Gazprom Neft) mas não há evidência de uso contínuo em produção.
+Quotes:
+  - QuoteID: Q001
+    TipoQuote: "Mecanismo"
+    Trecho: "MAS as systems of distributed AI have the following benefit: They speed up task fulfilment by parallelism and save the volume of data transmitted bypassing high-level partial solutions to other agents."
+    Página: "p.109"
+  - QuoteID: Q002
+    TipoQuote: "Mecanismo"
+    Trecho: "They are flexible by using agents of various capacities to carry out a task dynamically in cooperation. They are reliable by-passing functions from agents unable to carry out a task to other ones."
+    Página: "p.109"
+  - QuoteID: Q003
+    TipoQuote: "Contexto"
+    Trecho: "The main problem is difficult to ice conditions, which complicate navigation since most of the time the movement of ships in the Gulf of Ob takes place along a 500-kilometre canal through ice more than two meters thick."
+    Página: "p.111"
+  - QuoteID: Q004
+    TipoQuote: "Intervenção"
+    Trecho: "The vessels in the system were presented as agents. At the same time, the model took into account the principles of interaction between tankers and icebreakers and the logic of choosing the speed of the vessel, depending on the fullness of the terminal, the severity of ice conditions, the position of other vessels, air temperature and other factors."
+    Página: "p.112"
+  - QuoteID: Q005
+    TipoQuote: "Outcome"
+    Trecho: "Increasing the rate of fuel discharge into the tank from 25 l/s to 150 l/s. The probability of a deficit at the gas station significantly reduces."
+    Página: "p.114"
+  - QuoteID: Q006
+    TipoQuote: "Limitação"
+    Trecho: "The main disadvantage of agent modelling compared to SD is that it is often difficult to develop a detailed agent model that takes into account all the cause and effect relationships that affect the agent's decision."
+    Página: "p.109"

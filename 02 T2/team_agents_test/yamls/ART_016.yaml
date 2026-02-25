@@ -1,0 +1,94 @@
+---
+ArtigoID: "ART_016"
+Ano: 2023
+TipoPublicação: "Conference"
+Referência_Curta: "Samad et al., 2023"
+DOI: "https://doi.org/10.2118/216770-MS"
+
+SegmentoO&G: "Cross-segment"
+SegmentoO&G_Confiança: "Média"
+Ambiente: "Onshore"
+Complexidade: "Baixa"
+Complexidade_Justificativa: "F1=0, F2=0, F3=0"
+ProcessoSCM_Alvo: "Procurement/compras; Planejamento de produção; Monitoramento/visibilidade"
+TipoRisco_SCRM: "NR"
+ObjetoCrítico: "NR"
+
+ProblemaNegócio_Contexto: |
+  Em projetos EPC, P&IDs e demais drawings são a documentação crítica para gerar listas (pipelines, instrumentação, equipamentos) usadas em MTO e em atividades de procurement, além de suportar integração multidisciplinar para construção do digital twin.
+  Sob cronogramas rigorosos, a emissão e manutenção de Intelligent P&IDs (incluindo brownfield: demolition vs. construction, scope clouds e revisões) é trabalhosa, pouco “user-friendly”, e sujeita a erros em extrações como line list e instrument list.
+  Os outputs de engenharia tendem a ficar em “silos” e as limitações de software e formatos proprietários dificultam integração/centralização de dados ao longo do ciclo de vida do ativo (30–50 anos) e o uso posterior para análises e IA.
+  O artigo discute propostas para debottleneck de software e para viabilizar integração via data lake/cloud, incluindo uso proativo de IA para prever datas de conclusão e problemas de supply-demand de materiais.
+
+ClasseIA: "Digital Twin com IA"
+ClasseIA_Confiança: "Baixa"
+TarefaAnalítica: "Previsão; Classificação; Clustering"
+FamíliaModelo: "NR"
+TipoDado: "Tabular/ERP"
+Maturidade: "Conceito"
+Maturidade_Confiança: "Alta"
+
+Intervenção_Descrição: |
+  Propõe uma arquitetura de digital twin na fase EPC baseada em Intelligent P&IDs (CAD com RDB e “attributes-driven graphics”), integração via XML export e compartilhamento por links diretos/data lake em cloud.
+  Discute evolução de “smart CADDING” para centralizar tags e dados entre disciplinas, além de melhorias no software de P&ID para extração automática e confiável de relatórios (line list, instrument list, etc.) alinhados aos requisitos do digital twin.
+  Sugere, como próximo marco, treinar modelos de IA (regressão, classificação, clustering) usando dados provenientes de documentos/desenhos digitais para previsões (ex.: datas de conclusão) e detecção antecipada de issues de suprimento/demanda de materiais.
+
+Dados_Descrição: |
+  Dados de engenharia estruturados derivados de Intelligent P&IDs e de bancos relacionais/atributos (tags, listas de pipelines, instrumentação e equipamentos) usados para MTO e procurement.
+  Integração e troca de dados mencionadas via exportação XML e neutralização/extração em formatos texto (TXT/CSV/XML) e padrões/formatos neutros (ASCII-based; DXF/STEP) para reduzir dependência de software proprietário.
+  O artigo não reporta volume, período, granularidade, nem procedimentos formais de limpeza/rotulagem; descreve os dados de forma conceitual para suportar digital twin e potencial treinamento de modelos de IA.
+
+CategoriaMecanismo: "Integração de dados dispersos"
+Mecanismo_Fonte: "Misto"
+Mecanismo_Declarado: |
+  O artigo argumenta que centralizar e integrar dados/tags de P&IDs entre disciplinas (incluindo via data lake/cloud e exports como XML) “streamline multidisciplinary EPC activities”, reduz duplicidade e melhora desempenho de gestão do projeto, além de habilitar previsões proativas (ex.: datas de conclusão e issues de supply-demand) por meio de treinamento de modelos de IA.
+Mecanismo_Inferido: |
+  INFERIDO: Ao transformar P&IDs em “intelligent drawings” (RDB + atributos), a organização converte documentação de engenharia em dados estruturados reutilizáveis para relatórios (MTO/line list/instrument list), reduzindo retrabalho e erros de extração manual que afetam compras e planejamento.
+  INFERIDO: Ao consolidar esses dados em um data lake/cloud com interoperabilidade (XML/formatos neutros), a intervenção reduz fricção de compartilhamento entre disciplinas e cria base única para monitorar progresso e materiais, diminuindo atrasos causados por informação inconsistente ou indisponível.
+  INFERIDO: Ao treinar modelos de previsão com dados históricos do EPC (e, depois, dados reais de operação), a solução antecipa desvios de cronograma e desbalanceamentos de suprimento-demanda, permitindo ações corretivas em procurement/planejamento antes que ocorram impactos no projeto.
+Mecanismo_Estruturado: "P&IDs inteligentes + dados de engenharia (tags/listas) → Integração em RDB/data lake/cloud + extração/neutralização (XML/TXT/CSV/ASCII) + potencial treino de modelos (regressão/classificação/clustering) → Centralização e padronização de informação entre disciplinas → Decisões mais rápidas e proativas em planejamento/procurement (menos erros e antecipação de issues de materiais/prazos)"
+
+ResultadoTipo: "Qualitativo"
+Resultados_Quant: "NR"
+Resultados_Qual: "Relata lançamento bem-sucedido de uma plataforma de digital twin e discute benefícios esperados (aceleração de drafting, reporting mais “error free”, integração/centralização de dados e viabilização de previsões proativas de cronograma e materiais), sem apresentar métricas de desempenho."
+NívelEvidência: "Proposta teórica/framework"
+Limitações_Artigo: |
+  Os autores apontam limitações práticas/tecnológicas: (i) softwares atuais de smart P&ID não são “user-friendly” para brownfield (demolition vs. construction P&IDs), scope clouds e reporting; (ii) extrações como line list e instrument list dependem de configuração complexa e “Only an admin with high level smart P&ID admin skill may configure required reporting system”; (iii) risco de perda/inacessibilidade de ativos digitais ao longo de décadas devido a dependência de software proprietário e formatos não neutros, dificultando migração e uso de dados para treinamento de IA.
+
+Observação: |
+  O artigo menciona IA como “next milestone” e dá exemplos de uso (prever datas de conclusão e problemas de supply-demand), mas não descreve implementação/avaliação de modelos nem algoritmos específicos; a extração foca no mecanismo proposto para SCM em EPC.
+
+Quotes:
+  - QuoteID: "Q001"
+    TipoQuote: "Contexto"
+    Trecho: "P&ID is a valuable data source for oil and gas projects. It is used to generate pipelines, instrumentations and equipment lists. These are mainly used for material take-off and other procurement purposes."
+    Página: "p.1 (Abstract)"
+  - QuoteID: "Q002"
+    TipoQuote: "Mecanismo"
+    Trecho: "During project EPC stage, data lake may be used to find many out of the box solutions e.g., training AI models to predict project completion dates and material supply-demand issues, proactively."
+    Página: "p.1 (Abstract)"
+  - QuoteID: "Q003"
+    TipoQuote: "Contexto"
+    Trecho: "Due to stringent project schedules, it is always challenging to achieve an important milestone of timely issuance of Intelligent P&IDs."
+    Página: "p.1"
+  - QuoteID: "Q004"
+    TipoQuote: "Mecanismo"
+    Trecho: "It may help to save manhours by avoiding repeated tasking, duplicity detection and may improve overall project management and performance."
+    Página: "p.3 (Smart P&ID Role in Digital Twin)"
+  - QuoteID: "Q005"
+    TipoQuote: "Limitação"
+    Trecho: "Only an admin with high level smart P&ID admin skill may configure required reporting system, which is not good."
+    Página: "p.6"
+  - QuoteID: "Q006"
+    TipoQuote: "Intervenção"
+    Trecho: "Next milestone is AI deployment on any digital twin model. Once real production starts then future output predictions may be further fine-tuned after deploying AI regression, classification or cluster models."
+    Página: "p.7 (Digital Twin and AI)"
+  - QuoteID: "Q007"
+    TipoQuote: "Limitação"
+    Trecho: "Experience witnesses that digital assets are prone to inaccessibility after 02 to 03 decades."
+    Página: "p.7 (Forestalling Data Loss / Inaccessibility Issues in Future)"
+  - QuoteID: "Q008"
+    TipoQuote: "Mecanismo"
+    Trecho: "Most of the time, AI needs ASCII-based data to train its image processing, NLP (Natural Language Processing) or tabular data related supervised, un-supervised or reinforcement models."
+    Página: "p.9"
+---

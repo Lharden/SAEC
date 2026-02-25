@@ -1,0 +1,74 @@
+ArtigoID: "ART_036"
+Ano: 2025
+TipoPublicação: "Conference"
+Referência_Curta: "Al-Farsi & Al Mamari, 2025"
+DOI: "10.2118/224715-MS"
+SegmentoO&G: "Upstream (E&P)"
+SegmentoO&G_Confiança: "Alta"
+Ambiente: "Onshore"
+Complexidade: "Baixa"
+Complexidade_Justificativa: "F1=0 (ambiente onshore), F2=1 (múltiplos bidders/fornecedores mencionados), F3=0 (risco não descrito como alto/crítico)"
+ProcessoSCM_Alvo: "Procurement/compras"
+TipoRisco_SCRM: "NR"
+ObjetoCrítico: "NR"
+ProblemaNegócio_Contexto: |
+  O processo de avaliação técnica de propostas (technical bid evaluation) na OQEP é atualmente manual e baseado em papel, resultando em ineficiências significativas. A avaliação manual requer 60-70% mais tempo do que métodos automatizados, com cada proposta levando 8-10 horas para revisão. Verificações manuais de compliance adicionam 30-40% mais tempo, e a preparação de queries técnicas adiciona 10-15%. O processo completo apresenta atraso de 4-5 semanas. A equipe técnica dedica 70-80% do tempo a tarefas manuais de entrada de dados e revisão. Processos manuais podem causar perda de 20-25% de informações críticas. Métodos tradicionais são insuficientes para lidar com o volume de dados técnicos em propostas de Oil & Gas.
+ClasseIA: "Híbrido"
+ClasseIA_Confiança: "Média"
+TarefaAnalítica: "Automação (RPA+IA)"
+FamíliaModelo: "NR"
+TipoDado: "Texto"
+Maturidade: "Conceito"
+Maturidade_Confiança: "Alta"
+Intervenção_Descrição: |
+  Sistema baseado em IA para automatizar a avaliação técnica de propostas no procurement. O sistema utiliza machine learning para extração automática de dados de propostas técnicas (especificações, nomes de fornecedores, documentos de compliance). Inclui duas etapas: (1) Go-No-Go Stage - filtragem inicial de compliance verificando documentos obrigatórios; (2) Detailed Technical Evaluation - comparação de especificações técnicas com requisitos do projeto, geração de relatórios de compliance e queries técnicas. O sistema também oferece colaboração em tempo real entre stakeholders e tracking de timeline.
+Dados_Descrição: |
+  O artigo não especifica detalhes sobre dados históricos ou volume de dados utilizados. A proposta menciona que o sistema funcionará como base de dados centralizada para consolidar todas as atividades de procurement, incluindo propostas submetidas, relatórios de compliance, avaliações técnicas, comunicações e registros históricos. Não há detalhes sobre período de dados ou pré-processamento.
+CategoriaMecanismo: "Automação informacional (NLP)"
+Mecanismo_Fonte: "Declarado"
+Mecanismo_Declarado: |
+  "AI can be used to automate tasks like data extraction, data entry, compliance checks, technical queries preparation and final report generation, improving speed and accuracy." "By automating the extraction, entering and verification of these key pieces of information, the system reduces the likelihood of human error and significantly speeds up the process."
+Mecanismo_Inferido: |
+  INFERIDO: A extração automática de dados de propostas reduz o tempo gasto em tarefas manuais de entrada de dados. INFERIDO: A verificação automatizada de compliance reduz erros humanos na checagem de requisitos. INFERIDO: A geração automática de relatórios elimina a necessidade de compilação manual de dados. INFERIDO: O sistema de queries automatizado reduz o risco de perda de informações críticas.
+Mecanismo_Estruturado: "Dados de propostas técnicas → Extração automática por ML → Verificação de compliance → Relatórios e queries automatizados"
+ResultadoTipo: "Qualitativo"
+Resultados_Quant: "Redução esperada de 60-70% no tempo de avaliação; 30-40% menos tempo em compliance checks; 10-15% menos tempo em preparação de queries; 70-80% do tempo de funcionários economizado em tarefas manuais; 20-25% menos perda de informação (vs. baseline: processo manual atual)"
+Resultados_Qual: |
+  O artigo apresenta expectativas de melhorias em: (1) Redução no tempo de avaliação de propostas; (2) Melhoria na acurácia através da minimização de erros humanos; (3) Comunicação aprimorada através de plataforma centralizada; (4) Geração automatizada de documentos e relatórios. O sistema também oferecerá colaboração em tempo real, tracking de timeline e base de dados centralizada.
+NívelEvidência: "Proposta teórica/framework"
+Limitações_Artigo: "NR"
+Observação: |
+  Artigo apresenta proposta conceitual de digitalização de procurement. Os valores de redução percentual são projeções/estimativas baseadas em análise do processo atual, não resultados de implementação. O artigo não especifica algoritmos de ML utilizados, apenas menciona "machine learning algorithms" genericamente. Sistema ainda será testado em fase piloto.
+Quotes:
+  - QuoteID: Q001
+    TipoQuote: "Contexto"
+    Trecho: "The technical bid evaluation process, in particular, is labor-intensive, requiring the review of detailed submissions, data collection, and compliance verification."
+    Página: "p.2"
+  - QuoteID: Q002
+    TipoQuote: "Contexto"
+    Trecho: "Manual bid evaluation can take up to 60%-70% longer than expected automated methods. Reviewing each bid manually can take anywhere from 8 to 10 hours per bid."
+    Página: "p.2"
+  - QuoteID: Q003
+    TipoQuote: "Intervenção"
+    Trecho: "The digitalized system uses advanced machine learning algorithms that are tailored to the specific needs of the oil and gas industry, optimizing the procurement evaluation lifecycle."
+    Página: "p.3"
+  - QuoteID: Q004
+    TipoQuote: "Mecanismo"
+    Trecho: "AI can be used to automate tasks like data extraction, data entry, compliance checks, technical queries preparation and final report generation, improving speed and accuracy."
+    Página: "p.3"
+  - QuoteID: Q005
+    TipoQuote: "Mecanismo"
+    Trecho: "By automating the extraction, entering and verification of these key pieces of information, the system reduces the likelihood of human error and significantly speeds up the process."
+    Página: "p.4"
+  - QuoteID: Q006
+    TipoQuote: "Outcome"
+    Trecho: "The system is designed to minimize human error by automating the data entry and compliance verification processes."
+    Página: "p.5"
+  - QuoteID: Q007
+    TipoQuote: "Outcome"
+    Trecho: "This transparency will significantly reduce delays caused by miscommunication, ensuring that all parties are aligned and informed throughout the process."
+    Página: "p.5"
+  - QuoteID: Q008
+    TipoQuote: "Método"
+    Trecho: "The AI based solution shall be tested through a pilot phase before full implementation to ensure the functionality and accuracy of the system."
+    Página: "p.6"

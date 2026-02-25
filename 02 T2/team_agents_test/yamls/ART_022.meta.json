@@ -1,0 +1,10 @@
+{
+  "article_id": "ART_022",
+  "model": "kimi-k2.5",
+  "base_url": "http://localhost:4000",
+  "images_included": 0,
+  "text_only": true,
+  "tokens_input": 12614,
+  "tokens_output": 5956,
+  "tokens_total": 18570
+}

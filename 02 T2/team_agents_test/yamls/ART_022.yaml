@@ -1,0 +1,71 @@
+---
+ArtigoID: "ART_022"
+Ano: 2023
+TipoPublicação: "Conference"
+Referência_Curta: "Vedat, 2023"
+DOI: "10.2118/217024-MS"
+
+SegmentoO&G: "Upstream (E&P)"
+SegmentoO&G_Confiança: "Alta"
+Ambiente: "Offshore"
+Complexidade: "Média"
+Complexidade_Justificativa: "F1=1 (operação offshore em ambiente remoto e severo), F2=0 (número específico de fornecedores não mencionado), F3=1 (riscos de segurança e operacionais em offshore descritos como críticos, com ênfase na redução de entradas na zona de 500m)"
+ProcessoSCM_Alvo: "Logística/transporte; Gestão de estoques; Planejamento de demanda; Procurement/compras"
+TipoRisco_SCRM: "Risco operacional; Risco de transporte/logística; Risco de segurança; Risco de estoque"
+ObjetoCrítico: "Embarcações de supply offshore; Movimentação de cargas na zona de 500m; Utilização de back deck"
+
+ProblemaNegócio_Contexto: |
+  O setor offshore de oil & gas opera em ambientes remotos e severos, enfrentando cadeias de suprimentos complexas com ineficiências operacionais, riscos de segurança significativos (especialmente relacionados às entradas na zona de 500m ao redor das plataformas) e altos custos logísticos. Modelos operacionais arcaicos geram duplicação de recursos, desperdício e falta de colaboração entre stakeholders. Métodos manuais de planejamento logístico são ineficientes frente à variabilidade de demandas de carga, requisitos de manuseio específicos e necessidade de otimização de rotas e modais de transporte, resultando em atrasos, custos excessivos e emissões elevadas.
+
+ClasseIA: "Híbrido"
+ClasseIA_Confiança: "Alta"
+TarefaAnalítica: "Otimização; Previsão; Recomendação"
+FamíliaModelo: "Outro"
+TipoDado: "Tabular/ERP; Séries temporais; Multimodal"
+Maturidade: "Produção"
+Maturidade_Confiança: "Média"
+Intervenção_Descrição: |
+  Plataforma integrada baseada em IA (FlexDelivery) que utiliza algoritmos de machine learning e técnicas de otimização para gerenciar dados de carga (peso, dimensões, quantidade, requisitos de manuseio) e dados telemétricos. O sistema gera cronogramas de curto e longo prazo automaticamente, otimizando seleção de rotas, modais de transporte e estratégias de gestão de inventário. Inclui capacidade de rastreamento em tempo real, consolidação de cargas para maximizar utilização do back deck, e aprendizado contínuo a partir de dados históricos para melhoria de processos.
+Dados_Descrição: |
+  Dados de carga (peso, tamanho, quantidade, requisitos de manuseio específicos), dados telemétricos de embarcações e equipamentos, dados históricos de operações logísticas, e dados de rastreamento em tempo real. O sistema processa informações de múltiplas fontes para otimização de rotas e consolidação de cargas. Métricas operacionais reportadas incluem redução de consumo de combustível de 77 MT para 49 MT e distância de 1070 para 527 milhas náuticas.
+
+CategoriaMecanismo: "Otimização de trade-offs; Integração de dados dispersos; Priorização/alocação ótima"
+Mecanismo_Fonte: "Misto"
+Mecanismo_Declarado: |
+  Algoritmos de IA são empregados para criar cronogramas eficientes, e técnicas de ML são usadas para aprender com dados históricos e melhorar continuamente processos. A plataforma otimiza elementos incluindo seleção de rotas, modais de transporte e estratégias de gestão de inventário. A consolidação otimizada de cargas maximiza a utilização do back deck e reduz o número de entradas na zona de 500m. Rastreamento em tempo real e monitoramento são cruciais para gerenciar disrupções.
+Mecanismo_Inferido: |
+  INFERIDO: A integração de dados de carga e telemetria em uma plataforma unificada permite visibilidade em tempo real, reduzindo incertezas na tomada de decisão logística e permitindo resposta rápida a disrupções.
+  INFERIDO: O aprendizado de máquina contínuo a partir de dados históricos permite ajustes proativos nos cronogramas, antecipando gargalos antes que causem atrasos operacionais e otimizando a alocação de recursos.
+  INFERIDO: A consolidação otimizada de cargas através de algoritmos de IA maximiza a utilização do back deck, reduzindo o número de viagens necessárias e, consequentemente, os custos operacionais e emissões de CO2.
+Mecanismo_Estruturado: "Dados de carga e telemetria → Algoritmos de IA/ML → Otimização de rotas, modais e consolidação de cargas → Redução de custo/tempo/emissões e melhoria de segurança"
+
+ResultadoTipo: "Quantitativo"
+Resultados_Quant: "Tempo de entrega: redução de 23% (vs. baseline: processo manual); Custo de envio: redução de 23% (vs. baseline: $650/m²); Emissões CO2: redução de 32-36% (vs. baseline: 250 MT); Consumo combustível: redução de 36% (de 77 MT para 49 MT); Distância percorrida: redução de 51% (de 1070 para 527 milhas náuticas); Tempo de navegação: economia de 68 horas; Custo por m²: redução de $650 para $500"
+Resultados_Qual: "Melhoria na eficiência do processo de supply chain; Manutenção de altos níveis de segurança através da redução de entradas na zona de 500m; Aumento da colaboração e comunicação entre stakeholders; Melhoria na tomada de decisão; Maior transparência entre todos os elementos da cadeia de suprimentos; Estabelecimento de procedimentos padronizados para operações logísticas"
+NívelEvidência: "Estudo de caso real"
+Limitações_Artigo: "NR"
+
+Observação: |
+
+Quotes:
+  - QuoteID: "Q001"
+    TipoQuote: "Mecanismo"
+    Trecho: "AI algorithms are employed to create efficient schedules, and ML techniques have been used to learn from historical data and continuously improve processes over a variety of domains"
+    Página: "p.2"
+  - QuoteID: "Q002"
+    TipoQuote: "Contexto"
+    Trecho: "The offshore sector within the oil and gas industry presents unique challenges. Often operating in harsh and remote environments, the sector must manage complex supply chains, including the transportation of equipment and materials from various points of origin to the final point of consumption"
+    Página: "p.2"
+  - QuoteID: "Q003"
+    TipoQuote: "Intervenção"
+    Trecho: "The process is managed by an AI-based platform that automatically creates short and long-term schedules using various cargo and telemetric data"
+    Página: "p.1"
+  - QuoteID: "Q004"
+    TipoQuote: "Outcome"
+    Trecho: "Delivery time has been reduced by 23%, achieved by using an AI planning system, real-time tracking, and optimised transportation modes"
+    Página: "p.1"
+  - QuoteID: "Q005"
+    TipoQuote: "Outcome"
+    Trecho: "the use of integrated logistics in the offshore sector has resulted in an overall cost reduction of 23% on the shipment of goods and a reduction of CO2 emissions by 32%"
+    Página: "p.2"
+---

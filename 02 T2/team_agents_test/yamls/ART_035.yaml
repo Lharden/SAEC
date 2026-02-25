@@ -1,0 +1,83 @@
+--- 
+ArtigoID: "ART_035"
+Ano: 2025
+TipoPublicação: "Journal"
+Referência_Curta: "McGarvey et al., 2025"
+DOI: "https://doi.org/10.3390/logistics9010023"
+# CONTEXTO (C)
+SegmentoO&G: "Cross-segment"
+SegmentoO&G_Confiança: "Alta"
+Ambiente: "Offshore"
+Complexidade: "Alta"
+Complexidade_Justificativa: "F1=1 (operações marítimas em águas árticas), F2=1 (2048 navios de múltiplas empresas), F3=1 (risco de derramamento de óleo em ecossistema frágil)"
+ProcessoSCM_Alvo: "Monitoramento/visibilidade"
+TipoRisco_SCRM: "Risco operacional"
+ObjetoCrítico: "Dados de resposta a derramamentos de óleo; registros de navios"
+# NARRATIVAS CONTEXTUAIS
+ProblemaNegócio_Contexto: |
+  Dados de emergência e resposta a derramamentos de óleo no Ártico frequentemente são desagregados, incompletos e capturados por múltiplas partes interessiras usando diferentes plataformas, padrões e definições de dados. A falta de infraestrutura de informações, comunicações e transporte no Ártico, coupled com as enormes distâncias entre vilas esparsamente povoadas, a imprevisibilidade do clima e a magnitude das condições ambientais complicam o acesso à informação e podem atrasar a implantação e fornecimento de recursos críticos. Dados inconsistentes, ausentes e imprecisos limitam a capacidade de análise em tempo real necessária para resposta a emergências.
+# INTERVENÇÃO (I)
+ClasseIA: "Deep Learning"
+ClasseIA_Confiança: "Alta"
+TarefaAnalítica: "Detecção de anomalia"
+FamíliaModelo: "Redes neurais"
+TipoDado: "Tabular/ERP"
+Maturidade: "Piloto"
+Maturidade_Confiança: "Alta"
+Intervenção_Descrição: |
+  A intervenção utiliza uma rede neural para detecção, diagnóstico e correção de anomalias em banco de dados de resposta a emergências. O algoritmo foi desenvolvido usando Python com código aberto, aplicando técnicas de aprendizado de máquina para identificar registros duplicados e dados incompletos. O modelo neural foi treinado com subconjuntos do dataset original, com revisão por especialista humano. A rede neural propôs dados potenciais para completar registros ausentes baseados em informação contextual, e criou registros de auditoria para compliance.
+Dados_Descrição: |
+  Os dados compreendem 11.568 registros de resposta a derramamentos de óleo de 2048 navios participantes em trânsito pelas águas da costa oeste do Alasca e Ártico entre 1 de janeiro e 31 de agosto de 2023. Os atributos incluem ID do navio, nome, porto de origem/destino, rota pretendida, data/hora de chegada estimada, tipo e quantidade de combustível, carga a bordo, informações de contato, e dados do sistema de identificação automática. O dataset foi reduzido para 2.069 registros após limpeza (17,89% do original).
+# MECANISMO (M)
+CategoriaMecanismo: "Integração de dados dispersos"
+Mecanismo_Fonte: "Misto"
+Mecanismo_Declarado: |
+  "The neural net model deployed was able to detect, diagnose, and correct anomalies in the dataset, resulting in several improvements: Improved data quality, as missing, incomplete, and redundant data were identified and resolved using the neural net's classification algorithm; Improved data analysis processes, particularly with data cleaning tasks, compared to the use of automated anomaly detection scripts; Improved support for real-time data anomaly and inconsistency detection, as inconsistent, conflicting, and missing data were automatically flagged with the use of the classification algorithm; Improved utilization of scarce human resources, who could supervise and review the results of the automated data anomaly detection, diagnosis, and correction processes, rather than engage in time-consuming, cumbersome, and error-prone human data cleaning and review processes." (p.9)
+Mecanismo_Inferido: |
+  INFERIDO: A rede neural aprende padrões de dados válidos a partir de exemplos históricos. INFERIDO: Ao classificar registros como duplicados ou incompletos, o algoritmo automatiza o que seria um processo manual de limpeza de dados. INFERIDO: A detecção automática de anomalias reduz o tempo de processamento ao eliminar a necessidade de revisão humana extensiva. INFERIDO: A proposição de dados para completar registros ausentes baseia-se em correlações aprendidas entre campos existentes no dataset.
+Mecanismo_Estruturado: "Dados históricos de navios → Treinamento de rede neural → Classificação de anomalias → Dados limpos e auditados"
+# OUTCOME (O)
+ResultadoTipo: "Quantitativo"
+Resultados_Quant: "Redução de tempo de limpeza de dados: 78.33% (de 120h para 26h); Redução total de tempo de processo: 69.1% (de 136h para 42h); Dataset final: 2069 registros (17.89% do original de 11568)"
+Resultados_Qual: "Melhoria na qualidade dos dados, detecção e correção automática de anomalias, suporte para detecção de inconsistências em tempo real, melhor utilização de recursos humanos escassos"
+NívelEvidência: "Experimento com dados reais"
+Limitações_Artigo: |
+  O algoritmo self-healing foi desenvolvido com um único dataset compreendendo dados de 2048 navios e múltiplas transportadoras árticas por um período de 8 meses em 2023. O período de tempo foi limitado, e trabalho futuro deve estender a coleta de dados longitudinalmente, e com mais empresas de navegação, por um período mais longo. Os dados não foram validados contra outro dataset. Desenvolver e treinar algoritmos de machine learning e databases self-healing com dados incompletos, ausentes ou conflitantes introduz desafios no desenvolvimento do algoritmo, cria dados não-padrão e levanta questões sobre a validade dos modelos. O tamanho do dataset também impacta a validade e confiabilidade dos resultados de machine learning.
+# OPCIONAL
+Observação: |
+  O artigo foca em logística de resposta a emergências no Ártico, um contexto de infraestrutura pobre. A intervenção de IA é aplicada para limpar e melhorar a qualidade de dados de resposta a derramamentos de óleo, não para otimizar diretamente a cadeia de suprimentos de O&G. O segmento O&G é inferido do contexto de resposta a derramamentos de óleo e transporte marítimo ártico.
+# QUOTES
+Quotes:
+  - QuoteID: Q001
+    TipoQuote: "Contexto"
+    Trecho: "Accurate, real-time data about response technologies, capabilities, and availabilities are key to effective emergency response logistics; this is particularly important in remote settings, such as in the Arctic, where limited infrastructure, logistics, and technologies occasion the need for careful planning and immediate response in a fragile, pristine, and rapidly changing ecosystem."
+    Página: "p.1"
+  - QuoteID: Q002
+    TipoQuote: "Contexto"
+    Trecho: "Emergency response logistics data are often disaggregated, incomplete, and captured by multiple stakeholders using different platforms, standards, and data definitions."
+    Página: "p.2"
+  - QuoteID: Q003
+    TipoQuote: "Intervenção"
+    Trecho: "A neural network model was created using freely available open-source resources. A preliminary algorithm was developed that used color coding to highlight duplicative and incomplete data."
+    Página: "p.8"
+  - QuoteID: Q004
+    TipoQuote: "Mecanismo"
+    Trecho: "The neural net model deployed was able to detect, diagnose, and correct anomalies in the dataset, resulting in several improvements: Improved data quality, as missing, incomplete, and redundant data were identified and resolved using the neural net's classification algorithm."
+    Página: "p.9"
+  - QuoteID: Q005
+    TipoQuote: "Outcome"
+    Trecho: "The differences in time required for data cleaning using the automated anomaly detection scripts and using the neural nets approaches were significant, with a 78.33% reduction in time with the neural nets."
+    Página: "p.8"
+  - QuoteID: Q006
+    TipoQuote: "Limitação"
+    Trecho: "The self-healing algorithms were developed with a single dataset comprising data from 2048 ships and multiple Arctic shippers for an 8-month period in 2023. The time period covered was limited, and future work should clearly extend the data collection longitudinally, and with more shipping companies, over a longer time period."
+    Página: "p.10"
+  - QuoteID: Q007
+    TipoQuote: "Mecanismo"
+    Trecho: "Machine learning was used to propose potential data to complete the data records, based on contextual information and data in the dataset."
+    Página: "p.8"
+  - QuoteID: Q008
+    TipoQuote: "Intervenção"
+    Trecho: "Redundant data were deleted, and a tracer record was created for audit and compliance testing and analysis. Missing and incomplete data were flagged by the neural net so that the dataset could be updated with the missing information."
+    Página: "p.8"
+---

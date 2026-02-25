@@ -1,0 +1,67 @@
+ArtigoID: "ART_034"
+Ano: 2024
+TipoPublicação: "Conference"
+Referência_Curta: "Abdelaziem et al., 2024"
+DOI: "10.2118/220950-MS"
+SegmentoO&G: "Upstream (E&P)"
+SegmentoO&G_Confiança: "Alta"
+Ambiente: "Onshore"
+Complexidade: "Média"
+Complexidade_Justificativa: "F1=1 (operações offshore mencionadas para plataformas de perfuração), F2=1 (múltiplos fornecedores/vendedores implícitos para 500 SKUs), F3=0 (risco não descrito como alto/crítico explicitamente)"
+ProcessoSCM_Alvo: "Gestão de estoques"
+TipoRisco_SCRM: "Risco de estoque"
+ObjetoCrítico: "Inventário de perfuração (drilling inventory), SKUs de tubulares, equipamentos de completação, materiais de wellhead"
+ProblemaNegócio_Contexto: |
+  O gerenciamento de inventário de perfuração representa um ativo caro em empresas integradas de petróleo, com desafios significativos incluindo lead times imprevisíveis, flutuações de demanda, viés em previsões, estoque em pipeline, proliferação de SKUs e erro na distribuição de mix de SKUs. A disponibilidade limitada de dados para pesquisa, devido a preocupações com privacidade, competitive advantage e compliance regulatório, restringe o desenvolvimento de soluções de analytics. O objetivo é otimizar o valor do inventário mantido em empresas operacionais upstream, balanceando trade-offs entre custos de manutenção, níveis de serviço e eficiência financeira.
+ClasseIA: "ML não supervisionado"
+ClasseIA_Confiança: "Alta"
+TarefaAnalítica: "Clustering"
+FamíliaModelo: "Clustering"
+TipoDado: "Tabular/ERP"
+Maturidade: "Protótipo"
+Maturidade_Confiança: "Alta"
+Intervenção_Descrição: |
+  O artigo apresenta um dataset sintético de inventário de perfuração desenvolvido através de metodologia process-driven combinada com conhecimento de domínio. O dataset cobre 20 anos de transações, aproximadamente 500 SKUs únicos, mais de 15.000 transações (receipts, issues, returns, sales, loans, inspections, junks). Técnicas de clustering e analytics foram aplicadas para demonstrar efetividade em identificar desafios latentes e maximizar lucros. O dataset foi gerado usando Python com código open-source disponível no GitHub.
+Dados_Descrição: |
+  Dataset sintético baseado em simulação e conhecimento multidisciplinar de supply chain na indústria de petróleo junto com expertise de engenharia de perfuração e completação. Cobertura de 20 anos de transações (2000-2023), ~500 SKUs únicos, ~15.000 transações. Categorias incluem tubular goods, drilling accessories, completion equipment, wellhead materials. Inclui especificações multidisciplinares cobrindo sidetracks, slim holes, gravel-packed wells, artificially lifted wells, dual producers. Valor médio de ativos de 5 milhões USD. Probabilidades controladas para ruído, itens de ponta, transações anômalas (junk, sales, loans).
+CategoriaMecanismo: "Integração de dados dispersos"
+Mecanismo_Fonte: "Declarado"
+Mecanismo_Declarado: |
+  "analytics and clustering techniques are promising in elucidating latent challenges, maximizing profits, and achieving cost savings up to 10% of the inventory's total value." (p.2) "The introduced dataset was meticulously designed to ensure scalability and minimize drift." (p.2) "This dataset is intended to serve as a benchmark for future research into the role of data analytics and machine learning in optimizing the performance of drilling inventories." (p.23)
+Mecanismo_Inferido: |
+  INFERIDO: O dataset sintético permite replicabilidade e adaptabilidade a layouts divergentes através de parâmetros definidos pelo usuário. INFERIDO: A geração process-driven com conhecimento de domínio minimiza viés de endogeneidade. INFERIDO: Clustering revela padrões latentes em transações de inventário. INFERIDO: Analytics identifica desafios como acurácia de contagem, estoque obsoleto, subutilização de capital e excesso de inventário.
+Mecanismo_Estruturado: "Dados históricos de transações → Clustering e analytics → Identificação de padrões e desafios latentes → Otimização de políticas de inventário e redução de custos"
+ResultadoTipo: "Quantitativo"
+Resultados_Quant: "Redução de custos de até 10% do valor total do inventário (vs. baseline: NR); 500 SKUs únicos; 15.000+ transações; valor médio de ativos: 5 milhões USD"
+Resultados_Qual: |
+  O dataset sintético permite análise de KPIs de inventário, identificação de desafios latentes como acurácia de contagem de estoque, estoque obsoleto, subutilização de capital anual e excesso de inventário. Técnicas de clustering demonstram promessa em elucidar desafios latentes e maximizar lucros.
+NívelEvidência: "Simulação com dados sintéticos"
+Limitações_Artigo: |
+  O artigo reconhece que o dataset é sintético e não dados reais de campo. "future contributions to the source of this open-source dataset are essential as a way forward to advance the potential for innovative approaches in drilling inventory management." (p.23)
+Observação: |
+  Este artigo é primariamente sobre geração de dataset sintético para pesquisa, não sobre implementação de IA em produção. A "intervenção" de IA é demonstração de uso do dataset através de clustering e analytics. O artigo não implementa modelos preditivos ou de otimização em produção real.
+Quotes:
+  - QuoteID: Q001
+    TipoQuote: Contexto
+    Trecho: "Drilling inventory expresses an expensive asset in oil integrating companies, yet detailed investigations into inventory KPIs are sparse, owing to limited availability of data for research purposes."
+    Página: "p.3"
+  - QuoteID: Q002
+    TipoQuote: Intervenção
+    Trecho: "The introduced inventory dataset is characterized by randomness, rule-based procedure, and iterative process. It allows replicability and adaptability to divergent layouts by virtue of user-defined parameters."
+    Página: "p.1"
+  - QuoteID: Q003
+    TipoQuote: Mecanismo
+    Trecho: "analytics and clustering techniques are promising in elucidating latent challenges, maximizing profits, and achieving cost savings up to 10% of the inventory's total value."
+    Página: "p.2"
+  - QuoteID: Q004
+    TipoQuote: Outcome
+    Trecho: "This dataset is intended to serve as a benchmark for future research into the role of data analytics and machine learning in optimizing the performance of drilling inventories."
+    Página: "p.23"
+  - QuoteID: Q005
+    TipoQuote: Método
+    Trecho: "Generating synthetic datasets involves the implementation of data-driven and process-driven methodologies. Given the inherent risk of endogeneity bias, a process-driven approach, combined with domain knowledge, was followed."
+    Página: "p.1"
+  - QuoteID: Q006
+    TipoQuote: Contexto
+    Trecho: "Inventory management in the oil upstream industry faces numerous challenges, including unpredictable lead times, demand fluctuations, biased forecasting, pipeline stock, SKU proliferation, and SKU distribution mix error."
+    Página: "p.2"

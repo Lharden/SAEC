@@ -50,6 +50,7 @@ console = Console()
 # Comandos de Status
 # ============================================================
 
+
 @app.command()
 def status():
     """Mostra status do sistema e configuração."""
@@ -63,7 +64,9 @@ def status():
     table.add_column("Caminho", style="white")
     table.add_column("Existe", style="green")
 
-    table.add_row("Project Root", str(paths.PROJECT_ROOT), "OK" if paths.PROJECT_ROOT.exists() else "NO")
+    table.add_row(
+        "Project Root", str(paths.PROJECT_ROOT), "OK" if paths.PROJECT_ROOT.exists() else "NO"
+    )
     table.add_row("Articles", str(paths.ARTICLES), "OK" if paths.ARTICLES.exists() else "NO")
     table.add_row("Work Dir", str(paths.WORK), "OK" if paths.WORK.exists() else "NO")
     table.add_row("YAMLs", str(paths.YAMLS), "OK" if paths.YAMLS.exists() else "NO")
@@ -98,6 +101,7 @@ def status():
     # Artigos
     if paths.MAPPING_CSV.exists():
         from src.config import load_mapping, get_pending_articles
+
         mapping = load_mapping(paths.MAPPING_CSV)
         pending = get_pending_articles(paths.MAPPING_CSV)
 
@@ -113,11 +117,13 @@ def check():
 
     # Python
     import platform
+
     checks.append(("Python", platform.python_version(), True))
 
     # Torch + CUDA
     try:
         import torch
+
         cuda = torch.cuda.is_available()
         gpu = torch.cuda.get_device_name(0) if cuda else "N/A"
         checks.append(("PyTorch", f"{torch.__version__} (CUDA: {cuda})", cuda))
@@ -129,27 +135,32 @@ def check():
     # Marker
     try:
         from src.adapters.marker_adapter import get_marker_info
+
         info = get_marker_info()
-        checks.append(("Marker-PDF", f"v{info['version']} (GPU: {info['gpu_available']})", info['available']))
+        checks.append(
+            ("Marker-PDF", f"v{info['version']} (GPU: {info['gpu_available']})", info["available"])
+        )
     except Exception as e:
         checks.append(("Marker-PDF", f"Erro: {e}", False))
 
     # Surya
     try:
         from src.adapters.surya_adapter import get_surya_info
+
         info = get_surya_info()
-        checks.append(("Surya-OCR", f"GPU: {info['gpu_available']}", info['available']))
+        checks.append(("Surya-OCR", f"GPU: {info['gpu_available']}", info["available"]))
     except Exception as e:
         checks.append(("Surya-OCR", f"Erro: {e}", False))
 
     # Ollama
     try:
         from src.adapters.ollama_adapter import test_connection
+
         status = test_connection()
-        if status['available']:
+        if status["available"]:
             checks.append(("Ollama", f"{len(status['models'])} modelos", True))
-            if status['missing_models']:
-                for m in status['missing_models']:
+            if status["missing_models"]:
+                for m in status["missing_models"]:
                     checks.append(("  -> Missing", m, False))
         else:
             checks.append(("Ollama", "Não disponível", False))
@@ -159,6 +170,7 @@ def check():
     # ChromaDB
     try:
         import chromadb
+
         checks.append(("ChromaDB", f"v{chromadb.__version__}", True))
     except ImportError:
         checks.append(("ChromaDB", "Não instalado", False))
@@ -201,7 +213,9 @@ def ollama_list():
             # Verificar uso recomendado
             uso = []
             for task, default_model in DEFAULT_MODELS.items():
-                if model.name == default_model or model.name.startswith(default_model.split(":")[0]):
+                if model.name == default_model or model.name.startswith(
+                    default_model.split(":")[0]
+                ):
                     uso.append(task)
 
             table.add_row(
@@ -221,10 +235,13 @@ def ollama_list():
 # Comandos de Pipeline
 # ============================================================
 
+
 @app.command()
 def ingest(
     article: Optional[str] = typer.Option(None, "--article", "-a", help="ID do artigo específico"),
-    strategy: str = typer.Option("marker", "--strategy", "-s", help="Estratégia: marker|pymupdf|hybrid"),
+    strategy: str = typer.Option(
+        "marker", "--strategy", "-s", help="Estratégia: marker|pymupdf|hybrid"
+    ),
     force: bool = typer.Option(False, "--force", "-f", help="Forçar reprocessamento"),
     dry_run: bool = typer.Option(False, "--dry-run", help="Simular sem processar"),
 ):
@@ -270,8 +287,12 @@ def ingest(
 @app.command()
 def extract(
     article: Optional[str] = typer.Option(None, "--article", "-a", help="ID do artigo específico"),
-    strategy: str = typer.Option("local_first", "--strategy", "-s",
-                                  help="Estratégia: local_first|api_first|local_only|api_only"),
+    strategy: str = typer.Option(
+        "local_first",
+        "--strategy",
+        "-s",
+        help="Estratégia: local_first|api_first|local_only|api_only",
+    ),
     dry_run: bool = typer.Option(False, "--dry-run", help="Simular sem processar"),
 ):
     """Extrai dados CIMO dos artigos ingeridos."""
@@ -311,7 +332,8 @@ def extract(
                 continue
 
             import json
-            with open(texts_file) as f:
+
+            with open(texts_file, encoding="utf-8") as f:
                 texts = json.load(f)
 
             full_text = "\n\n".join(texts.values())
@@ -392,32 +414,39 @@ def validate(
             result = validate_extraction(yaml_content, artigo_id)
 
             status = "[green]VÁLIDO[/green]" if result.is_valid else "[red]INVÁLIDO[/red]"
-            console.print(f"{artigo_id}: {status} ({len(result.errors)} erros, {len(result.warnings)} warnings)")
+            console.print(
+                f"{artigo_id}: {status} ({len(result.errors)} erros, {len(result.warnings)} warnings)"
+            )
 
             if result.is_valid:
                 valid_count += 1
 
-            results.append({
-                "artigo_id": artigo_id,
-                "valid": result.is_valid,
-                "errors": len(result.errors),
-                "warnings": len(result.warnings),
-            })
+            results.append(
+                {
+                    "artigo_id": artigo_id,
+                    "valid": result.is_valid,
+                    "errors": len(result.errors),
+                    "warnings": len(result.warnings),
+                }
+            )
 
         except Exception as e:
             console.print(f"{artigo_id}: [red]ERRO - {e}[/red]")
-            results.append({
-                "artigo_id": artigo_id,
-                "valid": False,
-                "errors": 1,
-                "warnings": 0,
-                "error": str(e),
-            })
+            results.append(
+                {
+                    "artigo_id": artigo_id,
+                    "valid": False,
+                    "errors": 1,
+                    "warnings": 0,
+                    "error": str(e),
+                }
+            )
 
     console.print(f"\n[bold]Resultado:[/bold] {valid_count}/{len(yaml_files)} válidos")
 
     if output:
         import json
+
         Path(output).write_text(json.dumps(results, indent=2), encoding="utf-8")
         console.print(f"Relatório salvo em {output}")
 
@@ -484,9 +513,12 @@ def run(
 # Comandos RAG
 # ============================================================
 
+
 @app.command()
 def rag_index(
-    article: Optional[str] = typer.Option(None, "--article", "-a", help="Indexar artigo específico"),
+    article: Optional[str] = typer.Option(
+        None, "--article", "-a", help="Indexar artigo específico"
+    ),
     rebuild: bool = typer.Option(False, "--rebuild", help="Reconstruir índice completo"),
 ):
     """Constrói/atualiza índice RAG para busca semântica."""
@@ -504,6 +536,7 @@ def rag_index(
         console.print("[yellow]Reconstruindo índice completo...[/yellow]")
         # Limpar índice existente
         import shutil
+
         if rag_dir.exists():
             shutil.rmtree(rag_dir)
 
@@ -524,7 +557,8 @@ def rag_index(
             continue
 
         import json
-        with open(texts_file) as f:
+
+        with open(texts_file, encoding="utf-8") as f:
             texts = json.load(f)
 
         full_text = "\n\n".join(texts.values())
@@ -543,7 +577,9 @@ def rag_index(
 @app.command()
 def rag_search(
     query: str = typer.Argument(..., help="Query de busca"),
-    article: Optional[str] = typer.Option(None, "--article", "-a", help="Buscar em artigo específico"),
+    article: Optional[str] = typer.Option(
+        None, "--article", "-a", help="Buscar em artigo específico"
+    ),
     top_k: int = typer.Option(5, "--top", "-k", help="Número de resultados"),
 ):
     """Busca semântica no índice RAG."""
@@ -580,4 +616,3 @@ def rag_search(
 
 if __name__ == "__main__":
     app()
-

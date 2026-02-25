@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cd:*)",
+      "Bash(cd \"C:/Users/Leonardo/Documents/Computing/Projeto_Mestrado/files/files/articles/00 Dados RSL/02 T2/team_agents_test\" && ~/litellm-env/Scripts/python extract_article.py --article ART_002 --model gemini-pro --output ./yamls 2>&1)",
+      "Bash(C:/Users/Leonardo/litellm-env/Scripts/python:*)",
+      "Bash(cd \"C:/Users/Leonardo/Documents/Computing/Projeto_Mestrado/files/files/articles/00 Dados RSL/02 T2/team_agents_test\" && ~/litellm-env/Scripts/python extract_article.py --article ART_003 --model gemini-pro --output ./yamls 2>&1)",
+      "Bash(cd \"C:/Users/Leonardo/Documents/Computing/Projeto_Mestrado/files/files/articles/00 Dados RSL/02 T2/team_agents_test\" && ~/litellm-env/Scripts/python extract_article.py --article ART_004 --model gemini-pro --output ./yamls 2>&1)"
+    ]
+  }
+}
