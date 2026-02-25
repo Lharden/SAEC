@@ -21,13 +21,14 @@ from __future__ import annotations
 import sys
 import os
 from pathlib import Path
-from typing import Optional
+from typing import Literal, Optional
 
 # Fix Windows console encoding for Unicode
 if sys.platform == "win32":
     os.environ.setdefault("PYTHONIOENCODING", "utf-8")
 
 import typer
+from typer.models import OptionInfo
 from rich.console import Console
 from rich.table import Table
 from rich.panel import Panel
@@ -122,7 +123,7 @@ def check():
 
     # Torch + CUDA
     try:
-        import torch
+        import torch  # pyright: ignore[reportMissingImports]
 
         cuda = torch.cuda.is_available()
         gpu = torch.cuda.get_device_name(0) if cuda else "N/A"
@@ -247,11 +248,11 @@ def ingest(
 ):
     """Ingere PDFs (converte para texto/markdown)."""
     from src.config import paths, load_mapping
-    from src.context import create_context
+    from src.context import make_context
 
     console.print(Panel.fit(f"[bold blue]Ingestão de PDFs[/bold blue] (strategy={strategy})"))
 
-    ctx = create_context()
+    ctx = make_context()
 
     if article:
         articles = [a for a in load_mapping(paths.MAPPING_CSV) if a["ArtigoID"] == article]
@@ -287,7 +288,7 @@ def ingest(
 @app.command()
 def extract(
     article: Optional[str] = typer.Option(None, "--article", "-a", help="ID do artigo específico"),
-    strategy: str = typer.Option(
+    strategy: Literal["local_first", "api_first", "local_only", "api_only"] = typer.Option(
         "local_first",
         "--strategy",
         "-s",
@@ -389,7 +390,7 @@ def validate(
 ):
     """Valida YAMLs extraídos contra schema e regras."""
     from src.config import paths
-    from src.validators import validate_extraction
+    from src.validators import validate_yaml
 
     console.print(Panel.fit("[bold blue]Validação de YAMLs[/bold blue]"))
 
@@ -408,10 +409,9 @@ def validate(
             continue
 
         artigo_id = yaml_path.stem
-        yaml_content = yaml_path.read_text(encoding="utf-8")
-
         try:
-            result = validate_extraction(yaml_content, artigo_id)
+            yaml_content = yaml_path.read_text(encoding="utf-8")
+            result = validate_yaml(yaml_content)
 
             status = "[green]VÁLIDO[/green]" if result.is_valid else "[red]INVÁLIDO[/red]"
             console.print(
@@ -466,7 +466,7 @@ def consolidate(
     try:
         result = consolidate_yamls(
             yamls_dir=paths.YAMLS,
-            output_path=output_path,
+            output_excel=output_path,
         )
 
         console.print(f"[green]Consolidação concluída![/green]")
@@ -480,24 +480,47 @@ def consolidate(
 @app.command()
 def run(
     article: Optional[str] = typer.Option(None, "--article", "-a", help="ID do artigo específico"),
-    strategy: str = typer.Option("local_first", "--strategy", "-s", help="Estratégia de extração"),
+    strategy: Literal["local_first", "api_first", "local_only", "api_only"] = typer.Option(
+        "local_first", "--strategy", "-s", help="Estratégia de extração"
+    ),
     skip_ingest: bool = typer.Option(False, "--skip-ingest", help="Pular ingestão"),
     skip_extract: bool = typer.Option(False, "--skip-extract", help="Pular extração"),
     skip_validate: bool = typer.Option(False, "--skip-validate", help="Pular validação"),
     skip_consolidate: bool = typer.Option(False, "--skip-consolidate", help="Pular consolidação"),
 ):
     """Executa pipeline completo (ingest -> extract -> validate -> consolidate)."""
+
+    def _opt(value, fallback):
+        return fallback if isinstance(value, OptionInfo) else value
+
+    article = _opt(article, None)
+    strategy = _opt(strategy, "local_first")
+    skip_ingest = bool(_opt(skip_ingest, False))
+    skip_extract = bool(_opt(skip_extract, False))
+    skip_validate = bool(_opt(skip_validate, False))
+    skip_consolidate = bool(_opt(skip_consolidate, False))
+
     console.print(Panel.fit("[bold blue]Pipeline Completo SAEC[/bold blue]"))
 
     steps = []
     if not skip_ingest:
-        steps.append(("Ingestão", lambda: ingest(article=article, strategy="marker")))
+        steps.append(
+            (
+                "Ingestão",
+                lambda: ingest(article=article, strategy="marker", force=False, dry_run=False),
+            )
+        )
     if not skip_extract:
-        steps.append(("Extração", lambda: extract(article=article, strategy=strategy)))
+        steps.append(
+            (
+                "Extração",
+                lambda: extract(article=article, strategy=strategy, dry_run=False),
+            )
+        )
     if not skip_validate:
-        steps.append(("Validação", lambda: validate(article=article)))
+        steps.append(("Validação", lambda: validate(article=article, output=None)))
     if not skip_consolidate:
-        steps.append(("Consolidação", lambda: consolidate()))
+        steps.append(("Consolidação", lambda: consolidate(output=None)))
 
     for i, (name, func) in enumerate(steps, 1):
         console.print(f"\n[bold]=== Etapa {i}/{len(steps)}: {name} ===[/bold]")
